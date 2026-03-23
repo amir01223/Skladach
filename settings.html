@@ -1,0 +1,2704 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="settings_title">الإعدادات - نظام إدارة المخازن</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #c0392b;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --sidebar-width: 280px;
+        }
+        
+        /* Language Switcher */
+        .language-switcher-header {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-left: 15px;
+        }
+        
+        .lang-btn {
+            padding: 3px 8px;
+            border: 2px solid transparent;
+            background: transparent;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 11px;
+            color: var(--dark-color);
+            min-width: 25px;
+            text-align: center;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+            border-color: var(--secondary-color);
+        }
+        
+        /* RTL/LTR Support */
+        body.ltr {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        body.ltr .header-title,
+        body.ltr .card-header-custom h5,
+        body.ltr .form-label-custom,
+        body.ltr .modal-title-custom,
+        body.ltr .table-custom th,
+        body.ltr .table-custom td,
+        body.ltr .dropdown-menu,
+        body.ltr .pagination,
+        body.ltr .card-footer,
+        body.ltr .sidebar-user div,
+        body.ltr .nav-link span,
+        body.ltr .sidebar-logo h3,
+        body.ltr .sidebar-logo small,
+        body.ltr .main-footer .text-white-50 {
+            text-align: left;
+            direction: ltr;
+        }
+        
+        body.ltr .sidebar-nav {
+            text-align: left;
+        }
+        
+        body.ltr .nav-link {
+            flex-direction: row;
+        }
+        
+        body.ltr .nav-link i {
+            margin-right: 0;
+            margin-left: 15px;
+        }
+        
+        body.ltr .nav-link:hover {
+            transform: translateX(5px);
+        }
+        
+        body.ltr #sidebar {
+            right: auto;
+            left: 0;
+            border-left: none;
+            border-right: 4px solid var(--secondary-color);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        }
+        
+        body.ltr #sidebar.hidden {
+            margin-right: 0;
+            margin-left: calc(-1 * var(--sidebar-width));
+        }
+        
+        body.ltr .main-content {
+            margin-right: 0;
+            margin-left: var(--sidebar-width);
+        }
+        
+        body.ltr .main-content.full-width {
+            margin-left: 0;
+        }
+        
+        body.ltr .header-title i {
+            margin-left: 0;
+            margin-right: 10px;
+        }
+        
+        body.ltr .language-switcher-header {
+            margin-left: 0;
+            margin-right: 15px;
+        }
+        
+        body.ltr .action-buttons {
+            flex-direction: row;
+        }
+        
+        body.ltr .table-custom th {
+            text-align: left;
+        }
+        
+        body.ltr .text-end {
+            text-align: left !important;
+        }
+        
+        body.ltr .text-start {
+            text-align: right !important;
+        }
+        
+        body.ltr .dropdown-menu {
+            text-align: left;
+        }
+        
+        body.ltr .pagination {
+            padding-right: 0;
+            padding-left: 0;
+        }
+        
+        body.ltr .input-group > .input-group-text {
+            border-left: 1px solid #ced4da;
+            border-right: none;
+        }
+        
+        body.ltr .input-group > .form-control {
+            border-right: 1px solid #ced4da;
+            border-left: none;
+        }
+        
+        body.ltr .error-message {
+            text-align: left;
+        }
+        
+        body.ltr .btn-custom {
+            flex-direction: row;
+        }
+        
+        body.ltr .btn-custom i {
+            order: -1;
+        }
+        
+        body.ltr .d-flex.gap-3 {
+            flex-direction: row;
+        }
+        
+        body.ltr .modal-footer {
+            flex-direction: row-reverse;
+        }
+        
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color) 0%, #1a252f 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1030;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        #sidebar.hidden {
+            margin-right: calc(-1 * var(--sidebar-width));
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sidebar-logo i {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-user {
+            padding: 1rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-user img {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 1rem 1.5rem;
+            margin: 0.2rem 0.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(-5px);
+        }
+        
+        .nav-link.active {
+            color: white;
+            background: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+        }
+        
+        .main-content {
+            margin-right: var(--sidebar-width);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+        
+        .main-content.full-width {
+            margin-right: 0;
+        }
+        
+        /* Header Styles */
+        .main-header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        
+        .header-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .header-title i {
+            color: var(--secondary-color);
+            margin-left: 10px;
+        }
+        
+        /* Settings Grid */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        /* Card Styles */
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .card-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.2rem 1.5rem;
+            border-bottom: none;
+            border-radius: 15px 15px 0 0 !important;
+        }
+        
+        /* Settings Item Styles */
+        .settings-item {
+            padding: 1rem;
+            border-radius: 10px;
+            background: white;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .settings-item:hover {
+            background: #f8f9fa;
+            border-color: var(--secondary-color);
+            transform: translateX(-5px);
+        }
+        
+        .settings-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .settings-item-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .settings-item-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        /* Button Styles */
+        .btn-custom {
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+        
+        .btn-outline-light {
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .btn-outline-light:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-edit {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .btn-edit:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-delete {
+            background: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
+        }
+        
+        .btn-delete:hover {
+            background: #c0392b;
+            color: white;
+        }
+        
+        /* Modal Styles */
+        .modal-custom {
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content-custom {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .modal-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+        
+        .modal-title-custom {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .btn-close-custom {
+            color: white;
+            opacity: 0.8;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-close-custom:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        
+        /* Form Styles */
+        .form-label-custom {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control-custom, .form-select-custom {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .form-control-custom:focus, .form-select-custom:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15);
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Alert Styles */
+        .alert-custom {
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Badge Styles */
+        .badge-custom {
+            padding: 0.5em 1em;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: none;
+        }
+        
+        .badge-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .badge-warning {
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+        }
+        
+        .badge-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+        
+        /* System Settings Styles */
+        .system-settings {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .setting-group {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .setting-group:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        /* Toggle Switch */
+        .form-check-input:checked {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            #sidebar {
+                margin-right: calc(-1 * var(--sidebar-width));
+            }
+            
+            #sidebar.hidden {
+                margin-right: 0;
+            }
+            
+            .main-content {
+                margin-right: 0;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .language-switcher-header {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 1.4rem;
+            }
+            
+            .card-header-custom {
+                padding: 1rem;
+            }
+            
+            .btn-custom {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar" class="d-flex flex-column">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-warehouse"></i>
+                <div>
+                    <h3 class="mb-0 fw-bold" data-i18n="system_name">نظام المخازن</h3>
+                    <small class="text-white-50" data-i18n="system_integration">الإدارة المتكاملة</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Info -->
+        <div class="sidebar-user d-flex align-items-center gap-3">
+            <img src="https://ui-avatars.com/api/?name=أحمد+محمود&background=3498db&color=fff&size=50&rounded=true" 
+                 class="rounded-circle" alt="User">
+            <div>
+                <h6 class="mb-0 fw-bold">Ибрахим Амир</h6>
+                <small class="text-white-50" data-i18n="user_role">مدير النظام</small>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="sidebar-nav flex-grow-1">
+            <a href="dashboard.html" class="nav-link">
+                <i class="fas fa-home"></i>
+                <span data-i18n="dashboard">لوحة التحكم</span>
+            </a>
+            <a href="inventory.html" class="nav-link">
+                <i class="fas fa-boxes"></i>
+                <span data-i18n="inventory_management">إدارة المخزون</span>
+            </a>
+            <a href="transactions.html" class="nav-link">
+                <i class="fas fa-exchange-alt"></i>
+                <span data-i18n="daily_operations">العمليات اليومية</span>
+            </a>
+            <a href="reports.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i>
+                <span data-i18n="reports_analysis">التقارير والتحليل</span>
+            </a>
+            <a href="warehouses.html" class="nav-link">
+                <i class="fas fa-warehouse"></i>
+                <span data-i18n="warehouse_management">إدارة المخازن</span>
+            </a>
+            <a href="users.html" class="nav-link">
+                <i class="fas fa-users"></i>
+                <span data-i18n="users">المستخدمون</span>
+            </a>
+            <a href="settings.html" class="nav-link active">
+                <i class="fas fa-cog"></i>
+                <span data-i18n="settings">الإعدادات</span>
+            </a>
+        </nav>
+        
+        <!-- Logout Button -->
+        <div class="p-3 mt-auto">
+            <a href="index.html" class="btn btn-danger w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
+                <i class="fas fa-sign-out-alt"></i>
+                <span data-i18n="logout">تسجيل الخروج</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="main-header d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <button onclick="WMS.toggleSidebar()" class="btn btn-outline-primary d-lg-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="header-title">
+                    <i class="fas fa-cog"></i>
+                    <span data-i18n="settings_title">الإعدادات</span>
+                </h1>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <!-- Language Switcher -->
+                <div class="language-switcher-header d-none d-lg-flex">
+                    <button class="lang-btn" data-lang="fr">FR</button>
+                    <button class="lang-btn active" data-lang="ar">AR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="ru">RU</button>
+                </div>
+                
+                <!-- Quick Actions -->
+                <button onclick="exportSettings()" class="btn btn-success btn-custom">
+                    <i class="fas fa-file-export"></i>
+                    <span data-i18n="export_settings">تصدير الإعدادات</span>
+                </button>
+                <button onclick="refreshSettings()" class="btn btn-outline-light btn-custom">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Alert Container -->
+        <div id="alertContainer" class="container mt-3"></div>
+
+        <!-- Main Content -->
+        <main class="container py-4">
+            <!-- Settings Grid -->
+            <div class="settings-grid fade-in">
+                <!-- Categories -->
+                <div class="card card-custom">
+                    <div class="card-header-custom d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-tags me-2"></i>
+                            <span data-i18n="product_categories">فئات المنتجات</span>
+                        </h5>
+                        <button onclick="openAddCategoryModal()" class="btn btn-primary btn-custom">
+                            <i class="fas fa-plus"></i>
+                            <span data-i18n="add_category">إضافة فئة</span>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="categoriesList">
+                            <div class="text-center text-muted py-4">
+                                <div class="loading-spinner mx-auto mb-3"></div>
+                                <p data-i18n="loading_categories">جاري تحميل الفئات...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suppliers -->
+                <div class="card card-custom">
+                    <div class="card-header-custom d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-truck me-2"></i>
+                            <span data-i18n="suppliers">الموردين</span>
+                        </h5>
+                        <button onclick="openAddSupplierModal()" class="btn btn-success btn-custom">
+                            <i class="fas fa-plus"></i>
+                            <span data-i18n="add_supplier">إضافة مورد</span>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="suppliersList">
+                            <div class="text-center text-muted py-4">
+                                <div class="loading-spinner mx-auto mb-3"></div>
+                                <p data-i18n="loading_suppliers">جاري تحميل الموردين...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customers -->
+                <div class="card card-custom">
+                    <div class="card-header-custom d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users me-2"></i>
+                            <span data-i18n="customers">العملاء</span>
+                        </h5>
+                        <button onclick="openAddCustomerModal()" class="btn btn-primary btn-custom">
+                            <i class="fas fa-plus"></i>
+                            <span data-i18n="add_customer">إضافة عميل</span>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="customersList">
+                            <div class="text-center text-muted py-4">
+                                <div class="loading-spinner mx-auto mb-3"></div>
+                                <p data-i18n="loading_customers">جاري تحميل العملاء...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Settings -->
+                <div class="card card-custom">
+                    <div class="card-header-custom">
+                        <h5 class="mb-0">
+                            <i class="fas fa-sliders-h me-2"></i>
+                            <span data-i18n="system_settings">إعدادات النظام</span>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="system-settings fade-in">
+                            <!-- Company Settings -->
+                            <div class="setting-group">
+                                <h6 class="mb-3 text-primary">
+                                    <i class="fas fa-building me-2"></i>
+                                    <span data-i18n="company_settings">إعدادات الشركة</span>
+                                </h6>
+                                <div class="settings-item mb-2">
+                                    <div class="settings-item-header">
+                                        <div>
+                                            <p class="settings-item-title" data-i18n="company_name">اسم الشركة</p>
+                                            <p class="settings-item-description" id="companyNameDisplay">Передовая складская компания</p>
+                                        </div>
+                                        <button onclick="editCompanyName()" class="btn-action btn-edit" data-i18n-title="edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="settings-item">
+                                    <div class="settings-item-header">
+                                        <div>
+                                            <p class="settings-item-title" data-i18n="commercial_id">رقم السجل التجاري</p>
+                                            <p class="settings-item-description" id="commercialIdDisplay">12345-2024</p>
+                                        </div>
+                                        <button onclick="editCommercialId()" class="btn-action btn-edit" data-i18n-title="edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Financial Settings -->
+                            <div class="setting-group">
+                                <h6 class="mb-3 text-primary">
+                                    <i class="fas fa-money-bill-wave me-2"></i>
+                                    <span data-i18n="financial_settings">الإعدادات المالية</span>
+                                </h6>
+                                <div class="settings-item mb-2">
+                                    <div class="settings-item-header">
+                                        <div>
+                                            <p class="settings-item-title" data-i18n="default_currency">العملة الافتراضية</p>
+                                            <p class="settings-item-description" id="currencyDisplay"> Russian Ruble (RuB)</p>
+                                        </div>
+                                        <button onclick="editCurrency()" class="btn-action btn-edit" data-i18n-title="edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="settings-item">
+                                    <div class="settings-item-header">
+                                        <div>
+                                            <p class="settings-item-title" data-i18n="tax_rate">الضريبة المضافة</p>
+                                            <p class="settings-item-description" id="taxRateDisplay">14%</p>
+                                        </div>
+                                        <button onclick="editTaxRate()" class="btn-action btn-edit" data-i18n-title="edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- System Preferences -->
+                            <div class="setting-group">
+                                <h6 class="mb-3 text-primary">
+                                    <i class="fas fa-cog me-2"></i>
+                                    <span data-i18n="system_preferences">تفضيلات النظام</span>
+                                </h6>
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="autoBackup" checked>
+                                        <label class="form-check-label" for="autoBackup" data-i18n="auto_backup">النسخ الاحتياطي التلقائي</label>
+                                        <small class="text-muted d-block" data-i18n="auto_backup_description">نسخ احتياطي يومي في الساعة 2 صباحاً</small>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="lowStockNotifications" checked>
+                                        <label class="form-check-label" for="lowStockNotifications" data-i18n="low_stock_notifications">تنبيهات المخزون المنخفض</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                        <label class="form-check-label" for="emailNotifications" data-i18n="email_notifications">التنبيهات عبر البريد الإلكتروني</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Language and Region -->
+                            <div class="setting-group">
+                                <h6 class="mb-3 text-primary">
+                                    <i class="fas fa-globe me-2"></i>
+                                    <span data-i18n="language_region">اللغة والمنطقة</span>
+                                </h6>
+                                <div class="settings-item mb-2">
+                                    <div class="settings-item-header">
+                                        <div>
+                                            <p class="settings-item-title" data-i18n="language">اللغة</p>
+                                            <p class="settings-item-description" id="languageDisplay">Русский</p>
+                                        </div>
+                                        <button onclick="editLanguage()" class="btn-action btn-edit" data-i18n-title="edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="settings-item">
+                                    <div class="settings-item-header">
+                                        <div>
+                                            <p class="settings-item-title" data-i18n="timezone">التوقيت</p>
+                                            <p class="settings-item-description" id="timezoneDisplay">Time Russian(GMT+3)</p>
+                                        </div>
+                                        <button onclick="editTimezone()" class="btn-action btn-edit" data-i18n-title="edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal fade modal-custom" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title modal-title-custom">
+                        <i class="fas fa-tags me-2"></i>
+                        <span data-i18n="add_category_modal_title">إضافة فئة جديدة</span>
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="addCategoryForm" onsubmit="event.preventDefault(); addCategory();">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="category_name">اسم الفئة *</label>
+                                <input type="text" class="form-control form-control-custom" id="categoryName" required>
+                                <div class="invalid-feedback" id="categoryNameError"></div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="category_code">رمز الفئة *</label>
+                                <input type="text" class="form-control form-control-custom" id="categoryCode" required>
+                                <div class="invalid-feedback" id="categoryCodeError"></div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="description">الوصف</label>
+                                <textarea class="form-control form-control-custom" id="categoryDescription" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="colors">الألوان</label>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="setCategoryColor('#3498db')" style="background-color: #3498db;" data-i18n="blue">أزرق</button>
+                                    <button type="button" class="btn btn-success btn-sm" onclick="setCategoryColor('#27ae60')" style="background-color: #27ae60;" data-i18n="green">أخضر</button>
+                                    <button type="button" class="btn btn-warning btn-sm" onclick="setCategoryColor('#f39c12')" style="background-color: #f39c12;" data-i18n="orange">برتقالي</button>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="setCategoryColor('#e74c3c')" style="background-color: #e74c3c;" data-i18n="red">أحمر</button>
+                                </div>
+                                <input type="hidden" id="categoryColor" value="#3498db">
+                            </div>
+                        </div>
+                        
+                        <!-- Error Summary -->
+                        <div class="alert alert-danger mt-3 d-none" id="categoryFormErrors">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong data-i18n="form_errors_title">يوجد أخطاء في النموذج:</strong>
+                            <ul class="mb-0 mt-2" id="categoryErrorList"></ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                            <span data-i18n="cancel">إلغاء</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-custom" id="categorySubmitBtn">
+                            <i class="fas fa-save"></i>
+                            <span data-i18n="save_category">حفظ الفئة</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Supplier Modal -->
+    <div class="modal fade modal-custom" id="addSupplierModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title modal-title-custom">
+                        <i class="fas fa-truck me-2"></i>
+                        <span data-i18n="add_supplier_modal_title">إضافة مورد جديد</span>
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="addSupplierForm" onsubmit="event.preventDefault(); addSupplier();">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="supplier_name">اسم المورد *</label>
+                                <input type="text" class="form-control form-control-custom" id="supplierName" required>
+                                <div class="invalid-feedback" id="supplierNameError"></div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="email_address">البريد الإلكتروني *</label>
+                                <input type="email" class="form-control form-control-custom" id="supplierEmail" required>
+                                <div class="invalid-feedback" id="supplierEmailError"></div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="phone_number">رقم الهاتف *</label>
+                                <input type="tel" class="form-control form-control-custom" id="supplierPhone" required>
+                                <div class="invalid-feedback" id="supplierPhoneError"></div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="address">العنوان</label>
+                                <textarea class="form-control form-control-custom" id="supplierAddress" rows="2"></textarea>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="commercial_id">رقم السجل التجاري</label>
+                                <input type="text" class="form-control form-control-custom" id="supplierCommercialId">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="tax_id">رقم الضريبي</label>
+                                <input type="text" class="form-control form-control-custom" id="supplierTaxId">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="notes">ملاحظات</label>
+                                <textarea class="form-control form-control-custom" id="supplierNotes" rows="2"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Error Summary -->
+                        <div class="alert alert-danger mt-3 d-none" id="supplierFormErrors">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong data-i18n="form_errors_title">يوجد أخطاء في النموذج:</strong>
+                            <ul class="mb-0 mt-2" id="supplierErrorList"></ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                            <span data-i18n="cancel">إلغاء</span>
+                        </button>
+                        <button type="submit" class="btn btn-success btn-custom" id="supplierSubmitBtn">
+                            <i class="fas fa-save"></i>
+                            <span data-i18n="save_supplier">حفظ المورد</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Customer Modal -->
+    <div class="modal fade modal-custom" id="addCustomerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title modal-title-custom">
+                        <i class="fas fa-user me-2"></i>
+                        <span data-i18n="add_customer_modal_title">إضافة عميل جديد</span>
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="addCustomerForm" onsubmit="event.preventDefault(); addCustomer();">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="customer_name">اسم العميل *</label>
+                                <input type="text" class="form-control form-control-custom" id="customerName" required>
+                                <div class="invalid-feedback" id="customerNameError"></div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="email_address">البريد الإلكتروني *</label>
+                                <input type="email" class="form-control form-control-custom" id="customerEmail" required>
+                                <div class="invalid-feedback" id="customerEmailError"></div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="phone_number">رقم الهاتف *</label>
+                                <input type="tel" class="form-control form-control-custom" id="customerPhone" required>
+                                <div class="invalid-feedback" id="customerPhoneError"></div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="address">العنوان</label>
+                                <textarea class="form-control form-control-custom" id="customerAddress" rows="2"></textarea>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="customer_type">نوع العميل</label>
+                                <select class="form-select form-select-custom" id="customerType">
+                                    <option value="فرد" data-i18n="individual">فرد</option>
+                                    <option value="شركة" data-i18n="company">شركة</option>
+                                    <option value="حكومي" data-i18n="government">جهة حكومية</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="tax_id">رقم الضريبي</label>
+                                <input type="text" class="form-control form-control-custom" id="customerTaxId">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="notes">ملاحظات</label>
+                                <textarea class="form-control form-control-custom" id="customerNotes" rows="2"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Error Summary -->
+                        <div class="alert alert-danger mt-3 d-none" id="customerFormErrors">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong data-i18n="form_errors_title">يوجد أخطاء في النموذج:</strong>
+                            <ul class="mb-0 mt-2" id="customerErrorList"></ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                            <span data-i18n="cancel">إلغاء</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-custom" id="customerSubmitBtn">
+                            <i class="fas fa-save"></i>
+                            <span data-i18n="save_customer">حفظ العميل</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Simple Language Switcher - Version simplifiée et fonctionnelle
+        const languageSwitcher = {
+            currentLang: 'ar',
+            
+            translations: {
+                'ar': {
+                    "settings_title": "الإعدادات - نظام إدارة المخازن",
+                    "system_name": "نظام المخازن",
+                    "system_integration": "الإدارة المتكاملة",
+                    "user_role": "مدير النظام",
+                    "dashboard": "لوحة التحكم",
+                    "inventory_management": "إدارة المخزون",
+                    "daily_operations": "العمليات اليومية",
+                    "reports_analysis": "التقارير والتحليل",
+                    "warehouse_management": "إدارة المخازن",
+                    "users": "المستخدمون",
+                    "settings": "الإعدادات",
+                    "logout": "تسجيل الخروج",
+                    "export_settings": "تصدير الإعدادات",
+                    "product_categories": "فئات المنتجات",
+                    "add_category": "إضافة فئة",
+                    "loading_categories": "جاري تحميل الفئات...",
+                    "suppliers": "الموردين",
+                    "add_supplier": "إضافة مورد",
+                    "loading_suppliers": "جاري تحميل الموردين...",
+                    "customers": "العملاء",
+                    "add_customer": "إضافة عميل",
+                    "loading_customers": "جاري تحميل العملاء...",
+                    "system_settings": "إعدادات النظام",
+                    "company_settings": "إعدادات الشركة",
+                    "company_name": "اسم الشركة",
+                    "commercial_id": "رقم السجل التجاري",
+                    "financial_settings": "الإعدادات المالية",
+                    "default_currency": "العملة الافتراضية",
+                    "tax_rate": "الضريبة المضافة",
+                    "system_preferences": "تفضيلات النظام",
+                    "auto_backup": "النسخ الاحتياطي التلقائي",
+                    "auto_backup_description": "نسخ احتياطي يومي في الساعة 2 صباحاً",
+                    "low_stock_notifications": "تنبيهات المخزون المنخفض",
+                    "email_notifications": "التنبيهات عبر البريد الإلكتروني",
+                    "language_region": "اللغة والمنطقة",
+                    "language": "اللغة",
+                    "timezone": "التوقيت",
+                    "add_category_modal_title": "إضافة فئة جديدة",
+                    "category_name": "اسم الفئة *",
+                    "category_code": "رمز الفئة *",
+                    "description": "الوصف",
+                    "colors": "الألوان",
+                    "blue": "أزرق",
+                    "green": "أخضر",
+                    "orange": "برتقالي",
+                    "red": "أحمر",
+                    "form_errors_title": "يوجد أخطاء في النموذج:",
+                    "cancel": "إلغاء",
+                    "save_category": "حفظ الفئة",
+                    "add_supplier_modal_title": "إضافة مورد جديد",
+                    "supplier_name": "اسم المورد *",
+                    "email_address": "البريد الإلكتروني *",
+                    "phone_number": "رقم الهاتف *",
+                    "address": "العنوان",
+                    "tax_id": "رقم الضريبي",
+                    "notes": "ملاحظات",
+                    "save_supplier": "حفظ المورد",
+                    "add_customer_modal_title": "إضافة عميل جديد",
+                    "customer_name": "اسم العميل *",
+                    "customer_type": "نوع العميل",
+                    "individual": "فرد",
+                    "company": "شركة",
+                    "government": "جهة حكومية",
+                    "save_customer": "حفظ العميل",
+                    "edit": "تعديل",
+                    "edit_category": "تعديل الفئة",
+                    "delete_category": "حذف الفئة",
+                    "edit_supplier": "تعديل المورد",
+                    "delete_supplier": "حذف المورد",
+                    "edit_customer": "تعديل العميل",
+                    "delete_customer": "حذف العميل",
+                    "no_categories": "لا توجد فئات مسجلة",
+                    "add_new_category": "إضافة فئة جديدة",
+                    "no_suppliers": "لا توجد موردين مسجلين",
+                    "add_new_supplier": "إضافة مورد جديد",
+                    "no_customers": "لا توجد عملاء مسجلين",
+                    "add_new_customer": "إضافة عميل جديد",
+                    "products": "منتج"
+                },
+                'fr': {
+                    "settings_title": "Paramètres - Système de Gestion d'Entrepôt",
+                    "system_name": "Système d'Entrepôt",
+                    "system_integration": "Gestion Intégrée",
+                    "user_role": "Administrateur Système",
+                    "dashboard": "Tableau de Bord",
+                    "inventory_management": "Gestion des Stocks",
+                    "daily_operations": "Opérations Quotidiennes",
+                    "reports_analysis": "Rapports et Analyse",
+                    "warehouse_management": "Gestion des Entrepôts",
+                    "users": "Utilisateurs",
+                    "settings": "Paramètres",
+                    "logout": "Déconnexion",
+                    "export_settings": "Exporter Paramètres",
+                    "product_categories": "Catégories Produits",
+                    "add_category": "Ajouter Catégorie",
+                    "loading_categories": "Chargement catégories...",
+                    "suppliers": "Fournisseurs",
+                    "add_supplier": "Ajouter Fournisseur",
+                    "loading_suppliers": "Chargement fournisseurs...",
+                    "customers": "Clients",
+                    "add_customer": "Ajouter Client",
+                    "loading_customers": "Chargement clients...",
+                    "system_settings": "Paramètres Système",
+                    "company_settings": "Paramètres Société",
+                    "company_name": "Nom Société",
+                    "commercial_id": "Numéro Registre Commerce",
+                    "financial_settings": "Paramètres Financiers",
+                    "default_currency": "Devise par Défaut",
+                    "tax_rate": "TVA",
+                    "system_preferences": "Préférences Système",
+                    "auto_backup": "Sauvegarde Automatique",
+                    "auto_backup_description": "Sauvegarde quotidienne à 2h du matin",
+                    "low_stock_notifications": "Notifications Stock Faible",
+                    "email_notifications": "Notifications Email",
+                    "language_region": "Langue et Région",
+                    "language": "Langue",
+                    "timezone": "Fuseau Horaire",
+                    "add_category_modal_title": "Ajouter Nouvelle Catégorie",
+                    "category_name": "Nom Catégorie *",
+                    "category_code": "Code Catégorie *",
+                    "description": "Description",
+                    "colors": "Couleurs",
+                    "blue": "Bleu",
+                    "green": "Vert",
+                    "orange": "Orange",
+                    "red": "Rouge",
+                    "form_errors_title": "Erreurs dans le formulaire:",
+                    "cancel": "Annuler",
+                    "save_category": "Sauvegarder Catégorie",
+                    "add_supplier_modal_title": "Ajouter Nouveau Fournisseur",
+                    "supplier_name": "Nom Fournisseur *",
+                    "email_address": "Adresse Email *",
+                    "phone_number": "Numéro Téléphone *",
+                    "address": "Adresse",
+                    "tax_id": "Numéro Fiscal",
+                    "notes": "Notes",
+                    "save_supplier": "Sauvegarder Fournisseur",
+                    "add_customer_modal_title": "Ajouter Nouveau Client",
+                    "customer_name": "Nom Client *",
+                    "customer_type": "Type Client",
+                    "individual": "Individu",
+                    "company": "Société",
+                    "government": "Gouvernemental",
+                    "save_customer": "Sauvegarder Client",
+                    "edit": "Modifier",
+                    "edit_category": "Modifier Catégorie",
+                    "delete_category": "Supprimer Catégorie",
+                    "edit_supplier": "Modifier Fournisseur",
+                    "delete_supplier": "Supprimer Fournisseur",
+                    "edit_customer": "Modifier Client",
+                    "delete_customer": "Supprimer Client",
+                    "no_categories": "Aucune catégorie enregistrée",
+                    "add_new_category": "Ajouter nouvelle catégorie",
+                    "no_suppliers": "Aucun fournisseur enregistré",
+                    "add_new_supplier": "Ajouter nouveau fournisseur",
+                    "no_customers": "Aucun client enregistré",
+                    "add_new_customer": "Ajouter nouveau client",
+                    "products": "produits"
+                },
+                'en': {
+                    "settings_title": "Settings - Warehouse Management System",
+                    "system_name": "Warehouse System",
+                    "system_integration": "Integrated Management",
+                    "user_role": "System Administrator",
+                    "dashboard": "Dashboard",
+                    "inventory_management": "Inventory Management",
+                    "daily_operations": "Daily Operations",
+                    "reports_analysis": "Reports & Analysis",
+                    "warehouse_management": "Warehouse Management",
+                    "users": "Users",
+                    "settings": "Settings",
+                    "logout": "Logout",
+                    "export_settings": "Export Settings",
+                    "product_categories": "Product Categories",
+                    "add_category": "Add Category",
+                    "loading_categories": "Loading categories...",
+                    "suppliers": "Suppliers",
+                    "add_supplier": "Add Supplier",
+                    "loading_suppliers": "Loading suppliers...",
+                    "customers": "Customers",
+                    "add_customer": "Add Customer",
+                    "loading_customers": "Loading customers...",
+                    "system_settings": "System Settings",
+                    "company_settings": "Company Settings",
+                    "company_name": "Company Name",
+                    "commercial_id": "Commercial ID",
+                    "financial_settings": "Financial Settings",
+                    "default_currency": "Default Currency",
+                    "tax_rate": "Tax Rate",
+                    "system_preferences": "System Preferences",
+                    "auto_backup": "Auto Backup",
+                    "auto_backup_description": "Daily backup at 2 AM",
+                    "low_stock_notifications": "Low Stock Notifications",
+                    "email_notifications": "Email Notifications",
+                    "language_region": "Language & Region",
+                    "language": "Language",
+                    "timezone": "Timezone",
+                    "add_category_modal_title": "Add New Category",
+                    "category_name": "Category Name *",
+                    "category_code": "Category Code *",
+                    "description": "Description",
+                    "colors": "Colors",
+                    "blue": "Blue",
+                    "green": "Green",
+                    "orange": "Orange",
+                    "red": "Red",
+                    "form_errors_title": "Errors in the form:",
+                    "cancel": "Cancel",
+                    "save_category": "Save Category",
+                    "add_supplier_modal_title": "Add New Supplier",
+                    "supplier_name": "Supplier Name *",
+                    "email_address": "Email Address *",
+                    "phone_number": "Phone Number *",
+                    "address": "Address",
+                    "tax_id": "Tax ID",
+                    "notes": "Notes",
+                    "save_supplier": "Save Supplier",
+                    "add_customer_modal_title": "Add New Customer",
+                    "customer_name": "Customer Name *",
+                    "customer_type": "Customer Type",
+                    "individual": "Individual",
+                    "company": "Company",
+                    "government": "Government",
+                    "save_customer": "Save Customer",
+                    "edit": "Edit",
+                    "edit_category": "Edit Category",
+                    "delete_category": "Delete Category",
+                    "edit_supplier": "Edit Supplier",
+                    "delete_supplier": "Delete Supplier",
+                    "edit_customer": "Edit Customer",
+                    "delete_customer": "Delete Customer",
+                    "no_categories": "No categories registered",
+                    "add_new_category": "Add new category",
+                    "no_suppliers": "No suppliers registered",
+                    "add_new_supplier": "Add new supplier",
+                    "no_customers": "No customers registered",
+                    "add_new_customer": "Add new customer",
+                    "products": "products"
+                },
+                'ru': {
+                    "settings_title": "Настройки - Система Управления Складом",
+                    "system_name": "Система Склада",
+                    "system_integration": "Интегрированное Управление",
+                    "user_role": "Администратор Системы",
+                    "dashboard": "Панель Управления",
+                    "inventory_management": "Управление Запасами",
+                    "daily_operations": "Ежедневные Операции",
+                    "reports_analysis": "Отчеты и Анализ",
+                    "warehouse_management": "Управление Складами",
+                    "users": "Пользователи",
+                    "settings": "Настройки",
+                    "logout": "Выход",
+                    "export_settings": "Экспорт Настроек",
+                    "product_categories": "Категории Товаров",
+                    "add_category": "Добавить Категорию",
+                    "loading_categories": "Загрузка категорий...",
+                    "suppliers": "Поставщики",
+                    "add_supplier": "Добавить Поставщика",
+                    "loading_suppliers": "Загрузка поставщиков...",
+                    "customers": "Клиенты",
+                    "add_customer": "Добавить Клиента",
+                    "loading_customers": "Загрузка клиентов...",
+                    "system_settings": "Системные Настройки",
+                    "company_settings": "Настройки Компании",
+                    "company_name": "Название Компании",
+                    "commercial_id": "Регистрационный Номер",
+                    "financial_settings": "Финансовые Настройки",
+                    "default_currency": "Валюта по Умолчанию",
+                    "tax_rate": "Налоговая Ставка",
+                    "system_preferences": "Системные Предпочтения",
+                    "auto_backup": "Авторезервное Копирование",
+                    "auto_backup_description": "Ежедневное резервное копирование в 2 часа ночи",
+                    "low_stock_notifications": "Уведомления о Низком Запасе",
+                    "email_notifications": "Уведомления по Email",
+                    "language_region": "Язык и Регион",
+                    "language": "Язык",
+                    "timezone": "Часовой Пояс",
+                    "add_category_modal_title": "Добавить Новую Категорию",
+                    "category_name": "Название Категории *",
+                    "category_code": "Код Категории *",
+                    "description": "Описание",
+                    "colors": "Цвета",
+                    "blue": "Синий",
+                    "green": "Зеленый",
+                    "orange": "Оранжевый",
+                    "red": "Красный",
+                    "form_errors_title": "Ошибки в форме:",
+                    "cancel": "Отмена",
+                    "save_category": "Сохранить Категорию",
+                    "add_supplier_modal_title": "Добавить Нового Поставщика",
+                    "supplier_name": "Название Поставщика *",
+                    "email_address": "Адрес Email *",
+                    "phone_number": "Номер Телефона *",
+                    "address": "Адрес",
+                    "tax_id": "Налоговый Номер",
+                    "notes": "Примечания",
+                    "save_supplier": "Сохранить Поставщика",
+                    "add_customer_modal_title": "Добавить Нового Клиента",
+                    "customer_name": "Имя Клиента *",
+                    "customer_type": "Тип Клиента",
+                    "individual": "Физическое лицо",
+                    "company": "Компания",
+                    "government": "Государственное учреждение",
+                    "save_customer": "Сохранить Клиента",
+                    "edit": "Редактировать",
+                    "edit_category": "Редактировать Категорию",
+                    "delete_category": "Удалить Категорию",
+                    "edit_supplier": "Редактировать Поставщика",
+                    "delete_supplier": "Удалить Поставщика",
+                    "edit_customer": "Редактировать Клиента",
+                    "delete_customer": "Удалить Клиента",
+                    "no_categories": "Нет зарегистрированных категорий",
+                    "add_new_category": "Добавить новую категорию",
+                    "no_suppliers": "Нет зарегистрированных поставщиков",
+                    "add_new_supplier": "Добавить нового поставщика",
+                    "no_customers": "Нет зарегистрированных клиентов",
+                    "add_new_customer": "Добавить нового клиента",
+                    "products": "товаров"
+                }
+            },
+            
+            init: function() {
+                this.loadLanguage();
+                this.setupEventListeners();
+                this.applyTranslations();
+            },
+            
+            loadLanguage: function() {
+                const savedLang = localStorage.getItem('preferredLang');
+                if (savedLang && this.translations[savedLang]) {
+                    this.currentLang = savedLang;
+                } else {
+                    this.currentLang = 'ar';
+                    localStorage.setItem('preferredLang', 'ar');
+                }
+                this.updateActiveButton();
+            },
+            
+            switchLanguage: function(langCode) {
+                if (this.currentLang === langCode) return;
+                
+                this.currentLang = langCode;
+                localStorage.setItem('preferredLang', langCode);
+                
+                // Update direction
+                this.updatePageDirection(langCode);
+                
+                // Apply translations
+                this.applyTranslations();
+                
+                // Update active button
+                this.updateActiveButton();
+                
+                // Refresh dynamic content
+                this.refreshDynamicContent();
+            },
+            
+            updatePageDirection: function(langCode) {
+                const html = document.documentElement;
+                const body = document.body;
+                
+                body.classList.remove('ltr', 'rtl');
+                
+                if (langCode === 'ar') {
+                    html.dir = 'rtl';
+                    html.lang = 'ar';
+                    body.classList.add('rtl');
+                } else {
+                    html.dir = 'ltr';
+                    html.lang = langCode;
+                    body.classList.add('ltr');
+                }
+            },
+            
+            applyTranslations: function() {
+                const translationData = this.translations[this.currentLang];
+                if (!translationData) return;
+                
+                // Translate all elements with data-i18n
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (translationData[key]) {
+                        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'SELECT') {
+                            element.placeholder = translationData[key];
+                        } else {
+                            element.textContent = translationData[key];
+                        }
+                    }
+                });
+                
+                // Translate title attributes
+                document.querySelectorAll('[data-i18n-title]').forEach(element => {
+                    const key = element.getAttribute('data-i18n-title');
+                    if (translationData[key]) {
+                        element.title = translationData[key];
+                    }
+                });
+                
+                // Translate select options
+                document.querySelectorAll('option[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (translationData[key]) {
+                        element.textContent = translationData[key];
+                    }
+                });
+                
+                // Update page title
+                if (translationData.settings_title) {
+                    document.title = translationData.settings_title;
+                }
+            },
+            
+            refreshDynamicContent: function() {
+                // Refresh categories, suppliers, and customers lists
+                if (window.categories && window.displayCategories) {
+                    window.displayCategories();
+                }
+                if (window.suppliers && window.displaySuppliers) {
+                    window.displaySuppliers();
+                }
+                if (window.customers && window.displayCustomers) {
+                    window.displayCustomers();
+                }
+            },
+            
+            updateActiveButton: function() {
+                document.querySelectorAll('.lang-btn').forEach(button => {
+                    button.classList.remove('active');
+                    if (button.getAttribute('data-lang') === this.currentLang) {
+                        button.classList.add('active');
+                    }
+                });
+            },
+            
+            setupEventListeners: function() {
+                document.querySelectorAll('.lang-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const lang = e.target.getAttribute('data-lang');
+                        this.switchLanguage(lang);
+                    });
+                });
+            },
+            
+            getTranslation: function(key) {
+                return this.translations[this.currentLang]?.[key] || key;
+            }
+        };
+        
+        // Initialize language switcher immediately
+        languageSwitcher.init();
+    </script>
+    
+    <!-- Custom JS -->
+    <script>
+        // WMS Global Object
+        const WMS = {
+            // Sidebar Management
+            toggleSidebar: function() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.querySelector('.main-content');
+                if (sidebar) sidebar.classList.toggle('hidden');
+                if (mainContent) mainContent.classList.toggle('full-width');
+            },
+            
+            // Modal Management
+            openModal: function(modalId) {
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    modal.show();
+                }
+            },
+            
+            closeModal: function(modalId) {
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+                    }
+                }
+            },
+            
+            // Alert System
+            showAlert: function(message, type = 'info', duration = 5000) {
+                const alertContainer = document.getElementById('alertContainer');
+                
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type} alert-custom fade-in`;
+                alert.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>
+                        <div class="flex-grow-1">${message}</div>
+                        <button class="btn btn-link text-${type === 'success' ? 'success' : type === 'danger' ? 'danger' : type === 'warning' ? 'warning' : 'info'} p-0" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                alertContainer.appendChild(alert);
+                
+                // Auto remove after duration
+                if (duration > 0) {
+                    setTimeout(() => {
+                        if (alert.parentElement) {
+                            alert.remove();
+                        }
+                    }, duration);
+                }
+            },
+            
+            // Confirm Action
+            confirmAction: function(message, callback) {
+                if (confirm(message)) {
+                    callback();
+                }
+            },
+            
+            // Format Numbers
+            formatNumber: function(num) {
+                return new Intl.NumberFormat('ar-EG').format(num);
+            },
+            
+            // Fetch Data (mock function)
+            fetchData: async function(endpoint) {
+                console.log(`Fetching data from: ${endpoint}`);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Mock data for demonstration
+                if (endpoint.includes('categories')) {
+                    const mockCategories = [
+                        {
+                            id: 'CAT001',
+                            name: languageSwitcher.currentLang === 'ar' ? 'الأجهزة الإلكترونية' : 
+                                  languageSwitcher.currentLang === 'fr' ? 'Appareils électroniques' :
+                                  languageSwitcher.currentLang === 'en' ? 'Electronic Devices' : 'Электронные устройства',
+                            code: 'ELEC',
+                            description: languageSwitcher.currentLang === 'ar' ? 'جميع الأجهزة الإلكترونية' :
+                                        languageSwitcher.currentLang === 'fr' ? 'Tous les appareils électroniques' :
+                                        languageSwitcher.currentLang === 'en' ? 'All electronic devices' : 'Все электронные устройства',
+                            color: '#3498db',
+                            created_at: '2024-01-15',
+                            product_count: 25
+                        },
+                        {
+                            id: 'CAT002',
+                            name: languageSwitcher.currentLang === 'ar' ? 'قطع الغيار' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Pièces de rechange' :
+                                  languageSwitcher.currentLang === 'en' ? 'Spare Parts' : 'Запчасти',
+                            code: 'SPARE',
+                            description: languageSwitcher.currentLang === 'ar' ? 'قطع غيار السيارات والمعدات' :
+                                        languageSwitcher.currentLang === 'fr' ? 'Pièces détachées pour voitures et équipements' :
+                                        languageSwitcher.currentLang === 'en' ? 'Car and equipment spare parts' : 'Запчасти для автомобилей и оборудования',
+                            color: '#e74c3c',
+                            created_at: '2024-01-20',
+                            product_count: 18
+                        },
+                        {
+                            id: 'CAT003',
+                            name: languageSwitcher.currentLang === 'ar' ? 'مواد غذائية' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Produits alimentaires' :
+                                  languageSwitcher.currentLang === 'en' ? 'Food Products' : 'Продовольственные товары',
+                            code: 'FOOD',
+                            description: languageSwitcher.currentLang === 'ar' ? 'مواد غذائية وتعبئة' :
+                                        languageSwitcher.currentLang === 'fr' ? 'Produits alimentaires et emballage' :
+                                        languageSwitcher.currentLang === 'en' ? 'Food products and packaging' : 'Продовольственные товары и упаковка',
+                            color: '#27ae60',
+                            created_at: '2024-02-01',
+                            product_count: 42
+                        },
+                        {
+                            id: 'CAT004',
+                            name: languageSwitcher.currentLang === 'ar' ? 'مواد مكتبية' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Fournitures de bureau' :
+                                  languageSwitcher.currentLang === 'en' ? 'Office Supplies' : 'Канцелярские товары',
+                            code: 'OFFICE',
+                            description: languageSwitcher.currentLang === 'ar' ? 'مواد مكتبية وقرطاسية' :
+                                        languageSwitcher.currentLang === 'fr' ? 'Fournitures de bureau et papeterie' :
+                                        languageSwitcher.currentLang === 'en' ? 'Office supplies and stationery' : 'Канцелярские товары и бумага',
+                            color: '#f39c12',
+                            created_at: '2024-02-15',
+                            product_count: 15
+                        }
+                    ];
+                    
+                    return {
+                        success: true,
+                        data: mockCategories
+                    };
+                }
+                
+                if (endpoint.includes('suppliers')) {
+                    const mockSuppliers = [
+                        {
+                            id: 'SUP001',
+                            name: languageSwitcher.currentLang === 'ar' ? 'شركة التقنية الحديثة' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Société de Technologie Moderne' :
+                                  languageSwitcher.currentLang === 'en' ? 'Modern Technology Company' : 'Компания Современных Технологий',
+                            email: 'tech@modern.com',
+                            phone: '+201012345678',
+                            address: languageSwitcher.currentLang === 'ar' ? 'القاهرة - المعادي' :
+                                    languageSwitcher.currentLang === 'fr' ? 'Le Caire - Maadi' :
+                                    languageSwitcher.currentLang === 'en' ? 'Cairo - Maadi' : 'Каир - Маади',
+                            commercial_id: '123456-2024',
+                            tax_id: '123456789',
+                            notes: languageSwitcher.currentLang === 'ar' ? 'مورد رئيسي للأجهزة الإلكترونية' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Fournisseur principal d\'appareils électroniques' :
+                                  languageSwitcher.currentLang === 'en' ? 'Main supplier of electronic devices' : 'Основной поставщик электронных устройств',
+                            created_at: '2024-01-15'
+                        },
+                        {
+                            id: 'SUP002',
+                            name: languageSwitcher.currentLang === 'ar' ? 'مؤسسة الخليج للمواد الغذائية' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Fondation du Golfe pour les Produits Alimentaires' :
+                                  languageSwitcher.currentLang === 'en' ? 'Gulf Foundation for Food Products' : 'Фонд Залива по Продовольственным Товарам',
+                            email: 'food@gulf.com',
+                            phone: '+201098765432',
+                            address: languageSwitcher.currentLang === 'ar' ? 'الإسكندرية - سموحة' :
+                                    languageSwitcher.currentLang === 'fr' ? 'Alexandrie - Smouha' :
+                                    languageSwitcher.currentLang === 'en' ? 'Alexandria - Smouha' : 'Александрия - Смуха',
+                            commercial_id: '654321-2024',
+                            tax_id: '987654321',
+                            notes: languageSwitcher.currentLang === 'ar' ? 'مواد غذائية بجودة عالية' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Produits alimentaires de haute qualité' :
+                                  languageSwitcher.currentLang === 'en' ? 'High quality food products' : 'Продукты питания высокого качества',
+                            created_at: '2024-01-20'
+                        },
+                        {
+                            id: 'SUP003',
+                            name: languageSwitcher.currentLang === 'ar' ? 'شركة الهدى للمستلزمات المكتبية' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Société Al-Huda pour les Fournitures de Bureau' :
+                                  languageSwitcher.currentLang === 'en' ? 'Al-Huda Company for Office Supplies' : 'Компания Аль-Худа для Канцелярских Товаров',
+                            email: 'office@huda.com',
+                            phone: '+201055443322',
+                            address: languageSwitcher.currentLang === 'ar' ? 'الجيزة - الدقي' :
+                                    languageSwitcher.currentLang === 'fr' ? 'Gizeh - Dokki' :
+                                    languageSwitcher.currentLang === 'en' ? 'Giza - Dokki' : 'Гиза - Докки',
+                            commercial_id: '789123-2024',
+                            tax_id: '456789123',
+                            notes: languageSwitcher.currentLang === 'ar' ? 'مستلزمات مكتبية متنوعة' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Fournitures de bureau variées' :
+                                  languageSwitcher.currentLang === 'en' ? 'Various office supplies' : 'Различные канцелярские товары',
+                            created_at: '2024-02-01'
+                        }
+                    ];
+                    
+                    return {
+                        success: true,
+                        data: mockSuppliers
+                    };
+                }
+                
+                if (endpoint.includes('customers')) {
+                    const mockCustomers = [
+                        {
+                            id: 'CUS001',
+                            name: languageSwitcher.currentLang === 'ar' ? 'شركة النور للتجارة' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Société Al-Nour pour le Commerce' :
+                                  languageSwitcher.currentLang === 'en' ? 'Al-Nour Trading Company' : 'Торговая компания Ан-Нур',
+                            email: 'info@alnour.com',
+                            phone: '+201012345679',
+                            address: languageSwitcher.currentLang === 'ar' ? 'القاهرة - مدينة نصر' :
+                                    languageSwitcher.currentLang === 'fr' ? 'Le Caire - Madinet Nasr' :
+                                    languageSwitcher.currentLang === 'en' ? 'Cairo - Nasr City' : 'Каир - Наср-Сити',
+                            type: languageSwitcher.currentLang === 'ar' ? 'شركة' :
+                                 languageSwitcher.currentLang === 'fr' ? 'Société' :
+                                 languageSwitcher.currentLang === 'en' ? 'Company' : 'Компания',
+                            tax_id: '111222333',
+                            notes: languageSwitcher.currentLang === 'ar' ? 'عميل رئيسي' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Client principal' :
+                                  languageSwitcher.currentLang === 'en' ? 'Main client' : 'Основной клиент',
+                            created_at: '2024-01-15'
+                        },
+                        {
+                            id: 'CUS002',
+                            name: languageSwitcher.currentLang === 'ar' ? 'أحمد محمد' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Ahmed Mohamed' :
+                                  languageSwitcher.currentLang === 'en' ? 'Ahmed Mohamed' : 'Ахмед Мохамед',
+                            email: 'ahmed@gmail.com',
+                            phone: '+201012345680',
+                            address: languageSwitcher.currentLang === 'ar' ? 'الجيزة - المهندسين' :
+                                    languageSwitcher.currentLang === 'fr' ? 'Gizeh - Mohandessin' :
+                                    languageSwitcher.currentLang === 'en' ? 'Giza - Mohandessin' : 'Гиза - Мохандессин',
+                            type: languageSwitcher.currentLang === 'ar' ? 'فرد' :
+                                 languageSwitcher.currentLang === 'fr' ? 'Individu' :
+                                 languageSwitcher.currentLang === 'en' ? 'Individual' : 'Физическое лицо',
+                            tax_id: '',
+                            notes: languageSwitcher.currentLang === 'ar' ? 'عميل منتظم' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Client régulier' :
+                                  languageSwitcher.currentLang === 'en' ? 'Regular client' : 'Постоянный клиент',
+                            created_at: '2024-01-20'
+                        },
+                        {
+                            id: 'CUS003',
+                            name: languageSwitcher.currentLang === 'ar' ? 'مكتبة المعرفة' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Bibliothèque de la Connaissance' :
+                                  languageSwitcher.currentLang === 'en' ? 'Knowledge Library' : 'Библиотека Знаний',
+                            email: 'info@maarifa.com',
+                            phone: '+201012345681',
+                            address: languageSwitcher.currentLang === 'ar' ? 'الإسكندرية - الشاطبي' :
+                                    languageSwitcher.currentLang === 'fr' ? 'Alexandrie - Chatby' :
+                                    languageSwitcher.currentLang === 'en' ? 'Alexandria - Chatby' : 'Александрия - Чатби',
+                            type: languageSwitcher.currentLang === 'ar' ? 'شركة' :
+                                 languageSwitcher.currentLang === 'fr' ? 'Société' :
+                                 languageSwitcher.currentLang === 'en' ? 'Company' : 'Компания',
+                            tax_id: '444555666',
+                            notes: languageSwitcher.currentLang === 'ar' ? 'مشتريات كبيرة' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Grands achats' :
+                                  languageSwitcher.currentLang === 'en' ? 'Large purchases' : 'Крупные закупки',
+                            created_at: '2024-02-01'
+                        },
+                        {
+                            id: 'CUS004',
+                            name: languageSwitcher.currentLang === 'ar' ? 'سارة علي' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Sara Ali' :
+                                  languageSwitcher.currentLang === 'en' ? 'Sara Ali' : 'Сара Али',
+                            email: 'sara@gmail.com',
+                            phone: '+201012345682',
+                            address: languageSwitcher.currentLang === 'ar' ? 'القاهرة - الزمالك' :
+                                    languageSwitcher.currentLang === 'fr' ? 'Le Caire - Zamalek' :
+                                    languageSwitcher.currentLang === 'en' ? 'Cairo - Zamalek' : 'Каир - Замалек',
+                            type: languageSwitcher.currentLang === 'ar' ? 'فرد' :
+                                 languageSwitcher.currentLang === 'fr' ? 'Individu' :
+                                 languageSwitcher.currentLang === 'en' ? 'Individual' : 'Физическое лицо',
+                            tax_id: '',
+                            notes: languageSwitcher.currentLang === 'ar' ? 'عميل جديد' :
+                                  languageSwitcher.currentLang === 'fr' ? 'Nouveau client' :
+                                  languageSwitcher.currentLang === 'en' ? 'New client' : 'Новый клиент',
+                            created_at: '2024-02-15'
+                        }
+                    ];
+                    
+                    return {
+                        success: true,
+                        data: mockCustomers
+                    };
+                }
+                
+                return { success: true, data: [] };
+            },
+            
+            // Post Data (mock function)
+            postData: async function(endpoint, data) {
+                console.log(`Posting data to: ${endpoint}`, data);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                return {
+                    success: true,
+                    message: languageSwitcher.getTranslation('category_added_success'),
+                    data: { 
+                        ...data, 
+                        id: endpoint.includes('categories') ? 'CAT' + Date.now().toString().slice(-6) :
+                             endpoint.includes('suppliers') ? 'SUP' + Date.now().toString().slice(-6) :
+                             'CUS' + Date.now().toString().slice(-6),
+                        created_at: new Date().toISOString().split('T')[0]
+                    }
+                };
+            },
+            
+            // Delete Data (mock function)
+            deleteData: async function(endpoint, id) {
+                console.log(`Deleting data from: ${endpoint}, ID: ${id}`);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                return {
+                    success: true,
+                    message: languageSwitcher.getTranslation('category_deleted_success')
+                };
+            }
+        };
+        
+        // Global variables
+        let categories = [];
+        let suppliers = [];
+        let customers = [];
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Load data
+            await loadData();
+            
+            // Show welcome message
+            setTimeout(() => {
+                WMS.showAlert(languageSwitcher.getTranslation('settings_refreshed'), 'info');
+            }, 1000);
+        });
+        
+        // Load all data
+        async function loadData() {
+            try {
+                // Load categories, suppliers, and customers
+                const [categoriesData, suppliersData, customersData] = await Promise.all([
+                    WMS.fetchData('categories?limit=100'),
+                    WMS.fetchData('suppliers?limit=100'),
+                    WMS.fetchData('customers?limit=100')
+                ]);
+                
+                if (categoriesData && categoriesData.data) {
+                    categories = categoriesData.data;
+                    displayCategories();
+                }
+                
+                if (suppliersData && suppliersData.data) {
+                    suppliers = suppliersData.data;
+                    displaySuppliers();
+                }
+                
+                if (customersData && customersData.data) {
+                    customers = customersData.data;
+                    displayCustomers();
+                }
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحميل البيانات:', error);
+                WMS.showAlert(languageSwitcher.getTranslation('load_error'), 'danger');
+            }
+        }
+        
+        // Display categories
+        function displayCategories() {
+            const list = document.getElementById('categoriesList');
+            if (!list) return;
+            
+            if (categories.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-tags fa-3x mb-3"></i>
+                        <p class="mb-3">${languageSwitcher.getTranslation('no_categories')}</p>
+                        <button class="btn btn-primary btn-sm" onclick="openAddCategoryModal()">
+                            <i class="fas fa-plus me-2"></i><span>${languageSwitcher.getTranslation('add_new_category')}</span>
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = categories.map(category => `
+                <div class="settings-item fade-in">
+                    <div class="settings-item-header">
+                        <div>
+                            <p class="settings-item-title">
+                                <span class="badge badge-primary badge-custom" style="background-color: ${category.color || '#3498db'};">
+                                    ${category.name}
+                                </span>
+                            </p>
+                            <p class="settings-item-description">
+                                <i class="fas fa-code me-1"></i> ${category.code}
+                                <span class="mx-2">•</span>
+                                <i class="fas fa-box me-1"></i> ${category.product_count || 0} ${languageSwitcher.getTranslation('products')}
+                                <span class="mx-2">•</span>
+                                <i class="fas fa-calendar me-1"></i> ${category.created_at}
+                            </p>
+                        </div>
+                        <div class="action-buttons">
+                            <button onclick="editCategory('${category.id}')" class="btn-action btn-edit" data-bs-toggle="tooltip" title="${languageSwitcher.getTranslation('edit_category')}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteCategory('${category.id}')" class="btn-action btn-delete" data-bs-toggle="tooltip" title="${languageSwitcher.getTranslation('delete_category')}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    ${category.description ? `<p class="text-muted mt-2">${category.description}</p>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        // Display suppliers
+        function displaySuppliers() {
+            const list = document.getElementById('suppliersList');
+            if (!list) return;
+            
+            if (suppliers.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-truck fa-3x mb-3"></i>
+                        <p class="mb-3">${languageSwitcher.getTranslation('no_suppliers')}</p>
+                        <button class="btn btn-success btn-sm" onclick="openAddSupplierModal()">
+                            <i class="fas fa-plus me-2"></i><span>${languageSwitcher.getTranslation('add_new_supplier')}</span>
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = suppliers.map(supplier => `
+                <div class="settings-item fade-in">
+                    <div class="settings-item-header">
+                        <div>
+                            <p class="settings-item-title">${supplier.name}</p>
+                            <p class="settings-item-description">
+                                <i class="fas fa-envelope me-1"></i> ${supplier.email}
+                                <span class="mx-2">•</span>
+                                <i class="fas fa-phone me-1"></i> ${supplier.phone}
+                            </p>
+                        </div>
+                        <div class="action-buttons">
+                            <button onclick="editSupplier('${supplier.id}')" class="btn-action btn-edit" data-bs-toggle="tooltip" title="${languageSwitcher.getTranslation('edit_supplier')}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteSupplier('${supplier.id}')" class="btn-action btn-delete" data-bs-toggle="tooltip" title="${languageSwitcher.getTranslation('delete_supplier')}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    ${supplier.address ? `<p class="text-muted mt-1"><i class="fas fa-map-marker-alt me-1"></i> ${supplier.address}</p>` : ''}
+                    ${supplier.notes ? `<p class="text-muted mt-1"><i class="fas fa-sticky-note me-1"></i> ${supplier.notes}</p>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        // Display customers
+        function displayCustomers() {
+            const list = document.getElementById('customersList');
+            if (!list) return;
+            
+            if (customers.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <p class="mb-3">${languageSwitcher.getTranslation('no_customers')}</p>
+                        <button class="btn btn-primary btn-sm" onclick="openAddCustomerModal()">
+                            <i class="fas fa-plus me-2"></i><span>${languageSwitcher.getTranslation('add_new_customer')}</span>
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = customers.map(customer => `
+                <div class="settings-item fade-in">
+                    <div class="settings-item-header">
+                        <div>
+                            <p class="settings-item-title">
+                                ${customer.name}
+                                <span class="badge ${customer.type === languageSwitcher.getTranslation('company') ? 'badge-primary' : customer.type === languageSwitcher.getTranslation('government') ? 'badge-warning' : 'badge-success'} badge-custom">
+                                    ${customer.type}
+                                </span>
+                            </p>
+                            <p class="settings-item-description">
+                                <i class="fas fa-envelope me-1"></i> ${customer.email}
+                                <span class="mx-2">•</span>
+                                <i class="fas fa-phone me-1"></i> ${customer.phone}
+                            </p>
+                        </div>
+                        <div class="action-buttons">
+                            <button onclick="editCustomer('${customer.id}')" class="btn-action btn-edit" data-bs-toggle="tooltip" title="${languageSwitcher.getTranslation('edit_customer')}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteCustomer('${customer.id}')" class="btn-action btn-delete" data-bs-toggle="tooltip" title="${languageSwitcher.getTranslation('delete_customer')}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    ${customer.address ? `<p class="text-muted mt-1"><i class="fas fa-map-marker-alt me-1"></i> ${customer.address}</p>` : ''}
+                    ${customer.tax_id ? `<p class="text-muted mt-1"><i class="fas fa-id-card me-1"></i> ${languageSwitcher.getTranslation('tax_id')}: ${customer.tax_id}</p>` : ''}
+                    ${customer.notes ? `<p class="text-muted mt-1"><i class="fas fa-sticky-note me-1"></i> ${customer.notes}</p>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        // Open add category modal
+        function openAddCategoryModal() {
+            document.getElementById('addCategoryForm').reset();
+            document.getElementById('categoryColor').value = '#3498db';
+            
+            // Reset errors
+            document.getElementById('addCategoryForm').querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('categoryFormErrors').classList.add('d-none');
+            
+            const modal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
+            modal.show();
+        }
+        
+        // Set category color
+        function setCategoryColor(color) {
+            document.getElementById('categoryColor').value = color;
+        }
+        
+        // Add category
+        async function addCategory() {
+            const form = document.getElementById('addCategoryForm');
+            const submitBtn = document.getElementById('categorySubmitBtn');
+            
+            // Reset errors
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('categoryFormErrors').classList.add('d-none');
+            
+            // Get form values
+            const name = document.getElementById('categoryName').value.trim();
+            const code = document.getElementById('categoryCode').value.trim();
+            const description = document.getElementById('categoryDescription').value.trim();
+            const color = document.getElementById('categoryColor').value;
+            
+            // Validation
+            const errors = [];
+            
+            if (!name) errors.push(languageSwitcher.getTranslation('category_name_required'));
+            if (!code) errors.push(languageSwitcher.getTranslation('category_code_required'));
+            
+            // Check if code already exists
+            const codeExists = categories.some(cat => cat.code.toLowerCase() === code.toLowerCase());
+            if (codeExists) errors.push(languageSwitcher.getTranslation('category_code_exists'));
+            
+            if (errors.length > 0) {
+                document.getElementById('categoryErrorList').innerHTML = errors.map(error => `<li>${error}</li>`).join('');
+                document.getElementById('categoryFormErrors').classList.remove('d-none');
+                return;
+            }
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>' + languageSwitcher.getTranslation('saving');
+                
+                const categoryData = {
+                    name,
+                    code,
+                    description,
+                    color
+                };
+                
+                const result = await WMS.postData('categories', categoryData);
+                
+                if (result && result.success) {
+                    WMS.showAlert(languageSwitcher.getTranslation('category_added_success'), 'success');
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+                    if (modal) modal.hide();
+                    
+                    // Add to local array and refresh display
+                    categories.push(result.data);
+                    displayCategories();
+                } else {
+                    throw new Error(result?.message || 'فشل في إضافة الفئة');
+                }
+                
+            } catch (error) {
+                console.error('❌ خطأ في إضافة الفئة:', error);
+                WMS.showAlert(error.message || 'حدث خطأ أثناء إضافة الفئة', 'danger');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + languageSwitcher.getTranslation('save_category');
+            }
+        }
+        
+        // Open add supplier modal
+        function openAddSupplierModal() {
+            document.getElementById('addSupplierForm').reset();
+            
+            // Reset errors
+            document.getElementById('addSupplierForm').querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('supplierFormErrors').classList.add('d-none');
+            
+            const modal = new bootstrap.Modal(document.getElementById('addSupplierModal'));
+            modal.show();
+        }
+        
+        // Add supplier
+        async function addSupplier() {
+            const form = document.getElementById('addSupplierForm');
+            const submitBtn = document.getElementById('supplierSubmitBtn');
+            
+            // Reset errors
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('supplierFormErrors').classList.add('d-none');
+            
+            // Get form values
+            const name = document.getElementById('supplierName').value.trim();
+            const email = document.getElementById('supplierEmail').value.trim();
+            const phone = document.getElementById('supplierPhone').value.trim();
+            const address = document.getElementById('supplierAddress').value.trim();
+            const commercialId = document.getElementById('supplierCommercialId').value.trim();
+            const taxId = document.getElementById('supplierTaxId').value.trim();
+            const notes = document.getElementById('supplierNotes').value.trim();
+            
+            // Validation
+            const errors = [];
+            
+            if (!name) errors.push(languageSwitcher.getTranslation('supplier_name_required'));
+            if (!email) errors.push(languageSwitcher.getTranslation('email_required'));
+            if (!phone) errors.push(languageSwitcher.getTranslation('phone_required'));
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email && !emailRegex.test(email)) errors.push(languageSwitcher.getTranslation('invalid_email'));
+            
+            if (errors.length > 0) {
+                document.getElementById('supplierErrorList').innerHTML = errors.map(error => `<li>${error}</li>`).join('');
+                document.getElementById('supplierFormErrors').classList.remove('d-none');
+                return;
+            }
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>' + languageSwitcher.getTranslation('saving');
+                
+                const supplierData = {
+                    name,
+                    email,
+                    phone,
+                    address,
+                    commercial_id: commercialId,
+                    tax_id: taxId,
+                    notes
+                };
+                
+                const result = await WMS.postData('suppliers', supplierData);
+                
+                if (result && result.success) {
+                    WMS.showAlert(languageSwitcher.getTranslation('supplier_added_success'), 'success');
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addSupplierModal'));
+                    if (modal) modal.hide();
+                    
+                    // Add to local array and refresh display
+                    suppliers.push(result.data);
+                    displaySuppliers();
+                } else {
+                    throw new Error(result?.message || 'فشل في إضافة المورد');
+                }
+                
+            } catch (error) {
+                console.error('❌ خطأ في إضافة المورد:', error);
+                WMS.showAlert(error.message || 'حدث خطأ أثناء إضافة المورد', 'danger');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + languageSwitcher.getTranslation('save_supplier');
+            }
+        }
+        
+        // Open add customer modal
+        function openAddCustomerModal() {
+            document.getElementById('addCustomerForm').reset();
+            
+            // Reset errors
+            document.getElementById('addCustomerForm').querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('customerFormErrors').classList.add('d-none');
+            
+            const modal = new bootstrap.Modal(document.getElementById('addCustomerModal'));
+            modal.show();
+        }
+        
+        // Add customer
+        async function addCustomer() {
+            const form = document.getElementById('addCustomerForm');
+            const submitBtn = document.getElementById('customerSubmitBtn');
+            
+            // Reset errors
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('customerFormErrors').classList.add('d-none');
+            
+            // Get form values
+            const name = document.getElementById('customerName').value.trim();
+            const email = document.getElementById('customerEmail').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+            const address = document.getElementById('customerAddress').value.trim();
+            const type = document.getElementById('customerType').value;
+            const taxId = document.getElementById('customerTaxId').value.trim();
+            const notes = document.getElementById('customerNotes').value.trim();
+            
+            // Validation
+            const errors = [];
+            
+            if (!name) errors.push(languageSwitcher.getTranslation('customer_name_required'));
+            if (!email) errors.push(languageSwitcher.getTranslation('email_required'));
+            if (!phone) errors.push(languageSwitcher.getTranslation('phone_required'));
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email && !emailRegex.test(email)) errors.push(languageSwitcher.getTranslation('invalid_email'));
+            
+            if (errors.length > 0) {
+                document.getElementById('customerErrorList').innerHTML = errors.map(error => `<li>${error}</li>`).join('');
+                document.getElementById('customerFormErrors').classList.remove('d-none');
+                return;
+            }
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>' + languageSwitcher.getTranslation('saving');
+                
+                const customerData = {
+                    name,
+                    email,
+                    phone,
+                    address,
+                    type,
+                    tax_id: taxId,
+                    notes
+                };
+                
+                const result = await WMS.postData('customers', customerData);
+                
+                if (result && result.success) {
+                    WMS.showAlert(languageSwitcher.getTranslation('customer_added_success'), 'success');
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addCustomerModal'));
+                    if (modal) modal.hide();
+                    
+                    // Add to local array and refresh display
+                    customers.push(result.data);
+                    displayCustomers();
+                } else {
+                    throw new Error(result?.message || 'فشل في إضافة العميل');
+                }
+                
+            } catch (error) {
+                console.error('❌ خطأ في إضافة العميل:', error);
+                WMS.showAlert(error.message || 'حدث خطأ أثناء إضافة العميل', 'danger');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + languageSwitcher.getTranslation('save_customer');
+            }
+        }
+        
+        // Edit category
+        function editCategory(id) {
+            const category = categories.find(c => c.id === id);
+            if (!category) {
+                WMS.showAlert(languageSwitcher.getTranslation('category_not_found'), 'warning');
+                return;
+            }
+            
+            // Fill form with category data
+            document.getElementById('categoryName').value = category.name;
+            document.getElementById('categoryCode').value = category.code;
+            document.getElementById('categoryDescription').value = category.description || '';
+            document.getElementById('categoryColor').value = category.color || '#3498db';
+            
+            // Reset errors
+            document.getElementById('addCategoryForm').querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('categoryFormErrors').classList.add('d-none');
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
+            modal.show();
+            
+            // Store the ID for updating
+            window.currentEditId = id;
+        }
+        
+        // Edit supplier
+        function editSupplier(id) {
+            const supplier = suppliers.find(s => s.id === id);
+            if (!supplier) {
+                WMS.showAlert(languageSwitcher.getTranslation('supplier_not_found'), 'warning');
+                return;
+            }
+            
+            // Fill form with supplier data
+            document.getElementById('supplierName').value = supplier.name;
+            document.getElementById('supplierEmail').value = supplier.email;
+            document.getElementById('supplierPhone').value = supplier.phone;
+            document.getElementById('supplierAddress').value = supplier.address || '';
+            document.getElementById('supplierCommercialId').value = supplier.commercial_id || '';
+            document.getElementById('supplierTaxId').value = supplier.tax_id || '';
+            document.getElementById('supplierNotes').value = supplier.notes || '';
+            
+            // Reset errors
+            document.getElementById('addSupplierForm').querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('supplierFormErrors').classList.add('d-none');
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('addSupplierModal'));
+            modal.show();
+            
+            // Store the ID for updating
+            window.currentEditId = id;
+        }
+        
+        // Edit customer
+        function editCustomer(id) {
+            const customer = customers.find(c => c.id === id);
+            if (!customer) {
+                WMS.showAlert(languageSwitcher.getTranslation('customer_not_found'), 'warning');
+                return;
+            }
+            
+            // Fill form with customer data
+            document.getElementById('customerName').value = customer.name;
+            document.getElementById('customerEmail').value = customer.email;
+            document.getElementById('customerPhone').value = customer.phone;
+            document.getElementById('customerAddress').value = customer.address || '';
+            document.getElementById('customerType').value = customer.type || languageSwitcher.getTranslation('individual');
+            document.getElementById('customerTaxId').value = customer.tax_id || '';
+            document.getElementById('customerNotes').value = customer.notes || '';
+            
+            // Reset errors
+            document.getElementById('addCustomerForm').querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('customerFormErrors').classList.add('d-none');
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('addCustomerModal'));
+            modal.show();
+            
+            // Store the ID for updating
+            window.currentEditId = id;
+        }
+        
+        // Delete category
+        async function deleteCategory(id) {
+            const category = categories.find(c => c.id === id);
+            if (!category) return;
+            
+            // Check if category has products
+            if (category.product_count > 0) {
+                WMS.showAlert(languageSwitcher.getTranslation('category_has_products'), 'warning');
+                return;
+            }
+            
+            WMS.confirmAction(languageSwitcher.getTranslation('confirm_delete_category') + ` "${category.name}"?`, async () => {
+                const result = await WMS.deleteData('categories', id);
+                if (result && result.success) {
+                    WMS.showAlert(languageSwitcher.getTranslation('category_deleted_success'), 'success');
+                    
+                    // Remove from local array and refresh display
+                    categories = categories.filter(c => c.id !== id);
+                    displayCategories();
+                }
+            });
+        }
+        
+        // Delete supplier
+        async function deleteSupplier(id) {
+            const supplier = suppliers.find(s => s.id === id);
+            if (!supplier) return;
+            
+            WMS.confirmAction(languageSwitcher.getTranslation('confirm_delete_supplier') + ` "${supplier.name}"?`, async () => {
+                const result = await WMS.deleteData('suppliers', id);
+                if (result && result.success) {
+                    WMS.showAlert(languageSwitcher.getTranslation('supplier_deleted_success'), 'success');
+                    
+                    // Remove from local array and refresh display
+                    suppliers = suppliers.filter(s => s.id !== id);
+                    displaySuppliers();
+                }
+            });
+        }
+        
+        // Delete customer
+        async function deleteCustomer(id) {
+            const customer = customers.find(c => c.id === id);
+            if (!customer) return;
+            
+            WMS.confirmAction(languageSwitcher.getTranslation('confirm_delete_customer') + ` "${customer.name}"?`, async () => {
+                const result = await WMS.deleteData('customers', id);
+                if (result && result.success) {
+                    WMS.showAlert(languageSwitcher.getTranslation('customer_deleted_success'), 'success');
+                    
+                    // Remove from local array and refresh display
+                    customers = customers.filter(c => c.id !== id);
+                    displayCustomers();
+                }
+            });
+        }
+        
+        // Edit company name
+        function editCompanyName() {
+            const currentName = document.getElementById('companyNameDisplay').textContent;
+            const newName = prompt(languageSwitcher.getTranslation('enter_company_name'), currentName);
+            if (newName && newName.trim() !== '') {
+                document.getElementById('companyNameDisplay').textContent = newName.trim();
+                WMS.showAlert(languageSwitcher.getTranslation('company_name_updated'), 'success');
+            }
+        }
+        
+        // Edit commercial ID
+        function editCommercialId() {
+            const currentId = document.getElementById('commercialIdDisplay').textContent;
+            const newId = prompt(languageSwitcher.getTranslation('enter_commercial_id'), currentId);
+            if (newId !== null) {
+                document.getElementById('commercialIdDisplay').textContent = newId;
+                WMS.showAlert(languageSwitcher.getTranslation('commercial_id_updated'), 'success');
+            }
+        }
+        
+        // Edit currency
+        function editCurrency() {
+            const currentCurrency = document.getElementById('currencyDisplay').textContent;
+            const newCurrency = prompt(languageSwitcher.getTranslation('enter_currency'), currentCurrency);
+            if (newCurrency && newCurrency.trim() !== '') {
+                document.getElementById('currencyDisplay').textContent = newCurrency.trim();
+                WMS.showAlert(languageSwitcher.getTranslation('currency_updated'), 'success');
+            }
+        }
+        
+        // Edit tax rate
+        function editTaxRate() {
+            const currentTax = document.getElementById('taxRateDisplay').textContent;
+            const newTax = prompt(languageSwitcher.getTranslation('enter_tax_rate'), currentTax.replace('%', ''));
+            if (newTax && !isNaN(newTax)) {
+                document.getElementById('taxRateDisplay').textContent = newTax + '%';
+                WMS.showAlert(languageSwitcher.getTranslation('tax_rate_updated'), 'success');
+            }
+        }
+        
+        // Edit language
+        function editLanguage() {
+            const currentLanguage = document.getElementById('languageDisplay').textContent;
+            const newLanguage = prompt(languageSwitcher.getTranslation('enter_language'), currentLanguage);
+            if (newLanguage && newLanguage.trim() !== '') {
+                document.getElementById('languageDisplay').textContent = newLanguage.trim();
+                WMS.showAlert(languageSwitcher.getTranslation('language_updated'), 'success');
+            }
+        }
+        
+        // Edit timezone
+        function editTimezone() {
+            const currentTimezone = document.getElementById('timezoneDisplay').textContent;
+            const newTimezone = prompt(languageSwitcher.getTranslation('enter_timezone'), currentTimezone);
+            if (newTimezone && newTimezone.trim() !== '') {
+                document.getElementById('timezoneDisplay').textContent = newTimezone.trim();
+                WMS.showAlert(languageSwitcher.getTranslation('timezone_updated'), 'success');
+            }
+        }
+        
+        // Export settings
+        function exportSettings() {
+            const settingsData = {
+                categories: categories,
+                suppliers: suppliers,
+                customers: customers,
+                systemSettings: {
+                    companyName: document.getElementById('companyNameDisplay').textContent,
+                    currency: document.getElementById('currencyDisplay').textContent,
+                    language: document.getElementById('languageDisplay').textContent,
+                    exportDate: new Date().toISOString()
+                }
+            };
+            
+            const dataStr = JSON.stringify(settingsData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `settings_backup_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            WMS.showAlert(languageSwitcher.getTranslation('settings_exported_success'), 'success');
+        }
+        
+        // Refresh settings
+        function refreshSettings() {
+            loadData();
+            WMS.showAlert(languageSwitcher.getTranslation('settings_refreshed'), 'info');
+        }
+        
+        // Export functions to global scope
+        window.openAddCategoryModal = openAddCategoryModal;
+        window.openAddSupplierModal = openAddSupplierModal;
+        window.openAddCustomerModal = openAddCustomerModal;
+        window.setCategoryColor = setCategoryColor;
+        window.editCategory = editCategory;
+        window.editSupplier = editSupplier;
+        window.editCustomer = editCustomer;
+        window.deleteCategory = deleteCategory;
+        window.deleteSupplier = deleteSupplier;
+        window.deleteCustomer = deleteCustomer;
+        window.editCompanyName = editCompanyName;
+        window.editCommercialId = editCommercialId;
+        window.editCurrency = editCurrency;
+        window.editTaxRate = editTaxRate;
+        window.editLanguage = editLanguage;
+        window.editTimezone = editTimezone;
+        window.exportSettings = exportSettings;
+        window.refreshSettings = refreshSettings;
+        window.WMS = WMS;
+        window.languageSwitcher = languageSwitcher;
+    </script>
+    <script src="js/languageSwitcher.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

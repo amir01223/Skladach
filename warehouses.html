@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление Складами - Система Управления Складами</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Roboto (pour russe) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #c0392b;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --sidebar-width: 280px;
+        }
+        
+        /* Language Switcher */
+        .language-switcher-header {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-right: 15px;
+        }
+        
+        .lang-btn {
+            padding: 3px 8px;
+            border: 2px solid transparent;
+            background: transparent;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 11px;
+            color: var(--dark-color);
+            min-width: 25px;
+            text-align: center;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+            border-color: var(--secondary-color);
+        }
+        
+        /* LTR Support (par défaut pour russe) */
+        body {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        .header-title,
+        .warehouse-title,
+        .warehouse-details,
+        .card-header-custom h5,
+        .form-label-custom,
+        .modal-title-custom,
+        .sidebar-user div,
+        .nav-link span,
+        .sidebar-logo h3,
+        .sidebar-logo small,
+        .main-footer .text-white-50,
+        .detail-label,
+        .detail-value,
+        .warehouse-code,
+        .stats-cards .stat-label,
+        .stats-cards .stat-value,
+        .text-end {
+            text-align: left;
+            direction: ltr;
+        }
+        
+        .sidebar-nav {
+            text-align: left;
+        }
+        
+        .nav-link {
+            flex-direction: row;
+        }
+        
+        .nav-link i {
+            margin-right: 15px;
+            margin-left: 0;
+        }
+        
+        .nav-link:hover {
+            transform: translateX(5px);
+        }
+        
+        #sidebar {
+            right: auto;
+            left: 0;
+            border-left: none;
+            border-right: 4px solid var(--secondary-color);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        }
+        
+        #sidebar.hidden {
+            transform: translateX(calc(-1 * var(--sidebar-width)));
+        }
+        
+        .main-content {
+            margin-right: 0;
+            margin-left: var(--sidebar-width);
+        }
+        
+        .main-content.full-width {
+            margin-left: 0;
+        }
+        
+        .header-title i {
+            margin-left: 0;
+            margin-right: 10px;
+        }
+        
+        .language-switcher-header {
+            margin-left: 0;
+            margin-right: 15px;
+        }
+        
+        .action-buttons {
+            flex-direction: row;
+        }
+        
+        .text-end {
+            text-align: left !important;
+        }
+        
+        .text-start {
+            text-align: right !important;
+        }
+        
+        .dropdown-menu {
+            text-align: left;
+        }
+        
+        .input-group > .input-group-text {
+            border-left: 1px solid #ced4da;
+            border-right: none;
+        }
+        
+        .input-group > .form-control {
+            border-right: 1px solid #ced4da;
+            border-left: none;
+        }
+        
+        .btn-custom {
+            flex-direction: row;
+        }
+        
+        .btn-custom i {
+            order: -1;
+        }
+        
+        .d-flex.gap-3 {
+            flex-direction: row;
+        }
+        
+        .modal-footer {
+            flex-direction: row-reverse;
+        }
+        
+        * {
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        /* ==================== SIDEBAR ==================== */
+        
+        #sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color) 0%, #1a252f 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            max-height: 100vh;
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1050 !important;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--secondary-color);
+            right: 0;
+            top: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        #sidebar.hidden {
+            transform: translateX(var(--sidebar-width));
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sidebar-logo i {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-user {
+            padding: 1rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-user img {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        
+        /* ==================== NAVIGATION ==================== */
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+            text-align: right;
+            flex-grow: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 1rem 1.5rem;
+            margin: 0.2rem 0.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            color: white;
+            background: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+            flex-shrink: 0;
+        }
+        
+        .main-content {
+            margin-right: var(--sidebar-width);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .main-content.full-width {
+            margin-right: 0;
+        }
+        
+        /* Header Styles */
+        .main-header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        
+        .header-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .header-title i {
+            color: var(--secondary-color);
+            margin-right: 10px;
+        }
+        
+        /* Card Styles */
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .card-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.2rem 1.5rem;
+            border-bottom: none;
+            border-radius: 15px 15px 0 0 !important;
+        }
+        
+        /* Warehouse Cards Grid */
+        .warehouses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .warehouse-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .warehouse-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--secondary-color));
+        }
+        
+        .warehouse-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border-color: var(--secondary-color);
+        }
+        
+        .warehouse-card.active::before {
+            background: linear-gradient(90deg, transparent, var(--success-color));
+        }
+        
+        .warehouse-card.inactive::before {
+            background: linear-gradient(90deg, transparent, #6c757d);
+        }
+        
+        .warehouse-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .warehouse-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--secondary-color);
+        }
+        
+        .warehouse-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.15), rgba(39, 174, 96, 0.25));
+            color: var(--success-color);
+        }
+        
+        .status-inactive {
+            background: linear-gradient(135deg, rgba(108, 117, 125, 0.15), rgba(108, 117, 125, 0.25));
+            color: #6c757d;
+        }
+        
+        .warehouse-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .warehouse-code {
+            font-size: 0.9rem;
+            color: #6c757d;
+            background: #f8f9fa;
+            padding: 0.3rem 0.8rem;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .warehouse-details {
+            border-top: 1px solid #e9ecef;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .detail-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .capacity-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+        
+        .capacity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), #2980b9);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .capacity-low .capacity-fill {
+            background: linear-gradient(90deg, var(--warning-color), #f1c40f);
+        }
+        
+        .capacity-full .capacity-fill {
+            background: linear-gradient(90deg, var(--danger-color), #e74c3c);
+        }
+        
+        /* Button Styles */
+        .btn-custom {
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .btn-outline-light {
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .btn-outline-light:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+        
+        .btn-action {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
+            color: var(--secondary-color);
+        }
+        
+        .btn-edit:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-delete {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.2));
+            color: var(--danger-color);
+        }
+        
+        .btn-delete:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        /* Modal Styles */
+        .modal-custom {
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content-custom {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .modal-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+        
+        .modal-title-custom {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .btn-close-custom {
+            color: white;
+            opacity: 0.8;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-close-custom:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        
+        /* Form Styles */
+        .form-label-custom {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control-custom, .form-select-custom {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .form-control-custom:focus, .form-select-custom:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15);
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Alert Styles */
+        .alert-custom {
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        /* ==================== BOUTON LOGOUT ==================== */
+        
+        .logout-container {
+            padding: 1rem;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+            width: 100%;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            #sidebar {
+                transform: translateX(var(--sidebar-width));
+                position: fixed;
+                z-index: 1050 !important;
+            }
+            
+            #sidebar.hidden {
+                transform: translateX(0) !important;
+            }
+            
+            .main-content {
+                margin-right: 0 !important;
+                margin-left: 0 !important;
+            }
+            
+            .language-switcher-header {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 1.4rem;
+            }
+            
+            .card-header-custom {
+                padding: 1rem;
+            }
+            
+            .btn-custom {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .warehouses-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar" class="d-flex flex-column">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-warehouse"></i>
+                <div>
+                    <h3 class="mb-0 fw-bold">Складская Система</h3>
+                    <small class="text-white-50">Интегрированное Управление</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Info -->
+        <div class="sidebar-user d-flex align-items-center gap-3">
+            <img src="https://ui-avatars.com/api/?name=ИА&background=3498db&color=fff&size=50&rounded=true" 
+                    class="rounded-circle" alt="User">
+            <div>
+                <h6 class="mb-0 fw-bold">Ибрахим Амир</h6>
+                <small class="text-white-50">Администратор Системы</small>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="sidebar-nav flex-grow-1">
+            <a href="dashboard.html" class="nav-link">
+                <i class="fas fa-home"></i>
+                <span>Панель Управления</span>
+            </a>
+            <a href="inventory.html" class="nav-link">
+                <i class="fas fa-boxes"></i>
+                <span>Управление Запасами</span>
+            </a>
+            <a href="transactions.html" class="nav-link">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Ежедневные Операции</span>
+            </a>
+            <a href="reports.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i>
+                <span>Отчеты и Анализ</span>
+            </a>
+            <a href="warehouses.html" class="nav-link active">
+                <i class="fas fa-warehouse"></i>
+                <span>Управление Складами</span>
+            </a>
+            <a href="users.html" class="nav-link">
+                <i class="fas fa-users"></i>
+                <span>Пользователи</span>
+            </a>
+            <a href="settings.html" class="nav-link">
+                <i class="fas fa-cog"></i>
+                <span>Настройки</span>
+            </a>
+        </nav>
+        
+        <!-- Logout Button -->
+        <div class="logout-container">
+            <a href="index.html" class="btn btn-danger w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Выйти</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="main-header d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <button onclick="WMS.toggleSidebar()" class="btn btn-outline-primary d-lg-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="header-title">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Управление Складами</span>
+                </h1>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <!-- Language Switcher -->
+                <div class="language-switcher-header d-none d-lg-flex">
+                    <button class="lang-btn" data-lang="fr">FR</button>
+                    <button class="lang-btn" data-lang="ar">AR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn active" data-lang="ru">RU</button>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="d-none d-md-flex gap-3">
+                    <div class="text-end">
+                        <small class="text-muted d-block">Всего Складов</small>
+                        <span class="fw-bold text-primary" id="totalWarehouses">0</span>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted d-block">Активных</small>
+                        <span class="fw-bold text-success" id="activeWarehouses">0</span>
+                    </div>
+                </div>
+                
+                <!-- Add Warehouse Button -->
+                <button onclick="openAddWarehouseModal()" class="btn btn-primary btn-custom">
+                    <i class="fas fa-plus"></i>
+                    <span>Добавить Склад</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Alert Container -->
+        <div id="alertContainer" class="container mt-3"></div>
+
+        <!-- Main Content -->
+        <main class="container py-4">
+            <!-- Statistics Cards -->
+            <div class="stats-cards fade-in">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <h3 class="stat-value text-primary" id="statsTotal">0</h3>
+                    <p class="stat-label">Всего Складов</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="stat-value text-success" id="statsActive">0</h3>
+                    <p class="stat-label">Активных Складов</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="stat-value text-warning" id="statsCapacity">0%</h3>
+                    <p class="stat-label">Средняя Заполненность</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-info bg-opacity-10 text-info">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <h3 class="stat-value text-info" id="statsProducts">0</h3>
+                    <p class="stat-label">Товары на Складах</p>
+                </div>
+            </div>
+
+            <!-- Warehouse Grid -->
+            <div class="card card-custom fade-in">
+                <div class="card-header-custom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        <span>Список Складов</span>
+                    </h5>
+                    <div class="d-flex gap-2">
+                        <button onclick="exportWarehouses()" class="btn btn-success btn-custom">
+                            <i class="fas fa-file-excel"></i>
+                            <span>Экспорт Excel</span>
+                        </button>
+                        <button onclick="refreshWarehouses()" class="btn btn-outline-light btn-custom">
+                            <i class="fas fa-redo"></i>
+                            <span>Обновить</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Search and Filter -->
+                    <div class="row mb-4">
+                        <div class="col-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" id="searchWarehouse" class="form-control border-start-0" 
+                                       placeholder="Поиск склада...">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 mt-2 mt-md-0">
+                            <select id="statusFilter" class="form-select form-select-custom">
+                                <option value="">Все Статусы</option>
+                                <option value="Активный">Активный</option>
+                                <option value="Неактивный">Неактивный</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-3 mt-2 mt-md-0">
+                            <button onclick="filterWarehouses()" class="btn btn-primary w-100 btn-custom">
+                                <i class="fas fa-filter"></i>
+                                <span>Фильтр</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Warehouses Grid -->
+                    <div id="warehousesContainer" class="warehouses-grid">
+                        <div class="text-center text-muted py-5">
+                            <div class="loading-spinner mx-auto mb-3"></div>
+                            <p>Загрузка складов...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div id="emptyState" class="text-center py-5 d-none">
+                        <i class="fas fa-warehouse fa-3x text-muted mb-3"></i>
+                        <p class="text-muted mb-3">Нет зарегистрированных складов</p>
+                        <button onclick="openAddWarehouseModal()" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>
+                            <span>Добавить Склад</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Warehouse Modal -->
+    <div class="modal fade modal-custom" id="addWarehouseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title modal-title-custom">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        <span>Добавить Новый Склад</span>
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="addWarehouseForm" onsubmit="event.preventDefault(); addWarehouse();">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <!-- Warehouse Name -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Название Склада *</label>
+                                <input type="text" class="form-control form-control-custom" id="warehouseName" required>
+                                <div class="invalid-feedback" id="nameError"></div>
+                            </div>
+                            
+                            <!-- Warehouse Code -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Код Склада *</label>
+                                <input type="text" class="form-control form-control-custom" id="warehouseCode" required>
+                                <div class="invalid-feedback" id="codeError"></div>
+                            </div>
+                            
+                            <!-- Location -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Местоположение *</label>
+                                <input type="text" class="form-control form-control-custom" id="warehouseLocation" required>
+                                <div class="invalid-feedback" id="locationError"></div>
+                            </div>
+                            
+                            <!-- Manager -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Ответственный Менеджер *</label>
+                                <input type="text" class="form-control form-control-custom" id="warehouseManager" required>
+                                <div class="invalid-feedback" id="managerError"></div>
+                            </div>
+                            
+                            <!-- Phone -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Номер Телефона *</label>
+                                <input type="tel" class="form-control form-control-custom" id="warehousePhone" required>
+                                <div class="invalid-feedback" id="phoneError"></div>
+                            </div>
+                            
+                            <!-- Capacity -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Емкость Хранения *</label>
+                                <input type="number" class="form-control form-control-custom" id="warehouseCapacity" min="1" required>
+                                <div class="invalid-feedback" id="capacityError"></div>
+                            </div>
+                            
+                            <!-- Status -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Статус *</label>
+                                <select class="form-select form-select-custom" id="warehouseStatus" required>
+                                    <option value="">Выбрать Статус</option>
+                                    <option value="Активный">Активный</option>
+                                    <option value="Неактивный">Неактивный</option>
+                                </select>
+                                <div class="invalid-feedback" id="statusError"></div>
+                            </div>
+                            
+                            <!-- Type -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Тип Склада *</label>
+                                <select class="form-select form-select-custom" id="warehouseType" required>
+                                    <option value="">Выбрать Тип</option>
+                                    <option value="Главный">Главный</option>
+                                    <option value="Вспомогательный">Вспомогательный</option>
+                                    <option value="Распределительный">Распределительный</option>
+                                    <option value="Розничный">Розничный</option>
+                                </select>
+                                <div class="invalid-feedback" id="typeError"></div>
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Эл. Почта</label>
+                                <input type="email" class="form-control form-control-custom" id="warehouseEmail">
+                                <div class="invalid-feedback" id="emailError"></div>
+                            </div>
+                            
+                            <!-- Dimensions -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Размеры (м²)</label>
+                                <input type="number" class="form-control form-control-custom" id="warehouseDimensions" min="1">
+                                <div class="invalid-feedback" id="dimensionsError"></div>
+                            </div>
+                            
+                            <!-- Description -->
+                            <div class="col-12">
+                                <label class="form-label-custom">Описание</label>
+                                <textarea class="form-control form-control-custom" id="warehouseDescription" rows="2"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Error Summary -->
+                        <div class="alert alert-danger mt-3 d-none" id="formErrors">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Есть ошибки в форме:</strong>
+                            <ul class="mb-0 mt-2" id="errorList"></ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                            <span>Отмена</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-custom">
+                            <i class="fas fa-save"></i>
+                            <span>Сохранить Склад</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Warehouse Modal -->
+    <div class="modal fade modal-custom" id="editWarehouseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title modal-title-custom">
+                        <i class="fas fa-edit me-2"></i>
+                        <span>Редактировать Склад</span>
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="editWarehouseForm" onsubmit="event.preventDefault(); updateWarehouse();">
+                    <input type="hidden" id="editWarehouseId">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <!-- Warehouse Name -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Название Склада *</label>
+                                <input type="text" class="form-control form-control-custom" id="editWarehouseName" required>
+                                <div class="invalid-feedback" id="editNameError"></div>
+                            </div>
+                            
+                            <!-- Warehouse Code -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Код Склада *</label>
+                                <input type="text" class="form-control form-control-custom" id="editWarehouseCode" required>
+                                <div class="invalid-feedback" id="editCodeError"></div>
+                            </div>
+                            
+                            <!-- Location -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Местоположение *</label>
+                                <input type="text" class="form-control form-control-custom" id="editWarehouseLocation" required>
+                                <div class="invalid-feedback" id="editLocationError"></div>
+                            </div>
+                            
+                            <!-- Manager -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Ответственный Менеджер *</label>
+                                <input type="text" class="form-control form-control-custom" id="editWarehouseManager" required>
+                                <div class="invalid-feedback" id="editManagerError"></div>
+                            </div>
+                            
+                            <!-- Phone -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Номер Телефона *</label>
+                                <input type="tel" class="form-control form-control-custom" id="editWarehousePhone" required>
+                                <div class="invalid-feedback" id="editPhoneError"></div>
+                            </div>
+                            
+                            <!-- Capacity -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Емкость Хранения *</label>
+                                <input type="number" class="form-control form-control-custom" id="editWarehouseCapacity" min="1" required>
+                                <div class="invalid-feedback" id="editCapacityError"></div>
+                            </div>
+                            
+                            <!-- Current Stock -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Текущий Запас</label>
+                                <input type="number" class="form-control form-control-custom" id="editCurrentStock" min="0" readonly>
+                            </div>
+                            
+                            <!-- Status -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Статус *</label>
+                                <select class="form-select form-select-custom" id="editWarehouseStatus" required>
+                                    <option value="">Выбрать Статус</option>
+                                    <option value="Активный">Активный</option>
+                                    <option value="Неактивный">Неактивный</option>
+                                </select>
+                                <div class="invalid-feedback" id="editStatusError"></div>
+                            </div>
+                            
+                            <!-- Type -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Тип Склада *</label>
+                                <select class="form-select form-select-custom" id="editWarehouseType" required>
+                                    <option value="">Выбрать Тип</option>
+                                    <option value="Главный">Главный</option>
+                                    <option value="Вспомогательный">Вспомогательный</option>
+                                    <option value="Распределительный">Распределительный</option>
+                                    <option value="Розничный">Розничный</option>
+                                </select>
+                                <div class="invalid-feedback" id="editTypeError"></div>
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Эл. Почта</label>
+                                <input type="email" class="form-control form-control-custom" id="editWarehouseEmail">
+                                <div class="invalid-feedback" id="editEmailError"></div>
+                            </div>
+                            
+                            <!-- Description -->
+                            <div class="col-12">
+                                <label class="form-label-custom">Описание</label>
+                                <textarea class="form-control form-control-custom" id="editWarehouseDescription" rows="2"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Error Summary -->
+                        <div class="alert alert-danger mt-3 d-none" id="editFormErrors">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Есть ошибки в форме:</strong>
+                            <ul class="mb-0 mt-2" id="editErrorList"></ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                            <span>Отмена</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-custom">
+                            <i class="fas fa-save"></i>
+                            <span>Сохранить Изменения</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Translations dictionary
+        const translations = {
+            ru: {
+                pageTitle: "Управление Складами - Система Управления Складами",
+                systemName: "Складская Система",
+                systemIntegration: "Интегрированное Управление",
+                userRole: "Администратор Системы",
+                navDashboard: "Панель Управления",
+                navInventory: "Управление Запасами",
+                navOperations: "Ежедневные Операции",
+                navReports: "Отчеты и Анализ",
+                navWarehouses: "Управление Складами",
+                navUsers: "Пользователи",
+                navSettings: "Настройки",
+                navLogout: "Выйти",
+                mainTitle: "Управление Складами",
+                statsTotalLabel: "Всего Складов",
+                statsActiveLabel: "Активных",
+                btnAddWarehouse: "Добавить Склад",
+                statsTotalText: "Всего Складов",
+                statsActiveText: "Активных Складов",
+                statsCapacityText: "Средняя Заполненность",
+                statsProductsText: "Товары на Складах",
+                warehouseListTitle: "Список Складов",
+                btnExportExcel: "Экспорт Excel",
+                btnRefresh: "Обновить",
+                filterAll: "Все Статусы",
+                filterActive: "Активный",
+                filterInactive: "Неактивный",
+                btnFilter: "Фильтр",
+                loadingText: "Загрузка складов...",
+                noWarehousesText: "Нет зарегистрированных складов",
+                btnAddWarehouse2: "Добавить Склад",
+                labelLocation: "Местоположение",
+                labelManager: "Менеджер",
+                labelPhone: "Телефон",
+                labelCapacity: "Емкость",
+                labelCurrentStock: "Текущий Запас",
+                labelFillRate: "Уровень Заполнения",
+                btnEdit: "Редактировать",
+                btnDelete: "Удалить",
+                modalAddTitle: "Добавить Новый Склад",
+                modalEditTitle: "Редактировать Склад",
+                labelName: "Название Склада *",
+                labelCode: "Код Склада *",
+                labelLocation: "Местоположение *",
+                labelManager: "Ответственный Менеджер *",
+                labelPhone: "Номер Телефона *",
+                labelCapacity: "Емкость Хранения *",
+                labelStatus: "Статус *",
+                optionSelectStatus: "Выбрать Статус",
+                optionActive: "Активный",
+                optionInactive: "Неактивный",
+                labelType: "Тип Склада *",
+                optionSelectType: "Выбрать Тип",
+                optionMain: "Главный",
+                optionSubsidiary: "Вспомогательный",
+                optionDistribution: "Распределительный",
+                optionRetail: "Розничный",
+                labelEmail: "Эл. Почта",
+                labelDimensions: "Размеры (м²)",
+                labelDescription: "Описание",
+                formErrorsTitle: "Есть ошибки в форме:",
+                btnCancel: "Отмена",
+                btnCancelText: "Отмена",
+                btnSaveWarehouse: "Сохранить Склад",
+                editLabelName: "Название Склада *",
+                editLabelCode: "Код Склада *",
+                editLabelLocation: "Местоположение *",
+                editLabelManager: "Ответственный Менеджер *",
+                editLabelPhone: "Номер Телефона *",
+                editLabelCapacity: "Емкость Хранения *",
+                editLabelCurrentStock: "Текущий Запас",
+                editLabelStatus: "Статус *",
+                editOptionSelectStatus: "Выбрать Статус",
+                editOptionActive: "Активный",
+                editOptionInactive: "Неактивный",
+                editLabelType: "Тип Склада *",
+                editOptionSelectType: "Выбрать Тип",
+                editOptionMain: "Главный",
+                editOptionSubsidiary: "Вспомогательный",
+                editOptionDistribution: "Распределительный",
+                editOptionRetail: "Розничный",
+                editLabelEmail: "Эл. Почта",
+                editLabelDescription: "Описание",
+                editFormErrorsTitle: "Есть ошибки в форме:",
+                editBtnCancel: "Отмена",
+                editBtnCancelText: "Отмена",
+                editBtnSave: "Сохранить Изменения",
+                searchPlaceholder: "Поиск склада..."
+            }
+        };
+
+        // Current language
+        let currentLang = 'ru';
+
+        // Function to change language
+        function changeLanguage(lang) {
+            currentLang = lang;
+            
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Update page direction
+            if (lang === 'ar') {
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = 'ar';
+                document.body.classList.remove('ltr');
+            } else {
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = lang;
+                document.body.classList.add('ltr');
+            }
+            
+            // Apply translations
+            applyTranslations(lang);
+            
+            // Save preference
+            localStorage.setItem('preferredLang', lang);
+        }
+
+        // Function to apply translations
+        function applyTranslations(lang) {
+            const langData = translations[lang];
+            if (!langData) return;
+            
+            try {
+                // Page title
+                document.title = langData.pageTitle;
+                
+                // Update all elements with IDs matching translation keys
+                Object.keys(langData).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                            if (key !== 'searchPlaceholder') {
+                                element.placeholder = langData[key];
+                            }
+                        } else {
+                            element.textContent = langData[key];
+                        }
+                    }
+                });
+                
+                // Special handling for search placeholder
+                const searchInput = document.getElementById('searchWarehouse');
+                if (searchInput && langData.searchPlaceholder) {
+                    searchInput.placeholder = langData.searchPlaceholder;
+                }
+                
+            } catch (error) {
+                console.error('Ошибка при применении переводов:', error);
+            }
+        }
+        
+        // WMS Global Object
+        const WMS = {
+            toggleSidebar: function() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.querySelector('.main-content');
+                if (sidebar) sidebar.classList.toggle('hidden');
+                if (mainContent) mainContent.classList.toggle('full-width');
+            },
+            
+            showAlert: function(message, type = 'info', duration = 5000) {
+                const alertContainer = document.getElementById('alertContainer');
+                if (!alertContainer) return;
+                
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type} alert-custom fade-in`;
+                alert.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>
+                        <div class="flex-grow-1">${message}</div>
+                        <button class="btn btn-link text-${type === 'success' ? 'success' : type === 'danger' ? 'danger' : type === 'warning' ? 'warning' : 'info'} p-0" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                alertContainer.appendChild(alert);
+                
+                // Auto remove after duration
+                if (duration > 0) {
+                    setTimeout(() => {
+                        if (alert.parentElement) {
+                            alert.remove();
+                        }
+                    }, duration);
+                }
+            },
+            
+            formatNumber: function(num) {
+                try {
+                    // Force international (English) numbers for all languages
+                    return new Intl.NumberFormat('en-US').format(num);
+                } catch (e) {
+                    return num.toString();
+                }
+            },
+            
+            fetchData: async function(endpoint) {
+                console.log(`Fetching data from: ${endpoint}`);
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                if (endpoint.includes('warehouses')) {
+                    const mockWarehouses = [
+                        {
+                            id: 'W001',
+                            name: 'Главный Склад',
+                            code: 'WH-001',
+                            location: 'Каир - Маади',
+                            manager: 'Ибрахим Амир',
+                            phone: '+7(903)845-71-65',
+                            capacity: 10000,
+                            current_stock: 7500,
+                            status: 'Активный',
+                            type: 'Главный',
+                            email: 'main@company.com',
+                            dimensions: 500,
+                            description: 'Главный склад компании'
+                        },
+                        {
+                            id: 'W002',
+                            name: 'Склад Распределения',
+                            code: 'WH-002',
+                            location: 'Гиза - Докки',
+                            manager: 'Мохамед Сайед',
+                            phone: '+201098765432',
+                            capacity: 8000,
+                            current_stock: 3500,
+                            status: 'Активный',
+                            type: 'Распределительный',
+                            email: 'distribution@company.com',
+                            dimensions: 400,
+                            description: 'Склад распределения для района Гиза'
+                        }
+                    ];
+                    
+                    return { success: true, data: mockWarehouses };
+                }
+                
+                return { success: true, data: [] };
+            },
+            
+            postData: async function(endpoint, data) {
+                console.log(`Posting data to: ${endpoint}`, data);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return { success: true, message: 'Операция выполнена успешно', data: { ...data, id: 'W' + Date.now().toString().slice(-6) } };
+            },
+            
+            putData: async function(endpoint, id, data) {
+                console.log(`Updating data at: ${endpoint}, ID: ${id}`, data);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return { success: true, message: 'Обновление выполнено успешно', data: { ...data, id: id } };
+            },
+            
+            deleteData: async function(endpoint, id) {
+                console.log(`Deleting data from: ${endpoint}, ID: ${id}`);
+                await new Promise(resolve => setTimeout(resolve, 800));
+                return { success: true, message: 'Удаление выполнено успешно' };
+            }
+        };
+        
+        // Global variables
+        let warehouses = [];
+        
+        // Load warehouses
+        async function loadWarehouses() {
+            try {
+                const warehousesData = await WMS.fetchData('warehouses?limit=100');
+                
+                if (warehousesData && warehousesData.data) {
+                    warehouses = warehousesData.data;
+                    displayWarehouses();
+                    updateStats();
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки данных:', error);
+                WMS.showAlert('Произошла ошибка при загрузке данных', 'danger');
+            }
+        }
+        
+        // Display warehouses in grid
+        function displayWarehouses() {
+            const container = document.getElementById('warehousesContainer');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (warehouses.length === 0) {
+                container.classList.add('d-none');
+                emptyState.classList.remove('d-none');
+                return;
+            }
+            
+            container.classList.remove('d-none');
+            emptyState.classList.add('d-none');
+            
+            const langData = translations[currentLang];
+            
+            container.innerHTML = warehouses.map(warehouse => {
+                const usage = warehouse.capacity > 0 ? Math.round((warehouse.current_stock / warehouse.capacity) * 100) : 0;
+                const capacityClass = usage > 90 ? 'capacity-full' : usage > 70 ? 'capacity-low' : '';
+                const statusClass = warehouse.status === 'Активный' ? 'status-active' : 'status-inactive';
+                const cardClass = warehouse.status === 'Активный' ? 'active' : 'inactive';
+                
+                return `
+                    <div class="warehouse-card ${cardClass} fade-in">
+                        <div class="warehouse-header">
+                            <div class="warehouse-icon">
+                                <i class="fas fa-warehouse"></i>
+                            </div>
+                            <span class="warehouse-status ${statusClass}">${warehouse.status}</span>
+                        </div>
+                        
+                        <h3 class="warehouse-title">${warehouse.name}</h3>
+                        <div class="warehouse-code">
+                            <i class="fas fa-code me-1"></i> ${warehouse.code}
+                        </div>
+                        
+                        <div class="warehouse-details">
+                            <div class="detail-item">
+                                <span class="detail-label">${langData.labelLocation}</span>
+                                <span class="detail-value">
+                                    <i class="fas fa-map-marker-alt me-1"></i> ${warehouse.location}
+                                </span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${langData.labelManager}</span>
+                                <span class="detail-value">
+                                    <i class="fas fa-user me-1"></i> ${warehouse.manager}
+                                </span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${langData.labelPhone}</span>
+                                <span class="detail-value">
+                                    <i class="fas fa-phone me-1"></i> ${warehouse.phone}
+                                </span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${langData.labelCapacity}</span>
+                                <span class="detail-value">${WMS.formatNumber(warehouse.capacity)}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${langData.labelCurrentStock}</span>
+                                <span class="detail-value">${WMS.formatNumber(warehouse.current_stock)}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">${langData.labelFillRate}</span>
+                                <span class="detail-value">${usage}%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="capacity-bar ${capacityClass}">
+                            <div class="capacity-fill" style="width: ${Math.min(usage, 100)}%"></div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button onclick="editWarehouse('${warehouse.id}')" class="btn-action btn-edit" data-bs-toggle="tooltip" title="${langData.btnEdit}">
+                                <i class="fas fa-edit"></i>
+                                <span>${langData.btnEdit}</span>
+                            </button>
+                            <button onclick="deleteWarehouse('${warehouse.id}')" class="btn-action btn-delete" data-bs-toggle="tooltip" title="${langData.btnDelete}">
+                                <i class="fas fa-trash"></i>
+                                <span>${langData.btnDelete}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const total = warehouses.length;
+            const active = warehouses.filter(w => w.status === 'Активный').length;
+            const totalCapacity = warehouses.reduce((sum, w) => sum + w.capacity, 0);
+            const totalStock = warehouses.reduce((sum, w) => sum + w.current_stock, 0);
+            const avgUsage = totalCapacity > 0 ? Math.round((totalStock / totalCapacity) * 100) : 0;
+            const totalProducts = warehouses.reduce((sum, w) => sum + w.current_stock, 0);
+            
+            document.getElementById('totalWarehouses').textContent = WMS.formatNumber(total);
+            document.getElementById('activeWarehouses').textContent = WMS.formatNumber(active);
+            document.getElementById('statsTotal').textContent = WMS.formatNumber(total);
+            document.getElementById('statsActive').textContent = WMS.formatNumber(active);
+            document.getElementById('statsCapacity').textContent = avgUsage + '%';
+            document.getElementById('statsProducts').textContent = WMS.formatNumber(totalProducts);
+        }
+        
+        // Open add warehouse modal
+        function openAddWarehouseModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addWarehouseModal'));
+            modal.show();
+        }
+        
+        // Add new warehouse
+        async function addWarehouse() {
+            const form = document.getElementById('addWarehouseForm');
+            const submitBtn = document.querySelector('#addWarehouseForm button[type="submit"]');
+            
+            // Reset errors
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('formErrors').classList.add('d-none');
+            
+            // Validate form
+            const name = document.getElementById('warehouseName').value.trim();
+            const code = document.getElementById('warehouseCode').value.trim();
+            const location = document.getElementById('warehouseLocation').value.trim();
+            const manager = document.getElementById('warehouseManager').value.trim();
+            const phone = document.getElementById('warehousePhone').value.trim();
+            const capacity = document.getElementById('warehouseCapacity').value;
+            const status = document.getElementById('warehouseStatus').value;
+            const type = document.getElementById('warehouseType').value;
+            
+            const errors = [];
+            
+            if (!name) errors.push('Название склада обязательно');
+            if (!code) errors.push('Код склада обязателен');
+            if (!location) errors.push('Местоположение обязательно');
+            if (!manager) errors.push('Ответственный менеджер обязателен');
+            if (!phone) errors.push('Номер телефона обязателен');
+            if (!capacity || capacity < 1) errors.push('Емкость хранения должна быть положительным числом');
+            if (!status) errors.push('Статус обязателен');
+            if (!type) errors.push('Тип склада обязателен');
+            
+            if (errors.length > 0) {
+                document.getElementById('errorList').innerHTML = errors.map(error => `<li>${error}</li>`).join('');
+                document.getElementById('formErrors').classList.remove('d-none');
+                return;
+            }
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Сохранение...';
+                
+                const newWarehouse = {
+                    name,
+                    code,
+                    location,
+                    manager,
+                    phone,
+                    capacity: parseInt(capacity),
+                    current_stock: 0,
+                    status,
+                    type,
+                    email: document.getElementById('warehouseEmail').value.trim(),
+                    dimensions: document.getElementById('warehouseDimensions').value || null,
+                    description: document.getElementById('warehouseDescription').value.trim()
+                };
+                
+                const result = await WMS.postData('warehouses', newWarehouse);
+                
+                if (result && result.success) {
+                    WMS.showAlert('Склад успешно добавлен', 'success');
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addWarehouseModal'));
+                    if (modal) modal.hide();
+                    
+                    form.reset();
+                    warehouses.push(result.data);
+                    displayWarehouses();
+                    updateStats();
+                } else {
+                    throw new Error(result?.message || 'Не удалось добавить склад');
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка добавления склада:', error);
+                WMS.showAlert(error.message || 'Произошла ошибка при добавлении склада', 'danger');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Сохранить Склад';
+            }
+        }
+        
+        // Edit warehouse
+        function editWarehouse(id) {
+            const warehouse = warehouses.find(w => w.id === id);
+            if (!warehouse) {
+                WMS.showAlert('Склад не найден', 'warning');
+                return;
+            }
+            
+            document.getElementById('editWarehouseId').value = warehouse.id;
+            document.getElementById('editWarehouseName').value = warehouse.name;
+            document.getElementById('editWarehouseCode').value = warehouse.code;
+            document.getElementById('editWarehouseLocation').value = warehouse.location;
+            document.getElementById('editWarehouseManager').value = warehouse.manager;
+            document.getElementById('editWarehousePhone').value = warehouse.phone;
+            document.getElementById('editWarehouseCapacity').value = warehouse.capacity;
+            document.getElementById('editCurrentStock').value = warehouse.current_stock;
+            document.getElementById('editWarehouseStatus').value = warehouse.status;
+            document.getElementById('editWarehouseType').value = warehouse.type;
+            document.getElementById('editWarehouseEmail').value = warehouse.email || '';
+            document.getElementById('editWarehouseDescription').value = warehouse.description || '';
+            
+            document.getElementById('editWarehouseForm').querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('editFormErrors').classList.add('d-none');
+            
+            const modal = new bootstrap.Modal(document.getElementById('editWarehouseModal'));
+            modal.show();
+        }
+        
+        // Update warehouse
+        async function updateWarehouse() {
+            const form = document.getElementById('editWarehouseForm');
+            const submitBtn = document.querySelector('#editWarehouseForm button[type="submit"]');
+            const id = document.getElementById('editWarehouseId').value;
+            
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('editFormErrors').classList.add('d-none');
+            
+            const name = document.getElementById('editWarehouseName').value.trim();
+            const code = document.getElementById('editWarehouseCode').value.trim();
+            const location = document.getElementById('editWarehouseLocation').value.trim();
+            const manager = document.getElementById('editWarehouseManager').value.trim();
+            const phone = document.getElementById('editWarehousePhone').value.trim();
+            const capacity = document.getElementById('editWarehouseCapacity').value;
+            const status = document.getElementById('editWarehouseStatus').value;
+            const type = document.getElementById('editWarehouseType').value;
+            
+            const errors = [];
+            
+            if (!name) errors.push('Название склада обязательно');
+            if (!code) errors.push('Код склада обязателен');
+            if (!location) errors.push('Местоположение обязательно');
+            if (!manager) errors.push('Ответственный менеджер обязателен');
+            if (!phone) errors.push('Номер телефона обязателен');
+            if (!capacity || capacity < 1) errors.push('Емкость хранения должна быть положительным числом');
+            if (!status) errors.push('Статус обязателен');
+            if (!type) errors.push('Тип склада обязателен');
+            
+            if (errors.length > 0) {
+                document.getElementById('editErrorList').innerHTML = errors.map(error => `<li>${error}</li>`).join('');
+                document.getElementById('editFormErrors').classList.remove('d-none');
+                return;
+            }
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Сохранение...';
+                
+                const updatedWarehouse = {
+                    name,
+                    code,
+                    location,
+                    manager,
+                    phone,
+                    capacity: parseInt(capacity),
+                    status,
+                    type,
+                    email: document.getElementById('editWarehouseEmail').value.trim(),
+                    description: document.getElementById('editWarehouseDescription').value.trim()
+                };
+                
+                const result = await WMS.putData('warehouses', id, updatedWarehouse);
+                
+                if (result && result.success) {
+                    WMS.showAlert('Склад успешно обновлен', 'success');
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editWarehouseModal'));
+                    if (modal) modal.hide();
+                    
+                    const index = warehouses.findIndex(w => w.id === id);
+                    if (index !== -1) {
+                        updatedWarehouse.current_stock = warehouses[index].current_stock;
+                        warehouses[index] = { ...warehouses[index], ...updatedWarehouse };
+                        displayWarehouses();
+                        updateStats();
+                    }
+                } else {
+                    throw new Error(result?.message || 'Не удалось обновить склад');
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка обновления склада:', error);
+                WMS.showAlert(error.message || 'Произошла ошибка при обновлении склада', 'danger');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Сохранить Изменения';
+            }
+        }
+        
+        // Delete warehouse
+        async function deleteWarehouse(id) {
+            const warehouse = warehouses.find(w => w.id === id);
+            if (!warehouse) return;
+            
+            if (warehouse.current_stock > 0) {
+                WMS.showAlert('Нельзя удалить склад, содержащий запасы', 'warning');
+                return;
+            }
+            
+            if (confirm(`Вы уверены, что хотите удалить склад "${warehouse.name}"?`)) {
+                try {
+                    const result = await WMS.deleteData('warehouses', id);
+                    if (result && result.success) {
+                        WMS.showAlert('Склад успешно удален', 'success');
+                        
+                        warehouses = warehouses.filter(w => w.id !== id);
+                        displayWarehouses();
+                        updateStats();
+                    }
+                } catch (error) {
+                    console.error('❌ Ошибка удаления склада:', error);
+                    WMS.showAlert('Произошла ошибка при удалении склада', 'danger');
+                }
+            }
+        }
+        
+        // Export warehouses to Excel
+        function exportWarehouses() {
+            let html = '<table><tr><th>Название Склада</th><th>Код</th><th>Местоположение</th><th>Менеджер</th><th>Статус</th><th>Емкость</th><th>Запасы</th></tr>';
+            
+            warehouses.forEach(warehouse => {
+                const usage = Math.round((warehouse.current_stock / warehouse.capacity) * 100);
+                html += `<tr>
+                    <td>${warehouse.name}</td>
+                    <td>${warehouse.code}</td>
+                    <td>${warehouse.location}</td>
+                    <td>${warehouse.manager}</td>
+                    <td>${warehouse.status}</td>
+                    <td>${WMS.formatNumber(warehouse.capacity)}</td>
+                    <td>${WMS.formatNumber(warehouse.current_stock)} (${usage}%)</td>
+                </tr>`;
+            });
+            
+            html += '</table>';
+            
+            let blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+            let url = URL.createObjectURL(blob);
+            
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = 'Склады.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            WMS.showAlert('Данные успешно экспортированы', 'success');
+        }
+        
+        // Refresh warehouses
+        function refreshWarehouses() {
+            loadWarehouses();
+            WMS.showAlert('Данные обновлены', 'info');
+        }
+        
+        // Filter warehouses
+        function filterWarehouses() {
+            const searchTerm = document.getElementById('searchWarehouse')?.value.toLowerCase() || '';
+            const statusFilter = document.getElementById('statusFilter')?.value || '';
+            
+            const container = document.getElementById('warehousesContainer');
+            const filtered = warehouses.filter(warehouse => {
+                const matchesSearch = !searchTerm || 
+                    warehouse.name.toLowerCase().includes(searchTerm) ||
+                    warehouse.code.toLowerCase().includes(searchTerm) ||
+                    warehouse.location.toLowerCase().includes(searchTerm) ||
+                    warehouse.manager.toLowerCase().includes(searchTerm);
+                
+                const matchesStatus = !statusFilter || warehouse.status === statusFilter;
+                
+                return matchesSearch && matchesStatus;
+            });
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-5 col-span-3">
+                        <i class="fas fa-search fa-3x mb-3"></i>
+                        <p>Нет результатов, соответствующих поиску</p>
+                    </div>
+                `;
+            } else {
+                const originalWarehouses = warehouses;
+                warehouses = filtered;
+                displayWarehouses();
+                warehouses = originalWarehouses;
+            }
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize language switcher
+            const savedLang = localStorage.getItem('preferredLang') || 'ru';
+            changeLanguage(savedLang);
+            
+            // Add event listeners to language buttons
+            document.querySelectorAll('.lang-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    if (lang) {
+                        changeLanguage(lang);
+                    }
+                });
+            });
+            
+            // Load data
+            await loadWarehouses();
+        });
+        
+        // Export functions to global scope
+        window.openAddWarehouseModal = openAddWarehouseModal;
+        window.editWarehouse = editWarehouse;
+        window.deleteWarehouse = deleteWarehouse;
+        window.exportWarehouses = exportWarehouses;
+        window.refreshWarehouses = refreshWarehouses;
+        window.filterWarehouses = filterWarehouses;
+        window.WMS = WMS;
+        window.changeLanguage = changeLanguage;
+    </script>
+    <script src="js/languageSwitcher.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

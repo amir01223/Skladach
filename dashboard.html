@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="dashboard_title">لوحة التحكم - نظام إدارة المخازن</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #c0392b;
+            --info-color: #17a2b8;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --sidebar-width: 280px;
+            
+            /* Dashboard Colors */
+            --card-blue: linear-gradient(135deg, #3498db, #2980b9);
+            --card-green: linear-gradient(135deg, #27ae60, #2ecc71);
+            --card-orange: linear-gradient(135deg, #f39c12, #e67e22);
+            --card-purple: linear-gradient(135deg, #9b59b6, #8e44ad);
+            --card-red: linear-gradient(135deg, #e74c3c, #c0392b);
+            --card-teal: linear-gradient(135deg, #1abc9c, #16a085);
+        }
+        
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        body.ltr .language-switcher {
+            right: auto;
+            left: 20px;
+        }
+        
+        .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid transparent;
+            background: transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--dark-color);
+        }
+        
+        .lang-btn:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .lang-btn.active {
+            background: var(--card-blue);
+            color: white;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            border-color: var(--secondary-color);
+        }
+        
+        /* RTL/LTR Support */
+        body.ltr {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body.ltr .sidebar-nav {
+            text-align: left;
+        }
+        
+        body.ltr .nav-link {
+            flex-direction: row;
+        }
+        
+        body.ltr .nav-link i {
+            margin-right: 15px;
+            margin-left: 0;
+        }
+        
+        body.ltr .stat-icon {
+            margin-left: 0;
+            margin-right: auto;
+        }
+        
+        body.ltr .stat-trend i {
+            margin-left: 0;
+            margin-right: 0.25rem;
+        }
+        
+        body.ltr .sidebar-user {
+            text-align: left;
+        }
+        
+        body.ltr .header-title i {
+            margin-left: 0;
+            margin-right: 10px;
+        }
+        
+        /* Sidebar Styles */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color) 0%, #1a252f 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1030;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--secondary-color);
+            right: 0;
+        }
+        
+        body.ltr #sidebar {
+            right: auto;
+            left: 0;
+            border-left: none;
+            border-right: 4px solid var(--secondary-color);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        }
+        
+        #sidebar.hidden {
+            transform: translateX(var(--sidebar-width));
+        }
+        
+        body.ltr #sidebar.hidden {
+            transform: translateX(calc(-1 * var(--sidebar-width)));
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sidebar-logo i {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-user {
+            padding: 1rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-user img {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+            text-align: right;
+        }
+        
+        body.ltr .sidebar-nav {
+            text-align: left;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 1rem 1.5rem;
+            margin: 0.2rem 0.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(-5px);
+        }
+        
+        body.ltr .nav-link:hover {
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            color: white;
+            background: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+        }
+        
+        .main-content {
+            margin-right: var(--sidebar-width);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+        
+        body.ltr .main-content {
+            margin-right: 0;
+            margin-left: var(--sidebar-width);
+        }
+        
+        .main-content.full-width {
+            margin-right: 0;
+        }
+        
+        body.ltr .main-content.full-width {
+            margin-left: 0;
+        }
+        
+        /* Header Styles */
+        .main-header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        
+        .header-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .header-title i {
+            color: var(--secondary-color);
+            margin-left: 10px;
+        }
+        
+        body.ltr .header-title i {
+            margin-left: 0;
+            margin-right: 10px;
+        }
+        
+        /* Statistics Cards */
+        .stat-card {
+            border: none;
+            border-radius: 15px;
+            padding: 1.5rem;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            z-index: 1;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stat-icon {
+            background: rgba(255,255,255,0.2);
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-left: auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        body.ltr .stat-icon {
+            margin-left: 0;
+            margin-right: auto;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stat-trend {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stat-trend i {
+            margin-left: 0.25rem;
+        }
+        
+        body.ltr .stat-trend i {
+            margin-left: 0;
+            margin-right: 0.25rem;
+        }
+        
+        /* Chart Cards */
+        .chart-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .chart-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .chart-card-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-card-header h5 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .chart-card-header h5 i {
+            color: var(--secondary-color);
+            margin-left: 0.5rem;
+        }
+        
+        body.ltr .chart-card-header h5 i {
+            margin-left: 0;
+            margin-right: 0.5rem;
+        }
+        
+        /* Alert Card */
+        .alert-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            border-top: 4px solid var(--warning-color);
+        }
+        
+        .alert-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .alert-card-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-card-header h5 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .alert-card-header h5 i {
+            color: var(--warning-color);
+            margin-left: 0.5rem;
+        }
+        
+        body.ltr .alert-card-header h5 i {
+            margin-left: 0;
+            margin-right: 0.5rem;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .table-custom {
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .table-custom thead {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+        }
+        
+        .table-custom th {
+            font-weight: 600;
+            padding: 1rem;
+            border: none;
+            white-space: nowrap;
+        }
+        
+        .table-custom tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .table-custom tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+            transform: scale(1.002);
+        }
+        
+        .table-custom td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        /* Recent Transactions */
+        .transaction-item {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            border-right: 4px solid transparent;
+            position: relative;
+        }
+        
+        body.ltr .transaction-item {
+            border-right: none;
+            border-left: 4px solid transparent;
+        }
+        
+        .transaction-item:hover {
+            background: #e9ecef;
+            transform: translateX(-5px);
+        }
+        
+        body.ltr .transaction-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .transaction-item.receive {
+            border-right-color: var(--success-color);
+        }
+        
+        body.ltr .transaction-item.receive {
+            border-left-color: var(--success-color);
+        }
+        
+        .transaction-item.issue {
+            border-right-color: var(--danger-color);
+        }
+        
+        body.ltr .transaction-item.issue {
+            border-left-color: var(--danger-color);
+        }
+        
+        .transaction-item.transfer {
+            border-right-color: var(--secondary-color);
+        }
+        
+        body.ltr .transaction-item.transfer {
+            border-left-color: var(--secondary-color);
+        }
+        
+        .transaction-item.return {
+            border-right-color: var(--warning-color);
+        }
+        
+        body.ltr .transaction-item.return {
+            border-left-color: var(--warning-color);
+        }
+        
+        .transaction-type-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .transaction-type-badge.receive {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+        }
+        
+        .transaction-type-badge.issue {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .transaction-type-badge.transfer {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .transaction-type-badge.return {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+        
+        /* Warehouses Overview */
+        .warehouse-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border-top: 5px solid var(--secondary-color);
+            height: 100%;
+        }
+        
+        .warehouse-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .warehouse-progress {
+            height: 10px;
+            border-radius: 5px;
+            background-color: #e9ecef;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        
+        .warehouse-progress-bar {
+            height: 100%;
+            border-radius: 5px;
+        }
+        
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        body.ltr .notification-badge {
+            left: auto;
+            right: -5px;
+        }
+        
+        /* Alert Styles */
+        .alert-custom {
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Button Styles */
+        .btn-custom {
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            color: white;
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-low {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .status-critical {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .status-warning {
+            background-color: rgba(155, 89, 182, 0.1);
+            color: #9b59b6;
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            #sidebar {
+                transform: translateX(var(--sidebar-width));
+            }
+            
+            body.ltr #sidebar {
+                transform: translateX(calc(-1 * var(--sidebar-width)));
+            }
+            
+            #sidebar.hidden {
+                transform: translateX(0);
+            }
+            
+            body.ltr #sidebar.hidden {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-right: 0;
+            }
+            
+            body.ltr .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 1.4rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .stat-icon {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .btn-custom {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .language-switcher {
+                top: 10px;
+                right: 10px;
+                padding: 8px 12px;
+            }
+            
+            body.ltr .language-switcher {
+                right: auto;
+                left: 10px;
+            }
+            
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="lang-btn" data-lang="fr">Français</button>
+        <button class="lang-btn" data-lang="ar">العربية</button>
+        <button class="lang-btn" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ru">Русский</button>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="d-flex flex-column">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-warehouse"></i>
+                <div>
+                    <h3 class="mb-0 fw-bold" data-i18n="system_name">نظام المخازن</h3>
+                    <small class="text-white-50" data-i18n="welcome_user">مرحباً، أمير</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="sidebar-nav flex-grow-1">
+            <a href="dashboard.html" class="nav-link active">
+                <i class="fas fa-chart-line"></i>
+                <span data-i18n="dashboard">لوحة التحكم</span>
+            </a>
+            <a href="inventory.html" class="nav-link">
+                <i class="fas fa-boxes"></i>
+                <span data-i18n="inventory_management">إدارة المخزون</span>
+            </a>
+            <a href="transactions.html" class="nav-link">
+                <i class="fas fa-exchange-alt"></i>
+                <span data-i18n="daily_operations">العمليات اليومية</span>
+            </a>
+            <a href="reports.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i>
+                <span data-i18n="reports">التقارير</span>
+            </a>
+            <a href="warehouses.html" class="nav-link">
+                <i class="fas fa-warehouse"></i>
+                <span data-i18n="warehouse_management">إدارة المخازن</span>
+            </a>
+            <a href="users.html" class="nav-link">
+                <i class="fas fa-users"></i>
+                <span data-i18n="users">المستخدمون</span>
+            </a>
+            <a href="settings.html" class="nav-link">
+                <i class="fas fa-cog"></i>
+                <span data-i18n="settings">الإعدادات</span>
+            </a>
+        </nav>
+        
+        <!-- Logout Button -->
+        <div class="p-3 mt-auto">
+            <a href="index.html" class="btn btn-danger w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
+                <i class="fas fa-sign-out-alt"></i>
+                <span data-i18n="logout">تسجيل الخروج</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="main-header d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <button onclick="toggleSidebar()" class="btn btn-outline-primary d-lg-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="header-title">
+                    <i class="fas fa-chart-line"></i>
+                    <span data-i18n="dashboard_page">لوحة التحكم</span>
+                </h1>
+            </div>
+            
+            <div class="d-flex align-items-center gap-4">
+                <!-- Date Display -->
+                <div class="d-none d-md-block">
+                    <div class="text-end">
+                        <small class="text-muted d-block" id="currentDate"></small>
+                        <small class="text-muted" id="currentTime"></small>
+                    </div>
+                </div>
+                
+                <!-- Notifications -->
+                <div class="position-relative">
+                    <button class="btn btn-outline-secondary btn-custom position-relative" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <span class="notification-badge">3</span>
+                </div>
+                
+                <!-- User Info -->
+                <div class="d-flex align-items-center gap-2">
+                    <img src="https://ui-avatars.com/api/?name=ИА&background=3498db&color=fff&size=50&rounded=true" 
+                         class="rounded-circle" alt="User">
+                   <div class="text-end d-none d-md-block">
+    <h6 class="mb-0 fw-bold" data-i18n="user_name">Ибрахим Амир</h6>
+    <small class="text-muted" data-i18n="user_role">مدير النظام</small>
+</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Alert Container -->
+        <div id="alertContainer" class="container mt-3"></div>
+
+        <!-- Dashboard Content -->
+        <main class="container-fluid py-4">
+            <!-- Statistics Cards -->
+            <div class="row g-4 mb-4 fade-in">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="stat-card" style="background: var(--card-blue);">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <p class="stat-label" data-i18n="total_products">إجمالي المنتجات</p>
+                                <h2 class="stat-number" id="totalProducts">1,250</h2>
+                                <p class="stat-trend mb-0">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span data-i18n="last_month_growth">+12% من الشهر الماضي</span>
+                                </p>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-box-open fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="stat-card" style="background: var(--card-green);">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <p class="stat-label" data-i18n="inventory_value">قيمة المخزون</p>
+                                <h2 class="stat-number" id="totalValue">2,450,000</h2>
+                                <p class="stat-trend mb-0">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span data-i18n="value_growth">+8% من الشهر الماضي</span>
+                                </p>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-coins fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="stat-card" style="background: var(--card-orange);">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <p class="stat-label" data-i18n="low_stock">منتجات منخفضة</p>
+                                <h2 class="stat-number" id="lowStockCount">18</h2>
+                                <p class="stat-trend mb-0">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span data-i18n="needs_reorder">يحتاج إعادة طلب</span>
+                                </p>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-circle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="stat-card" style="background: var(--card-purple);">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <p class="stat-label" data-i18n="today_transactions">عمليات اليوم</p>
+                                <h2 class="stat-number" id="todayTransactions">42</h2>
+                                <p class="stat-trend mb-0">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span data-i18n="last_updated_now">آخر تحديث: الآن</span>
+                                </p>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="fas fa-exchange-alt fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4 mb-4 fade-in">
+                <div class="col-12 col-lg-6">
+                    <div class="chart-card">
+                        <div class="chart-card-header d-flex justify-content-between align-items-center">
+                            <h5>
+                                <i class="fas fa-chart-line text-primary"></i>
+                                <span data-i18n="weekly_inventory_movement">حركة المخزون الأسبوعية</span>
+                            </h5>
+                            <select class="form-select form-select-sm w-auto border-0 bg-light" id="chartPeriod">
+                                <option data-i18n="last_7_days">آخر 7 أيام</option>
+                                <option data-i18n="last_30_days">آخر 30 يوم</option>
+                                <option data-i18n="last_3_months">آخر 3 أشهر</option>
+                            </select>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="transactionsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-lg-6">
+                    <div class="chart-card">
+                        <div class="chart-card-header d-flex justify-content-between align-items-center">
+                            <h5>
+                                <i class="fas fa-chart-pie text-success"></i>
+                                <span data-i18n="category_distribution">توزيع الفئات</span>
+                            </h5>
+                            <button class="btn btn-link text-decoration-none p-0 text-primary" onclick="showCategoryDetails()">
+                                <span data-i18n="view_details">عرض التفاصيل</span>
+                            </button>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tables Row -->
+            <div class="row g-4 mb-4 fade-in">
+                <!-- Low Stock Alert -->
+                <div class="col-12 col-lg-6">
+                    <div class="alert-card">
+                        <div class="alert-card-header d-flex justify-content-between align-items-center">
+                            <h5>
+                                <i class="fas fa-exclamation-triangle text-warning"></i>
+                                <span data-i18n="low_stock_alerts">تنبيهات المخزون المنخفض</span>
+                            </h5>
+                            <a href="inventory.html" class="btn btn-link text-decoration-none p-0 text-primary">
+                                <span data-i18n="view_all">عرض الكل</span>
+                            </a>
+                        </div>
+                        <div class="table-container">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th data-i18n="product">المنتج</th>
+                                            <th data-i18n="quantity">الكمية</th>
+                                            <th data-i18n="status">الحالة</th>
+                                            <th data-i18n="action">الإجراء</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lowStockTable">
+                                        <tr class="fade-in">
+                                            <td class="fw-bold">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-laptop text-primary me-2"></i>
+                                                    <span data-i18n="laptop">كمبيوتر محمول</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-danger">5 <span data-i18n="pieces">قطعة</span></span>
+                                            </td>
+                                            <td>
+                                                <span class="status-critical status-badge" data-i18n="very_low">منخفض جداً</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr class="fade-in">
+                                            <td class="fw-bold">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-print text-info me-2"></i>
+                                                    <span data-i18n="laser_printer">طابعة ليزر</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-danger">2 <span data-i18n="pieces">قطعة</span></span>
+                                            </td>
+                                            <td>
+                                                <span class="status-critical status-badge" data-i18n="very_low">منخفض جداً</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr class="fade-in">
+                                            <td class="fw-bold">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-mouse text-secondary me-2"></i>
+                                                    <span data-i18n="wireless_mouse">ماوس لاسلكي</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-warning">12 <span data-i18n="pieces">قطعة</span></span>
+                                            </td>
+                                            <td>
+                                                <span class="status-low status-badge" data-i18n="low">منخفض</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-warning">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr class="fade-in">
+                                            <td class="fw-bold">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-keyboard text-success me-2"></i>
+                                                    <span data-i18n="keyboard">لوحة مفاتيح</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-danger">3 <span data-i18n="pieces">قطع</span></span>
+                                            </td>
+                                            <td>
+                                                <span class="status-critical status-badge" data-i18n="very_low">منخفض جداً</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr class="fade-in">
+                                            <td class="fw-bold">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-desktop text-primary me-2"></i>
+                                                    <span data-i18n="monitor_24">شاشة 24 بوصة</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-warning">8 <span data-i18n="pieces">قطع</span></span>
+                                            </td>
+                                            <td>
+                                                <span class="status-low status-badge" data-i18n="low">منخفض</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-warning">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="col-12 col-lg-6">
+                    <div class="alert-card">
+                        <div class="alert-card-header d-flex justify-content-between align-items-center">
+                            <h5>
+                                <i class="fas fa-history text-purple"></i>
+                                <span data-i18n="recent_transactions">آخر العمليات</span>
+                            </h5>
+                            <a href="transactions.html" class="btn btn-link text-decoration-none p-0 text-primary">
+                                <span data-i18n="view_all">عرض الكل</span>
+                            </a>
+                        </div>
+                        <div id="recentTransactions">
+                            <div class="transaction-item receive fade-in">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <span class="transaction-type-badge receive">
+                                            <i class="fas fa-arrow-down me-1"></i>
+                                            <span data-i18n="incoming">وارد</span>
+                                        </span>
+                                        <h6 class="mb-0 mt-1 fw-bold" data-i18n="laptop">كمبيوتر محمول</h6>
+                                    </div>
+                                    <div class="text-end">
+                                        <small class="text-muted d-block" data-i18n="today">اليوم</small>
+                                        <small class="text-muted">10:30 ص</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small class="text-muted">
+                                            <span data-i18n="quantity">الكمية</span>: <span class="fw-bold">10 <span data-i18n="pieces">قطع</span></span>
+                                        </small>
+                                        <small class="text-muted me-2"> | 
+                                            <span data-i18n="reference">المرجع</span>: INV-2023-001
+                                        </small>
+                                    </div>
+                                    <small class="text-muted" data-i18n="main_warehouse">المخزن الرئيسي</small>
+                                </div>
+                            </div>
+                            
+                            <div class="transaction-item issue fade-in">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <span class="transaction-type-badge issue">
+                                            <i class="fas fa-arrow-up me-1"></i>
+                                            <span data-i18n="outgoing">صادر</span>
+                                        </span>
+                                        <h6 class="mb-0 mt-1 fw-bold" data-i18n="wireless_mouse">ماوس لاسلكي</h6>
+                                    </div>
+                                    <div class="text-end">
+                                        <small class="text-muted d-block" data-i18n="today">اليوم</small>
+                                        <small class="text-muted">11:45 ص</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small class="text-muted">
+                                            <span data-i18n="quantity">الكمية</span>: <span class="fw-bold">5 <span data-i18n="pieces">قطع</span></span>
+                                        </small>
+                                        <small class="text-muted me-2"> | 
+                                            <span data-i18n="reference">المرجع</span>: SALE-2023-001
+                                        </small>
+                                    </div>
+                                    <small class="text-muted" data-i18n="main_warehouse">المخزن الرئيسي</small>
+                                </div>
+                            </div>
+                            
+                            <div class="transaction-item transfer fade-in">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <span class="transaction-type-badge transfer">
+                                            <i class="fas fa-exchange-alt me-1"></i>
+                                            <span data-i18n="transfer">تحويل</span>
+                                        </span>
+                                        <h6 class="mb-0 mt-1 fw-bold" data-i18n="keyboard">لوحة مفاتيح</h6>
+                                    </div>
+                                    <div class="text-end">
+                                        <small class="text-muted d-block" data-i18n="today">اليوم</small>
+                                        <small class="text-muted">02:20 م</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small class="text-muted">
+                                            <span data-i18n="quantity">الكمية</span>: <span class="fw-bold">20 <span data-i18n="pieces">قطعة</span></span>
+                                        </small>
+                                        <small class="text-muted me-2"> | 
+                                            <span data-i18n="reference">المرجع</span>: TRF-2023-001
+                                        </small>
+                                    </div>
+                                    <small class="text-muted" data-i18n="from_main_to_branch1">من الرئيسي إلى الفرع الأول</small>
+                                </div>
+                            </div>
+                            
+                            <div class="transaction-item return fade-in">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <span class="transaction-type-badge return">
+                                            <i class="fas fa-undo me-1"></i>
+                                            <span data-i18n="return">إرجاع</span>
+                                        </span>
+                                        <h6 class="mb-0 mt-1 fw-bold" data-i18n="monitor_24">شاشة 24 بوصة</h6>
+                                    </div>
+                                    <div class="text-end">
+                                        <small class="text-muted d-block" data-i18n="today">اليوم</small>
+                                        <small class="text-muted">04:15 م</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small class="text-muted">
+                                            <span data-i18n="quantity">الكمية</span>: <span class="fw-bold">2 <span data-i18n="pieces">قطع</span></span>
+                                        </small>
+                                        <small class="text-muted me-2"> | 
+                                            <span data-i18n="reference">المرجع</span>: RET-2023-001
+                                        </small>
+                                    </div>
+                                    <small class="text-muted" data-i18n="main_warehouse">المخزن الرئيسي</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warehouses Overview -->
+            <div class="row fade-in">
+                <div class="col-12">
+                    <div class="chart-card">
+                        <div class="chart-card-header d-flex justify-content-between align-items-center">
+                            <h5>
+                                <i class="fas fa-warehouse text-info"></i>
+                                <span data-i18n="warehouse_overview">نظرة عامة على المخازن</span>
+                            </h5>
+                            <a href="warehouses.html" class="btn btn-link text-decoration-none p-0 text-primary">
+                                <span data-i18n="warehouse_management">إدارة المخازن</span>
+                            </a>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="warehouse-card" style="border-top-color: #3498db;">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h6 class="mb-0 fw-bold" data-i18n="main_warehouse">المخزن الرئيسي</h6>
+                                        <span class="badge" style="background: #3498db; color: white;">75%</span>
+                                    </div>
+                                    <p class="text-muted small mb-2">
+                                        <span data-i18n="capacity">السعة</span>: 1000 <span data-i18n="units">وحدة</span>
+                                    </p>
+                                    <div class="warehouse-progress">
+                                        <div class="warehouse-progress-bar" style="width: 75%; background: #3498db;"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <small data-i18n="available">متاح</small>
+                                        <small data-i18n="used">مستخدم</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="warehouse-card" style="border-top-color: #2ecc71;">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h6 class="mb-0 fw-bold" data-i18n="branch1_warehouse">مخزن الفرع الأول</h6>
+                                        <span class="badge" style="background: #2ecc71; color: white;">45%</span>
+                                    </div>
+                                    <p class="text-muted small mb-2">
+                                        <span data-i18n="capacity">السعة</span>: 500 <span data-i18n="units">وحدة</span>
+                                    </p>
+                                    <div class="warehouse-progress">
+                                        <div class="warehouse-progress-bar" style="width: 45%; background: #2ecc71;"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <small data-i18n="available">متاح</small>
+                                        <small data-i18n="used">مستخدم</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="warehouse-card" style="border-top-color: #f39c12;">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h6 class="mb-0 fw-bold" data-i18n="branch2_warehouse">مخزن الفرع الثاني</h6>
+                                        <span class="badge" style="background: #f39c12; color: white;">90%</span>
+                                    </div>
+                                    <p class="text-muted small mb-2">
+                                        <span data-i18n="capacity">السعة</span>: 300 <span data-i18n="units">وحدة</span>
+                                    </p>
+                                    <div class="warehouse-progress">
+                                        <div class="warehouse-progress-bar" style="width: 90%; background: #f39c12;"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <small data-i18n="available">متاح</small>
+                                        <small data-i18n="used">مستخدم</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="warehouse-card" style="border-top-color: #9b59b6;">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h6 class="mb-0 fw-bold" data-i18n="retail_warehouse">مخزن التجزئة</h6>
+                                        <span class="badge" style="background: #9b59b6; color: white;">60%</span>
+                                    </div>
+                                    <p class="text-muted small mb-2">
+                                        <span data-i18n="capacity">السعة</span>: 200 <span data-i18n="units">وحدة</span>
+                                    </p>
+                                    <div class="warehouse-progress">
+                                        <div class="warehouse-progress-bar" style="width: 60%; background: #9b59b6;"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <small data-i18n="available">متاح</small>
+                                        <small data-i18n="used">مستخدم</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Language Switcher JS -->
+    <script>
+        // Language Switcher Configuration avec traductions intégrées
+        const languageSwitcher = {
+            currentLang: 'ar',
+            translations: {},
+            
+            // Available languages
+            languages: {
+                'ar': { name: 'العربية' },
+                'fr': { name: 'Français' },
+                'en': { name: 'English' },
+                'ru': { name: 'Русский' }
+            },
+            
+            // Traductions intégrées
+            builtInTranslations: {
+                'fr': {
+                    "system_name": "Système de Gestion des Entrepôts",
+                    "dashboard_title": "Tableau de Bord",
+                    "dashboard": "Tableau de Bord",
+                    "dashboard_page": "Tableau de Bord",
+                    "inventory_management": "Gestion des Stocks",
+                    "daily_operations": "Opérations Quotidiennes",
+                    "reports": "Rapports",
+                    "warehouse_management": "Gestion des Entrepôts",
+                    "users": "Utilisateurs",
+                    "settings": "Paramètres",
+                    "logout": "Déconnexion",
+                    "welcome_user": "Bienvenue, Amine",
+                    "total_products": "Total des Produits",
+                    "last_month_growth": "+12% du mois dernier",
+                    "inventory_value": "Valeur du Stock",
+                    "value_growth": "+8% du mois dernier",
+                    "low_stock": "Produits Faibles",
+                    "needs_reorder": "Besoin de réapprovisionnement",
+                    "today_transactions": "Transactions du Jour",
+                    "last_updated_now": "Dernière mise à jour: Maintenant",
+                    "weekly_inventory_movement": "Mouvement Hebdomadaire des Stocks",
+                    "last_7_days": "7 derniers jours",
+                    "last_30_days": "30 derniers jours",
+                    "last_3_months": "3 derniers mois",
+                    "category_distribution": "Distribution des Catégories",
+                    "view_details": "Voir les Détails",
+                    "low_stock_alerts": "Alertes de Stock Faible",
+                    "view_all": "Voir Tout",
+                    "product": "Produit",
+                    "quantity": "Quantité",
+                    "status": "Statut",
+                    "action": "Action",
+                    "pieces": "pièces",
+                    "very_low": "Très faible",
+                    "low": "Faible",
+                    "laptop": "Ordinateur portable",
+                    "laser_printer": "Imprimante laser",
+                    "wireless_mouse": "Souris sans fil",
+                    "keyboard": "Clavier",
+                    "monitor_24": "Moniteur 24 pouces",
+                    "recent_transactions": "Transactions Récentes",
+                    "incoming": "Entrant",
+                    "outgoing": "Sortant",
+                    "transfer": "Transfert",
+                    "return": "Retour",
+                    "reference": "Référence",
+                    "main_warehouse": "Entrepôt Principal",
+                    "from_main_to_branch1": "Du principal à la succursale 1",
+                    "warehouse_overview": "Aperçu des Entrepôts",
+                    "capacity": "Capacité",
+                    "units": "unités",
+                    "available": "Disponible",
+                    "used": "Utilisé",
+                    "branch1_warehouse": "Entrepôt Succursale 1",
+                    "branch2_warehouse": "Entrepôt Succursale 2",
+                    "retail_warehouse": "Entrepôt de Détail",
+                    "today": "Aujourd'hui",
+                    "notifications": "Notifications",
+                    "low_stock_alert": "Stock faible",
+                    "hours_ago_2": "Il y a 2 heures",
+                    "new_operation": "Nouvelle opération",
+                    "receipt_operation_registered": "Opération de réception enregistrée",
+                    "hours_ago_4": "Il y a 4 heures",
+                    "monthly_report": "Rapport mensuel",
+                    "sales_report_ready": "Rapport des ventes prêt",
+                    "day_ago": "Il y a un jour",
+                    "all_notifications_read": "Toutes les notifications lues",
+                    "charts_updated": "Graphiques mis à jour",
+                    "category_details": "Détails des catégories",
+                    "categories": '["Électronique", "Ordinateurs", "Papeterie", "Mobilier de bureau", "Autre"]',
+                    "welcome_message": "Bienvenue dans le Système de Gestion des Stocks !",
+                    // ... autres traductions existantes ...
+                    "user_name": "Ahmed Mahmoud",
+                    "user_role": "Administrateur système",
+                     // ... reste des traductions ...
+
+                    "mark_all_read": "Tout marquer comme lu"
+                },
+                'en': {
+                    "system_name": "Warehouse Management System",
+                    "dashboard_title": "Dashboard",
+                    "dashboard": "Dashboard",
+                    "dashboard_page": "Dashboard",
+                    "inventory_management": "Inventory Management",
+                    "daily_operations": "Daily Operations",
+                    "reports": "Reports",
+                    "warehouse_management": "Warehouse Management",
+                    "users": "Users",
+                    "settings": "Settings",
+                    "logout": "Logout",
+                    "welcome_user": "Welcome, Amine",
+                    "total_products": "Total Products",
+                    "last_month_growth": "+12% from last month",
+                    "inventory_value": "Inventory Value",
+                    "value_growth": "+8% from last month",
+                    "low_stock": "Low Stock Products",
+                    "needs_reorder": "Needs reorder",
+                    "today_transactions": "Today's Transactions",
+                    "last_updated_now": "Last updated: Now",
+                    "weekly_inventory_movement": "Weekly Inventory Movement",
+                    "last_7_days": "Last 7 Days",
+                    "last_30_days": "Last 30 Days",
+                    "last_3_months": "Last 3 Months",
+                    "category_distribution": "Category Distribution",
+                    "view_details": "View Details",
+                    "low_stock_alerts": "Low Stock Alerts",
+                    "view_all": "View All",
+                    "product": "Product",
+                    "quantity": "Quantity",
+                    "status": "Status",
+                    "action": "Action",
+                    "pieces": "pieces",
+                    "very_low": "Very Low",
+                    "low": "Low",
+                    "laptop": "Laptop",
+                    "laser_printer": "Laser Printer",
+                    "wireless_mouse": "Wireless Mouse",
+                    "keyboard": "Keyboard",
+                    "monitor_24": "24-inch Monitor",
+                    "recent_transactions": "Recent Transactions",
+                    "incoming": "Incoming",
+                    "outgoing": "Outgoing",
+                    "transfer": "Transfer",
+                    "return": "Return",
+                    "reference": "Reference",
+                    "main_warehouse": "Main Warehouse",
+                    "from_main_to_branch1": "From main to branch 1",
+                    "warehouse_overview": "Warehouse Overview",
+                    "capacity": "Capacity",
+                    "units": "units",
+                    "available": "Available",
+                    "used": "Used",
+                    "branch1_warehouse": "Branch 1 Warehouse",
+                    "branch2_warehouse": "Branch 2 Warehouse",
+                    "retail_warehouse": "Retail Warehouse",
+                    "today": "Today",
+                    "notifications": "Notifications",
+                    "low_stock_alert": "Low stock alert",
+                    "hours_ago_2": "2 hours ago",
+                    "new_operation": "New operation",
+                    "receipt_operation_registered": "Receipt operation registered",
+                    "hours_ago_4": "4 hours ago",
+                    "monthly_report": "Monthly report",
+                    "sales_report_ready": "Sales report ready",
+                    "day_ago": "1 day ago",
+                    "all_notifications_read": "All notifications read",
+                    "charts_updated": "Charts updated",
+                    "category_details": "Category Details",
+                    "categories": '["Electronics", "Computers", "Stationery", "Office Furniture", "Other"]',
+                    "welcome_message": "Welcome to the Warehouse Management System!",
+                    "user_name": "Ahmed Mahmoud", 
+                    "user_role": "System Administrator",
+                    "mark_all_read": "Mark all as read"
+                },
+                'ru': {
+                    "system_name": "Система управления складом",
+                    "dashboard_title": "Панель управления",
+                    "dashboard": "Панель управления",
+                    "dashboard_page": "Панель управления",
+                    "inventory_management": "Управление запасами",
+                    "daily_operations": "Ежедневные операции",
+                    "reports": "Отчеты",
+                    "warehouse_management": "Управление складами",
+                    "users": "Пользователи",
+                    "settings": "Настройки",
+                    "logout": "Выйти",
+                    "welcome_user": "Добро пожаловать, Амин",
+                    "total_products": "Всего продуктов",
+                    "last_month_growth": "+12% с прошлого месяца",
+                    "inventory_value": "Стоимость запасов",
+                    "value_growth": "+8% с прошлого месяца",
+                    "low_stock": "Товары с низким запасом",
+                    "needs_reorder": "Требуется повторный заказ",
+                    "today_transactions": "Операции за сегодня",
+                    "last_updated_now": "Последнее обновление: Сейчас",
+                    "weekly_inventory_movement": "Еженедельное движение запасов",
+                    "last_7_days": "Последние 7 дней",
+                    "last_30_days": "Последние 30 дней",
+                    "last_3_months": "Последние 3 месяца",
+                    "category_distribution": "Распределение категорий",
+                    "view_details": "Просмотр деталей",
+                    "low_stock_alerts": "Оповещения о низком запасе",
+                    "view_all": "Просмотреть все",
+                    "product": "Продукт",
+                    "quantity": "Количество",
+                    "status": "Статус",
+                    "action": "Действие",
+                    "pieces": "шт",
+                    "very_low": "Очень низкий",
+                    "low": "Низкий",
+                    "laptop": "Ноутбук",
+                    "laser_printer": "Лазерный принтер",
+                    "wireless_mouse": "Беспроводная мышь",
+                    "keyboard": "Клавиатура",
+                    "monitor_24": "Монитор 24 дюйма",
+                    "recent_transactions": "Недавние операции",
+                    "incoming": "Входящие",
+                    "outgoing": "Исходящие",
+                    "transfer": "Перевод",
+                    "return": "Возврат",
+                    "reference": "Ссылка",
+                    "main_warehouse": "Главный склад",
+                    "from_main_to_branch1": "Из главного в филиал 1",
+                    "warehouse_overview": "Обзор складов",
+                    "capacity": "Вместимость",
+                    "units": "единицы",
+                    "available": "Доступно",
+                    "used": "Использовано",
+                    "branch1_warehouse": "Склад филиала 1",
+                    "branch2_warehouse": "Склад филиала 2",
+                    "retail_warehouse": "Розничный склад",
+                    "today": "Сегодня",
+                    "notifications": "Уведомления",
+                    "low_stock_alert": "Оповещение о низком запасе",
+                    "hours_ago_2": "2 часа назад",
+                    "new_operation": "Новая операция",
+                    "receipt_operation_registered": "Операция поступления зарегистрирована",
+                    "hours_ago_4": "4 часа назад",
+                    "monthly_report": "Ежемесячный отчет",
+                    "sales_report_ready": "Отчет о продажах готов",
+                    "day_ago": "1 день назад",
+                    "all_notifications_read": "Все уведомления прочитаны",
+                    "charts_updated": "Графики обновлены",
+                    "category_details": "Детали категорий",
+                    "categories": '["Электроника", "Компьютеры", "Канцелярия", "Офисная мебель", "Другое"]',
+                    "welcome_message": "Добро пожаловать в систему управления складом!",
+                    "user_name": "                    git clone https://github.com/username/repo.gitИбрахим Амир",
+                    "user_role": "Системный администратор",
+                    "mark_all_read": "Отметить все как прочитанные"
+                },
+                'ar': {
+                    "system_name": "نظام المخازن",
+                    "dashboard_title": "لوحة التحكم",
+                    "dashboard": "لوحة التحكم",
+                    "dashboard_page": "لوحة التحكم",
+                    "inventory_management": "إدارة المخزون",
+                    "daily_operations": "العمليات اليومية",
+                    "reports": "التقارير",
+                    "warehouse_management": "إدارة المخازن",
+                    "users": "المستخدمون",
+                    "settings": "الإعدادات",
+                    "logout": "تسجيل الخروج",
+                    "welcome_user": "مرحباً، أمير",
+                    "total_products": "إجمالي المنتجات",
+                    "last_month_growth": "+12% من الشهر الماضي",
+                    "inventory_value": "قيمة المخزون",
+                    "value_growth": "+8% من الشهر الماضي",
+                    "low_stock": "منتجات منخفضة",
+                    "needs_reorder": "يحتاج إعادة طلب",
+                    "today_transactions": "عمليات اليوم",
+                    "last_updated_now": "آخر تحديث: الآن",
+                    "weekly_inventory_movement": "حركة المخزون الأسبوعية",
+                    "last_7_days": "آخر 7 أيام",
+                    "last_30_days": "آخر 30 يوم",
+                    "last_3_months": "آخر 3 أشهر",
+                    "category_distribution": "توزيع الفئات",
+                    "view_details": "عرض التفاصيل",
+                    "low_stock_alerts": "تنبيهات المخزون المنخفض",
+                    "view_all": "عرض الكل",
+                    "product": "المنتج",
+                    "quantity": "الكمية",
+                    "status": "الحالة",
+                    "action": "الإجراء",
+                    "pieces": "قطعة",
+                    "very_low": "منخفض جداً",
+                    "low": "منخفض",
+                    "laptop": "كمبيوتر محمول",
+                    "laser_printer": "طابعة ليزر",
+                    "wireless_mouse": "ماوس لاسلكي",
+                    "keyboard": "لوحة مفاتيح",
+                    "monitor_24": "شاشة 24 بوصة",
+                    "recent_transactions": "آخر العمليات",
+                    "incoming": "وارد",
+                    "outgoing": "صادر",
+                    "transfer": "تحويل",
+                    "return": "إرجاع",
+                    "reference": "المرجع",
+                    "main_warehouse": "المخزن الرئيسي",
+                    "from_main_to_branch1": "من الرئيسي إلى الفرع الأول",
+                    "warehouse_overview": "نظرة عامة على المخازن",
+                    "capacity": "السعة",
+                    "units": "وحدة",
+                    "available": "متاح",
+                    "used": "مستخدم",
+                    "branch1_warehouse": "مخزن الفرع الأول",
+                    "branch2_warehouse": "مخزن الفرع الثاني",
+                    "retail_warehouse": "مخزن التجزئة",
+                    "today": "اليوم",
+                    "notifications": "التنبيهات",
+                    "low_stock_alert": "منتج نفذ تقريباً",
+                    "hours_ago_2": "منذ 2 ساعة",
+                    "new_operation": "عملية جديدة",
+                    "receipt_operation_registered": "تم تسجيل إذن استلام بضاعة جديد",
+                    "hours_ago_4": "منذ 4 ساعات",
+                    "monthly_report": "تقرير شهري",
+                    "sales_report_ready": "تقرير المبيعات الشهري جاهز للتحميل",
+                    "day_ago": "منذ يوم",
+                    "all_notifications_read": "تم تحديد جميع التنبيهات كمقروءة",
+                    "charts_updated": "تم تحديث المخططات",
+                    "category_details": "تفاصيل توزيع الفئات",
+                    "categories": '["إلكترونيات", "أجهزة كمبيوتر", "قرطاسية", "أثاث مكتبي", "أخرى"]',
+                    "welcome_message": "مرحباً بك في نظام إدارة المخازن!",
+                    "mark_all_read": "تحديد الكل كمقروء"
+                }
+            },
+            
+            // Initialize the language switcher
+            init: function() {
+                this.loadSavedLanguage();
+                this.setupEventListeners();
+            },
+            
+            // Load saved language from localStorage or browser
+            loadSavedLanguage: function() {
+                const savedLang = localStorage.getItem('preferredLang');
+                const browserLang = navigator.language.split('-')[0];
+                const availableLangs = Object.keys(this.languages);
+                
+                let langToLoad = savedLang;
+                
+                if (!langToLoad || !availableLangs.includes(langToLoad)) {
+                    langToLoad = availableLangs.includes(browserLang) ? browserLang : 'ar';
+                }
+                
+                this.switchLanguage(langToLoad);
+            },
+            
+            // Switch to a specific language
+            switchLanguage: async function(langCode) {
+                if (this.currentLang === langCode) return;
+                
+                console.log('Switching to language:', langCode);
+                
+                try {
+                    // Use built-in translations
+                    if (this.builtInTranslations[langCode]) {
+                        this.translations[langCode] = this.builtInTranslations[langCode];
+                    } else {
+                        // Fallback to Arabic if no built-in translation
+                        this.translations[langCode] = this.builtInTranslations['ar'];
+                    }
+                    
+                    // Update current language
+                    this.currentLang = langCode;
+                    
+                    // Save preference
+                    localStorage.setItem('preferredLang', langCode);
+                    
+                    // Apply translations
+                    this.applyTranslations(this.translations[langCode]);
+                    
+                    // Update UI direction and language
+                    this.updatePageDirection(langCode);
+                    
+                    // Update active button
+                    this.updateActiveButton(langCode);
+                    
+                    // Update page title
+                    if (this.translations[langCode].system_name && this.translations[langCode].dashboard_title) {
+                        document.title = this.translations[langCode].system_name + ' - ' + this.translations[langCode].dashboard_title;
+                    }
+                    
+                    console.log('Language switched to:', langCode);
+                    console.log('Dashboard translation:', this.translations[langCode].dashboard_page);
+                    
+                } catch (error) {
+                    console.error('Failed to load language:', error);
+                    // Fallback to built-in translations
+                    if (this.builtInTranslations[langCode]) {
+                        this.translations[langCode] = this.builtInTranslations[langCode];
+                        this.currentLang = langCode;
+                        this.applyTranslations(this.translations[langCode]);
+                        this.updatePageDirection(langCode);
+                        this.updateActiveButton(langCode);
+                    } else if (langCode !== 'ar') {
+                        this.switchLanguage('ar');
+                    }
+                }
+            },
+            
+            // Apply translations to all elements
+            applyTranslations: function(translationData) {
+                // Translate text elements
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (translationData[key]) {
+                        element.textContent = translationData[key];
+                    } else {
+                        console.warn('Translation key not found:', key);
+                    }
+                });
+                
+                // Translate placeholders
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                    const key = element.getAttribute('data-i18n-placeholder');
+                    if (translationData[key]) {
+                        element.placeholder = translationData[key];
+                    }
+                });
+                
+                // Translate title attributes
+                document.querySelectorAll('[data-i18n-title]').forEach(element => {
+                    const key = element.getAttribute('data-i18n-title');
+                    if (translationData[key]) {
+                        element.title = translationData[key];
+                    }
+                });
+                
+                // Update page title
+                if (translationData.system_name && translationData.dashboard_title) {
+                    document.title = translationData.system_name + ' - ' + translationData.dashboard_title;
+                }
+            },
+            
+            // Update page direction (RTL/LTR)
+            updatePageDirection: function(langCode) {
+                const html = document.documentElement;
+                const body = document.body;
+                
+                // Remove existing direction classes
+                body.classList.remove('rtl', 'ltr');
+                
+                if (langCode === 'ar') {
+                    html.dir = 'rtl';
+                    html.lang = 'ar';
+                    body.classList.add('rtl');
+                } else {
+                    html.dir = 'ltr';
+                    html.lang = langCode;
+                    body.classList.add('ltr');
+                }
+                
+                // Force reflow to ensure styles are applied correctly
+                document.body.offsetHeight;
+            },
+            
+            // Update active language button
+            updateActiveButton: function(langCode) {
+                document.querySelectorAll('.lang-btn').forEach(button => {
+                    button.classList.remove('active');
+                    if (button.getAttribute('data-lang') === langCode) {
+                        button.classList.add('active');
+                    }
+                });
+            },
+            
+            // Setup event listeners for language buttons
+            setupEventListeners: function() {
+                document.querySelectorAll('.lang-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const lang = e.target.getAttribute('data-lang');
+                        this.switchLanguage(lang);
+                    });
+                });
+            }
+        };
+    </script>
+    
+    <!-- Dashboard JS -->
+    <script>
+        // Global WMS Object
+        const WMS = {
+            // Sidebar Management
+            toggleSidebar: function() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.querySelector('.main-content');
+                
+                if (sidebar) {
+                    sidebar.classList.toggle('hidden');
+                }
+                
+                if (mainContent) {
+                    mainContent.classList.toggle('full-width');
+                }
+            },
+            
+            // Alert System
+            showAlert: function(message, type = 'info', duration = 5000) {
+                const alertContainer = document.getElementById('alertContainer');
+                
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type} alert-custom fade-in`;
+                alert.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>
+                        <div class="flex-grow-1">${message}</div>
+                        <button class="btn btn-link text-${type === 'success' ? 'success' : type === 'danger' ? 'danger' : type === 'warning' ? 'warning' : 'info'} p-0" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                alertContainer.appendChild(alert);
+                
+                // Auto remove after duration
+                if (duration > 0) {
+                    setTimeout(() => {
+                        if (alert.parentElement) {
+                            alert.remove();
+                        }
+                    }, duration);
+                }
+            },
+            
+            // Format Numbers
+            formatNumber: function(num) {
+                return new Intl.NumberFormat('ar-EG').format(num);
+            },
+            
+            // Format Currency
+            formatCurrency: function(num) {
+                return new Intl.NumberFormat('ar-EG', {
+                    style: 'currency',
+                    currency: 'EGP'
+                }).format(num);
+            }
+        };
+        
+        // Global variables
+        let transactionsChart = null;
+        let categoryChart = null;
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 تهيئة لوحة التحكم...');
+            
+            // Initialize language switcher
+            languageSwitcher.init();
+            
+            // Initialize real-time clock
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            // Initialize charts
+            initializeCharts();
+            
+            // Set up event listeners
+            document.getElementById('chartPeriod').addEventListener('change', updateChartData);
+            
+            // Simulate real-time updates
+            setInterval(updateStats, 30000); // Update every 30 seconds
+            
+            // Show welcome message
+            setTimeout(() => {
+                const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+                if (translations && translations.welcome_message) {
+                    WMS.showAlert(translations.welcome_message, 'info');
+                } else {
+                    WMS.showAlert('مرحباً بك في نظام إدارة المخازن!', 'info');
+                }
+            }, 1000);
+        });
+        
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Get current language for formatting
+            const lang = languageSwitcher.currentLang;
+            
+            // Format date
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString(lang === 'ar' ? 'ar-EG' : lang, dateOptions);
+            document.getElementById('currentDate').textContent = dateString;
+            
+            // Format time
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: lang !== 'ru' };
+            const timeString = now.toLocaleTimeString(lang === 'ar' ? 'ar-EG' : lang, timeOptions);
+            document.getElementById('currentTime').textContent = timeString;
+        }
+        
+        // Toggle sidebar (for mobile)
+        function toggleSidebar() {
+            WMS.toggleSidebar();
+        }
+        
+        // Show notifications
+        function showNotifications() {
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang] || {};
+            
+            const notifications = [
+                { 
+                    id: 1, 
+                    title: translations.low_stock_alert || 'منتج نفذ تقريباً', 
+                    message: translations.laptop + ' - ' + translations.quantity + ': 5 (' + translations.minimum + ': 10)', 
+                    type: 'warning', 
+                    time: translations.hours_ago_2 || 'منذ 2 ساعة' 
+                },
+                { 
+                    id: 2, 
+                    title: translations.new_operation || 'عملية جديدة', 
+                    message: translations.receipt_operation_registered || 'تم تسجيل إذن استلام بضاعة جديد', 
+                    type: 'info', 
+                    time: translations.hours_ago_4 || 'منذ 4 ساعات' 
+                },
+                { 
+                    id: 3, 
+                    title: translations.monthly_report || 'تقرير شهري', 
+                    message: translations.sales_report_ready || 'تقرير المبيعات الشهري جاهز للتحميل', 
+                    type: 'success', 
+                    time: translations.day_ago || 'منذ يوم' 
+                }
+            ];
+            
+            let alertContent = `<h6 class="mb-3">${translations.notifications || 'التنبيهات'}</h6>`;
+            notifications.forEach(notif => {
+                alertContent += `
+                    <div class="alert alert-${notif.type} mb-2 p-2">
+                        <div class="d-flex justify-content-between">
+                            <strong>${notif.title}</strong>
+                            <small class="text-muted">${notif.time}</small>
+                        </div>
+                        <small>${notif.message}</small>
+                    </div>
+                `;
+            });
+            
+            alertContent += `<button class="btn btn-sm btn-outline-primary w-100 mt-2" onclick="markAllAsRead()">${translations.mark_all_read || 'تحديد الكل كمقروء'}</button>`;
+            
+            WMS.showAlert(alertContent, 'info', 10000);
+        }
+        
+        function markAllAsRead() {
+            document.querySelectorAll('.notification-badge').forEach(badge => {
+                badge.style.display = 'none';
+            });
+            
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang] || {};
+            WMS.showAlert(translations.all_notifications_read || 'تم تحديد جميع التنبيهات كمقروءة', 'success');
+        }
+        
+        // Initialize charts
+        function initializeCharts() {
+            // Transactions Chart
+            const transactionsCtx = document.getElementById('transactionsChart').getContext('2d');
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang] || {};
+            
+            transactionsChart = new Chart(transactionsCtx, {
+                type: 'line',
+                data: {
+                    labels: languageSwitcher.currentLang === 'ar' ? 
+                        ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'] :
+                        languageSwitcher.currentLang === 'ru' ?
+                        ['Сб', 'Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт'] :
+                        ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                    datasets: [{
+                        label: translations.incoming || 'وارد',
+                        data: [12, 19, 8, 15, 22, 18, 25],
+                        borderColor: '#27ae60',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 2
+                    }, {
+                        label: translations.outgoing || 'صادر',
+                        data: [8, 12, 6, 9, 15, 11, 18],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: languageSwitcher.currentLang === 'ar',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    family: languageSwitcher.currentLang === 'ar' ? 'Cairo' : 'Segoe UI',
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            rtl: languageSwitcher.currentLang === 'ar',
+                            titleFont: {
+                                family: languageSwitcher.currentLang === 'ar' ? 'Cairo' : 'Segoe UI'
+                            },
+                            bodyFont: {
+                                family: languageSwitcher.currentLang === 'ar' ? 'Cairo' : 'Segoe UI'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return WMS.formatNumber(value);
+                                },
+                                font: {
+                                    family: languageSwitcher.currentLang === 'ar' ? 'Cairo' : 'Segoe UI'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    family: languageSwitcher.currentLang === 'ar' ? 'Cairo' : 'Segoe UI'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Category Distribution Chart
+            const categories = translations.categories ? JSON.parse(translations.categories) : 
+                languageSwitcher.currentLang === 'ar' ? 
+                ['إلكترونيات', 'أجهزة كمبيوتر', 'قرطاسية', 'أثاث مكتبي', 'أخرى'] :
+                languageSwitcher.currentLang === 'ru' ?
+                ['Электроника', 'Компьютеры', 'Канцелярия', 'Офисная мебель', 'Другое'] :
+                ['Electronics', 'Computers', 'Stationery', 'Office Furniture', 'Other'];
+            
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            categoryChart = new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: [35, 25, 20, 15, 5],
+                        backgroundColor: [
+                            '#3498db',
+                            '#2ecc71',
+                            '#f39c12',
+                            '#9b59b6',
+                            '#e74c3c'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: languageSwitcher.currentLang === 'ar' ? 'left' : 'right',
+                            rtl: languageSwitcher.currentLang === 'ar',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    family: languageSwitcher.currentLang === 'ar' ? 'Cairo' : 'Segoe UI',
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            rtl: languageSwitcher.currentLang === 'ar',
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} ${translations.units || 'وحدة'} (${percentage}%)`;
+                                }
+                            },
+                            titleFont: {
+                                family: languageSwitcher.currentLang === 'ar' ? 'Cairo' : 'Segoe UI'
+                            },
+                            bodyFont: {
+                                family: languageSwitcher.currentLang === 'ar' ? 'Cairo' : 'Segoe UI'
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+        
+        // Update chart data based on selected period
+        function updateChartData() {
+            const periodSelect = document.getElementById('chartPeriod');
+            const period = periodSelect.options[periodSelect.selectedIndex].textContent;
+            
+            // Simulate data update based on period
+            let transactionsData, categoryData;
+            
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang] || {};
+            
+            switch(period) {
+                case translations.last_30_days || 'آخر 30 يوم':
+                    transactionsData = {
+                        incoming: [15, 22, 18, 25, 30, 28, 22, 19, 24, 27, 20, 18, 22, 25, 28, 30, 32, 28, 25, 22, 20, 18, 22, 25, 28, 30, 32, 35, 30, 28],
+                        outgoing: [10, 15, 12, 18, 20, 17, 14, 12, 16, 19, 15, 13, 16, 18, 20, 22, 25, 22, 20, 18, 16, 14, 16, 18, 20, 22, 24, 26, 22, 20]
+                    };
+                    categoryData = [40, 30, 15, 10, 5];
+                    break;
+                    
+                case translations.last_3_months || 'آخر 3 أشهر':
+                    transactionsData = {
+                        incoming: [120, 135, 110],
+                        outgoing: [85, 95, 80]
+                    };
+                    categoryData = [45, 28, 12, 10, 5];
+                    break;
+                    
+                default: // Last 7 days
+                    transactionsData = {
+                        incoming: [12, 19, 8, 15, 22, 18, 25],
+                        outgoing: [8, 12, 6, 9, 15, 11, 18]
+                    };
+                    categoryData = [35, 25, 20, 15, 5];
+            }
+            
+            // Update transactions chart
+            if (transactionsChart) {
+                transactionsChart.data.datasets[0].data = transactionsData.incoming;
+                transactionsChart.data.datasets[1].data = transactionsData.outgoing;
+                
+                if (period === (translations.last_30_days || 'آخر 30 يوم')) {
+                    const days = [];
+                    for (let i = 29; i >= 0; i--) {
+                        const date = new Date();
+                        date.setDate(date.getDate() - i);
+                        const dayName = languageSwitcher.currentLang === 'ar' ? 
+                            date.toLocaleDateString('ar-EG', { weekday: 'short' }) :
+                            languageSwitcher.currentLang === 'ru' ?
+                            date.toLocaleDateString('ru-RU', { weekday: 'short' }) :
+                            date.toLocaleDateString(languageSwitcher.currentLang, { weekday: 'short' });
+                        days.push(dayName);
+                    }
+                    transactionsChart.data.labels = days;
+                } else if (period === (translations.last_3_months || 'آخر 3 أشهر')) {
+                    const monthLabels = languageSwitcher.currentLang === 'ar' ? 
+                        ['الشهر الأول', 'الشهر الثاني', 'الشهر الثالث'] :
+                        languageSwitcher.currentLang === 'ru' ?
+                        ['Месяц 1', 'Месяц 2', 'Месяц 3'] :
+                        ['Month 1', 'Month 2', 'Month 3'];
+                    transactionsChart.data.labels = monthLabels;
+                } else {
+                    transactionsChart.data.labels = languageSwitcher.currentLang === 'ar' ? 
+                        ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'] :
+                        languageSwitcher.currentLang === 'ru' ?
+                        ['Сб', 'Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт'] :
+                        ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+                }
+                
+                transactionsChart.update();
+            }
+            
+            // Update category chart
+            if (categoryChart) {
+                categoryChart.data.datasets[0].data = categoryData;
+                categoryChart.update();
+            }
+            
+            WMS.showAlert(`${translations.charts_updated || 'تم تحديث المخططات'} ${period}`, 'info');
+        }
+        
+        // Show category details
+        function showCategoryDetails() {
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang] || {};
+            const categories = translations.categories ? JSON.parse(translations.categories) : 
+                languageSwitcher.currentLang === 'ar' ? 
+                ['إلكترونيات', 'أجهزة كمبيوتر', 'قرطاسية', 'أثاث مكتبي', 'أخرى'] :
+                languageSwitcher.currentLang === 'ru' ?
+                ['Электроника', 'Компьютеры', 'Канцелярия', 'Офисная мебель', 'Другое'] :
+                ['Electronics', 'Computers', 'Stationery', 'Office Furniture', 'Other'];
+            
+            const details = `
+                <div class="mb-3">
+                    <h6 class="mb-3">${translations.category_details || 'تفاصيل توزيع الفئات'}</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle me-2" style="width: 15px; height: 15px; background-color: #3498db;"></div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between">
+                                        <span>${categories[0]}</span>
+                                        <span class="fw-bold">35%</span>
+                                    </div>
+                                    <div class="progress" style="height: 5px;">
+                                        <div class="progress-bar" style="width: 35%; background-color: #3498db;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle me-2" style="width: 15px; height: 15px; background-color: #2ecc71;"></div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between">
+                                        <span>${categories[1]}</span>
+                                        <span class="fw-bold">25%</span>
+                                    </div>
+                                    <div class="progress" style="height: 5px;">
+                                        <div class="progress-bar" style="width: 25%; background-color: #2ecc71;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle me-2" style="width: 15px; height: 15px; background-color: #f39c12;"></div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between">
+                                        <span>${categories[2]}</span>
+                                        <span class="fw-bold">20%</span>
+                                    </div>
+                                    <div class="progress" style="height: 5px;">
+                                        <div class="progress-bar" style="width: 20%; background-color: #f39c12;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle me-2" style="width: 15px; height: 15px; background-color: #9b59b6;"></div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between">
+                                        <span>${categories[3]}</span>
+                                        <span class="fw-bold">15%</span>
+                                    </div>
+                                    <div class="progress" style="height: 5px;">
+                                        <div class="progress-bar" style="width: 15%; background-color: #9b59b6;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle me-2" style="width: 15px; height: 15px; background-color: #e74c3c;"></div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between">
+                                        <span>${categories[4]}</span>
+                                        <span class="fw-bold">5%</span>
+                                    </div>
+                                    <div class="progress" style="height: 5px;">
+                                        <div class="progress-bar" style="width: 5%; background-color: #e74c3c;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            WMS.showAlert(details, 'info', 8000);
+        }
+        
+        // Update stats periodically
+        function updateStats() {
+            // Update the "last updated" text
+            const now = new Date();
+            const timeString = now.toLocaleTimeString(languageSwitcher.currentLang === 'ar' ? 'ar-EG' : languageSwitcher.currentLang, { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: languageSwitcher.currentLang !== 'ru'
+            });
+            
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang] || {};
+            
+            document.querySelectorAll('.stat-trend').forEach(el => {
+                if (el.textContent.includes('آخر تحديث') || el.textContent.includes('Last update') || el.textContent.includes('Последнее обновление')) {
+                    el.innerHTML = `<i class="fas fa-sync-alt"></i><span>${translations.last_updated_now || 'آخر تحديث: الآن'}</span>`;
+                }
+            });
+        }
+        
+        // Export functions to global scope
+        window.toggleSidebar = toggleSidebar;
+        window.showNotifications = showNotifications;
+        window.markAllAsRead = markAllAsRead;
+        window.updateChartData = updateChartData;
+        window.showCategoryDetails = showCategoryDetails;
+        window.WMS = WMS;
+    </script>
+    <script src="js/languageSwitcher.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

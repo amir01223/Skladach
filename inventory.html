@@ -1,0 +1,2621 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="inventory_management">إدارة المخزون - نظام إدارة المخازن</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #17a2b8;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --sidebar-width: 280px;
+            
+            /* Inventory Colors */
+            --inventory-blue: linear-gradient(135deg, #3498db, #2980b9);
+            --inventory-green: linear-gradient(135deg, #27ae60, #2ecc71);
+            --inventory-orange: linear-gradient(135deg, #f39c12, #e67e22);
+            --inventory-red: linear-gradient(135deg, #e74c3c, #c0392b);
+            --inventory-purple: linear-gradient(135deg, #9b59b6, #8e44ad);
+            --inventory-teal: linear-gradient(135deg, #1abc9c, #16a085);
+        }
+        
+        /* Language Switcher */
+        .language-switcher-header {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-left: 15px;
+        }
+        
+        .lang-btn {
+            padding: 3px 8px;
+            border: 2px solid transparent;
+            background: transparent;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 11px;
+            color: var(--dark-color);
+            min-width: 25px;
+            text-align: center;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+            border-color: var(--secondary-color);
+        }
+        
+        /* RTL/LTR Support */
+        body.ltr {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        body.ltr .header-title,
+        body.ltr .summary-label,
+        body.ltr .summary-subtext,
+        body.ltr .chart-card-header h5,
+        body.ltr .report-tab,
+        body.ltr .table-custom th,
+        body.ltr .table-custom td,
+        body.ltr .stat-label,
+        body.ltr .modal-title,
+        body.ltr .sidebar-user div,
+        body.ltr .nav-link span,
+        body.ltr .sidebar-logo h3,
+        body.ltr .sidebar-logo small,
+        body.ltr .btn-custom {
+            text-align: left;
+            direction: ltr;
+        }
+        
+        body.ltr .sidebar-nav {
+            text-align: left;
+        }
+        
+        body.ltr .nav-link {
+            flex-direction: row;
+        }
+        
+        body.ltr .nav-link i {
+            margin-right: 0;
+            margin-left: 15px;
+        }
+        
+        body.ltr .nav-link:hover {
+            transform: translateX(5px);
+        }
+        
+        body.ltr #sidebar {
+            right: auto;
+            left: 0;
+            border-left: none;
+            border-right: 4px solid var(--secondary-color);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        }
+        
+        body.ltr #sidebar.hidden {
+            margin-right: 0;
+            margin-left: calc(-1 * var(--sidebar-width));
+        }
+        
+        body.ltr .main-content {
+            margin-right: 0;
+            margin-left: var(--sidebar-width);
+        }
+        
+        body.ltr .main-content.full-width {
+            margin-left: 0;
+        }
+        
+        body.ltr .header-title i {
+            margin-left: 0;
+            margin-right: 10px;
+        }
+        
+        body.ltr .language-switcher-header {
+            margin-left: 0;
+            margin-right: 15px;
+        }
+        
+        body.ltr .text-end {
+            text-align: left !important;
+        }
+        
+        body.ltr .text-start {
+            text-align: right !important;
+        }
+        
+        body.ltr .summary-card,
+        body.ltr .chart-card,
+        body.ltr .report-table-card,
+        body.ltr .quick-stats {
+            text-align: left;
+        }
+        
+        body.ltr .form-select,
+        body.ltr .form-control {
+            text-align: left;
+            direction: ltr;
+        }
+        
+        body.ltr .chart-card-header .btn-link {
+            order: -1;
+        }
+        
+        body.ltr .d-flex.gap-3 {
+            flex-direction: row;
+        }
+        
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Sidebar Styles - CORRECTED */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color) 0%, #1a252f 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1030;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        #sidebar.hidden {
+            margin-right: calc(-1 * var(--sidebar-width));
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sidebar-logo i {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-user {
+            padding: 1rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-user img {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        
+        /* Navigation - CORRECTED */
+        .sidebar-nav {
+            padding: 1rem 0;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 2rem;
+            text-align: right;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 1rem 1.5rem;
+            margin: 0.2rem 0.5rem 0.8rem 0.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(-5px);
+        }
+        
+        .nav-link.active {
+            color: white;
+            background: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+        }
+        
+        /* Logout Button - CORRECTED */
+        #sidebar .p-3.mt-auto {
+            margin-top: auto !important;
+            padding: 1.5rem !important;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        .main-content {
+            margin-right: var(--sidebar-width);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+        
+        .main-content.full-width {
+            margin-right: 0;
+        }
+        
+        /* Header Styles */
+        .main-header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        
+        .header-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .header-title i {
+            color: var(--secondary-color);
+            margin-left: 10px;
+        }
+        
+        /* Summary Cards */
+        .summary-card {
+            border: none;
+            border-radius: 15px;
+            padding: 1.5rem;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            z-index: 1;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .summary-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+            opacity: 0.9;
+        }
+        
+        .summary-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .summary-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-subtext {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-action {
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Filters */
+        .filters-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+        
+        .filter-input {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+        
+        /* Table Styles */
+        .table-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            background: white;
+        }
+        
+        .table-custom {
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+        
+        .table-custom thead {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+        }
+        
+        .table-custom th {
+            font-weight: 600;
+            padding: 1rem;
+            border: none;
+            white-space: nowrap;
+            text-align: right;
+        }
+        
+        .table-custom tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .table-custom tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+            transform: scale(1.002);
+        }
+        
+        .table-custom td {
+            padding: 1rem;
+            vertical-align: middle;
+            text-align: right;
+        }
+        
+        /* Badge Styles */
+        .badge-custom {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: none;
+        }
+        
+        .badge-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .badge-warning {
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+        }
+        
+        .badge-danger {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            color: white;
+        }
+        
+        .badge-info {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: white;
+        }
+        
+        .badge-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+        
+        /* Button Styles */
+        .btn-custom {
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        /* Alert Styles */
+        .alert-custom {
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Modal Styles */
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem 2rem;
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #e9ecef;
+            padding: 1rem 2rem;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .form-group.error .form-control,
+        .form-group.error .form-select {
+            border-color: #e74c3c;
+        }
+        
+        .form-group.error .error-message {
+            display: block;
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            #sidebar {
+                margin-right: calc(-1 * var(--sidebar-width));
+            }
+            
+            #sidebar.hidden {
+                margin-right: 0;
+            }
+            
+            .main-content {
+                margin-right: 0;
+            }
+            
+            .language-switcher-header {
+                display: none;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 1.4rem;
+            }
+            
+            .summary-number {
+                font-size: 2rem;
+            }
+            
+            .filters-container {
+                padding: 1rem;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .table-custom th,
+            .table-custom td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .modal-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar" class="d-flex flex-column">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-warehouse"></i>
+               <div>
+                        <h6 class="mb-0 fw-bold" data-i18n="user_name">Ибрахим Амир</h6>
+                         <small class="text-white-50" data-i18n="user_role">مدير النظام</small>
+    </div>
+            </div>
+        </div>
+        
+        <!-- User Info -->
+        <div class="sidebar-user d-flex align-items-center gap-3">
+            <img src="https://ui-avatars.com/api/?name=أحمد+محمود&background=3498db&color=fff&size=50&rounded=true" 
+                 class="rounded-circle" alt="User">
+            <div>
+                <h6 class="mb-0 fw-bold">Ибрахим Амир</h6>
+                <small class="text-white-50" data-i18n="user_role">مدير النظام</small>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="sidebar-nav flex-grow-1">
+            <a href="dashboard.html" class="nav-link">
+                <i class="fas fa-chart-line"></i>
+                <span data-i18n="dashboard">لوحة التحكم</span>
+            </a>
+            <a href="inventory.html" class="nav-link active">
+                <i class="fas fa-boxes"></i>
+                <span data-i18n="inventory_management">إدارة المخزون</span>
+            </a>
+            <a href="transactions.html" class="nav-link">
+                <i class="fas fa-exchange-alt"></i>
+                <span data-i18n="daily_operations">العمليات اليومية</span>
+            </a>
+            <a href="reports.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i>
+                <span data-i18n="reports_analysis">التقارير والتحليل</span>
+            </a>
+            <a href="warehouses.html" class="nav-link">
+                <i class="fas fa-warehouse"></i>
+                <span data-i18n="warehouse_management">إدارة المخازن</span>
+            </a>
+            <a href="users.html" class="nav-link">
+                <i class="fas fa-users"></i>
+                <span data-i18n="users">المستخدمون</span>
+            </a>
+            <a href="settings.html" class="nav-link">
+                <i class="fas fa-cog"></i>
+                <span data-i18n="settings">الإعدادات</span>
+            </a>
+        </nav>
+        
+        <!-- Logout Button -->
+        <div class="p-3 mt-auto">
+            <a href="index.html" class="btn btn-danger w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
+                <i class="fas fa-sign-out-alt"></i>
+                <span data-i18n="logout">تسجيل الخروج</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="main-header d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <button onclick="toggleSidebar()" class="btn btn-outline-primary d-lg-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="header-title">
+                    <i class="fas fa-boxes"></i>
+                    <span data-i18n="inventory_management">إدارة المخزون</span>
+                </h1>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <!-- Language Switcher -->
+                <div class="language-switcher-header d-none d-lg-flex">
+                    <button class="lang-btn" data-lang="fr">FR</button>
+                    <button class="lang-btn active" data-lang="ar">AR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="ru">RU</button>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button onclick="openAddProductModal()" class="btn btn-primary btn-custom">
+                        <i class="fas fa-plus"></i>
+                        <span data-i18n="add_product">إضافة منتج</span>
+                    </button>
+                    <button onclick="importProducts()" class="btn btn-success btn-custom">
+                        <i class="fas fa-file-import"></i>
+                        <span data-i18n="import_products">استيراد</span>
+                    </button>
+                    <button onclick="exportProducts()" class="btn btn-warning btn-custom">
+                        <i class="fas fa-file-export"></i>
+                        <span data-i18n="export_products">تصدير</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Alert Container -->
+        <div id="alertContainer" class="container mt-3"></div>
+
+        <!-- Main Content -->
+        <main class="container-fluid py-4">
+            <!-- Summary Cards -->
+            <div class="row g-4 mb-4 fade-in">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="summary-card" style="background: var(--inventory-blue);">
+                        <div class="summary-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <h3 class="summary-label" data-i18n="total_products_label">إجمالي المنتجات</h3>
+                        <div class="summary-number" id="totalProducts">0</div>
+                        <div class="summary-subtext" data-i18n="unique_items">عنصر فريد</div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="summary-card" style="background: var(--inventory-green);">
+                        <div class="summary-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <h3 class="summary-label" data-i18n="total_value_label">إجمالي القيمة</h3>
+                        <div class="summary-number" id="totalValue">0</div>
+                        <div class="summary-subtext" data-i18n="inventory_value">قيمة المخزون</div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="summary-card" style="background: var(--inventory-orange);">
+                        <div class="summary-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3 class="summary-label" data-i18n="low_stock_label">منخفض المخزون</h3>
+                        <div class="summary-number" id="lowStockCount">0</div>
+                        <div class="summary-subtext" data-i18n="needs_attention">يحتاج اهتمام</div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="summary-card" style="background: var(--inventory-red);">
+                        <div class="summary-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <h3 class="summary-label" data-i18n="out_of_stock_label">نفد من المخزون</h3>
+                        <div class="summary-number" id="outOfStockCount">0</div>
+                        <div class="summary-subtext" data-i18n="zero_quantity">كمية صفر</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-container fade-in">
+                <div class="row g-3">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="form-group">
+                            <label data-i18n="search">بحث</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" id="searchInput" class="form-control filter-input" 
+                                       placeholder="ابحث عن منتج..." oninput="filterInventory()">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="form-group">
+                            <label data-i18n="category">الفئة</label>
+                            <select id="categoryFilter" class="form-select filter-input" onchange="filterInventory()">
+                                <option value="" data-i18n="all_categories">جميع الفئات</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="form-group">
+                            <label data-i18n="warehouse">المخزن</label>
+                            <select id="warehouseFilter" class="form-select filter-input" onchange="filterInventory()">
+                                <option value="" data-i18n="all_warehouses">جميع المخازن</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="form-group">
+                            <label data-i18n="status">الحالة</label>
+                            <select id="statusFilter" class="form-select filter-input" onchange="filterInventory()">
+                                <option value="" data-i18n="all_status">جميع الحالات</option>
+                                <option value="available" data-i18n="available">متوفر</option>
+                                <option value="low_stock" data-i18n="low_stock">منخفض</option>
+                                <option value="out_of_stock" data-i18n="out_of_stock">نفد</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Table -->
+            <div class="table-container fade-in">
+                <div class="table-responsive">
+                    <table class="table table-hover table-custom">
+                        <thead>
+                            <tr>
+                                <th width="50">#</th>
+                                <th data-i18n="code">الرمز</th>
+                                <th data-i18n="product_name">اسم المنتج</th>
+                                <th data-i18n="category">الفئة</th>
+                                <th data-i18n="quantity">الكمية</th>
+                                <th data-i18n="price">السعر</th>
+                                <th data-i18n="value">القيمة</th>
+                                <th data-i18n="warehouse">المخزن</th>
+                                <th data-i18n="status">الحالة</th>
+                                <th data-i18n="actions">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <tr>
+                                <td colspan="10" class="text-center py-5">
+                                    <div class="loading-spinner mx-auto mb-3"></div>
+                                    <p class="text-muted mb-0" data-i18n="loading_data">جاري تحميل البيانات...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center mt-4 fade-in">
+                <div class="text-muted" data-i18n="showing_results">عرض <span id="currentCount">0</span> من <span id="totalCount">0</span> منتج</div>
+                <nav>
+                    <ul class="pagination mb-0">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" data-i18n="previous">السابق</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" data-i18n="next">التالي</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" data-i18n="add_new_product">إضافة منتج جديد</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addProductForm" onsubmit="event.preventDefault(); validateAndAddProduct();">
+                        <!-- Error Summary -->
+                        <div id="formErrors" class="alert alert-danger hidden" role="alert"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="productName" data-i18n="product_name">اسم المنتج *</label>
+                                    <input type="text" id="productName" class="form-control" 
+                                           placeholder="أدخل اسم المنتج" onblur="validateProductName()">
+                                    <div class="error-message" id="nameError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="productCode" data-i18n="product_code">رمز المنتج *</label>
+                                    <input type="text" id="productCode" class="form-control" 
+                                           placeholder="أدخل رمز المنتج" onblur="validateProductCode()">
+                                    <div class="error-message" id="codeError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="productBarcode" data-i18n="barcode">الباركود</label>
+                                    <input type="text" id="productBarcode" class="form-control" 
+                                           placeholder="أدخل الباركود (اختياري)" onblur="validateBarcode()">
+                                    <div class="error-message" id="barcodeError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="categorySelect" data-i18n="category">الفئة *</label>
+                                    <select id="categorySelect" class="form-select" onchange="validateCategory()">
+                                        <option value="" data-i18n="select_category">اختر الفئة</option>
+                                    </select>
+                                    <div class="error-message" id="categoryError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="productUnit" data-i18n="unit">وحدة القياس *</label>
+                                    <input type="text" id="productUnit" class="form-control" 
+                                           placeholder="مثال: قطعة، كيلو..." value="قطعة" onblur="validateUnit()">
+                                    <div class="error-message" id="unitError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="productPrice" data-i18n="selling_price">سعر البيع *</label>
+                                    <input type="number" id="productPrice" class="form-control" 
+                                           placeholder="0.00" step="0.01" min="0" onblur="validatePrice()">
+                                    <div class="error-message" id="priceError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="productCost" data-i18n="cost_price">سعر التكلفة</label>
+                                    <input type="number" id="productCost" class="form-control" 
+                                           placeholder="0.00" step="0.01" min="0" onblur="validateCost()">
+                                    <div class="error-message" id="costError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="productStock" data-i18n="initial_stock">الكمية الأولية *</label>
+                                    <input type="number" id="productStock" class="form-control" 
+                                           placeholder="0" min="0" value="0" onblur="validateStock()">
+                                    <div class="error-message" id="stockError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="reorderLevel" data-i18n="reorder_level">حد إعادة الطلب *</label>
+                                    <input type="number" id="reorderLevel" class="form-control" 
+                                           placeholder="0" min="0" value="5" onblur="validateReorderLevel()">
+                                    <div class="error-message" id="reorderError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="warehouseSelect" data-i18n="warehouse">المخزن *</label>
+                                    <select id="warehouseSelect" class="form-select" onchange="validateWarehouse()">
+                                        <option value="" data-i18n="select_warehouse">اختر المخزن</option>
+                                    </select>
+                                    <div class="error-message" id="warehouseError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="expiryDate" data-i18n="expiry_date">تاريخ الصلاحية</label>
+                                    <input type="date" id="expiryDate" class="form-control" 
+                                           onchange="validateExpiryDate()">
+                                    <div class="error-message" id="expiryError"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="productDescription" data-i18n="description">الوصف</label>
+                                    <textarea id="productDescription" class="form-control" 
+                                              rows="3" placeholder="وصف المنتج (اختياري)"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cancel">إلغاء</button>
+                    <button type="button" class="btn btn-primary" onclick="validateAndAddProduct()" id="submitBtn">
+                        <i class="fas fa-save me-2"></i>
+                        <span data-i18n="save_product">حفظ المنتج</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" data-i18n="product_details">تفاصيل المنتج</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="productDetailContent">
+                    <!-- Details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="close">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Language Switcher JS -->
+    <script>
+        // Language Switcher Configuration avec traductions intégrées
+        const languageSwitcher = {
+            currentLang: 'ar',
+            translations: {},
+            
+            // Available languages
+            languages: {
+                'ar': { name: 'العربية' },
+                'fr': { name: 'Français' },
+                'en': { name: 'English' },
+                'ru': { name: 'Русский' }
+            },
+            
+            // Traductions intégrées
+            builtInTranslations: {
+                'fr': {
+                    "inventory_management": "Gestion des Stocks",
+                    "system_name": "Système d'Entrepôt",
+                    "system_integration": "Bienvenue, Ahmed Mahmoud",
+                    "user_role": "Administrateur Système",
+                    "dashboard": "Tableau de Bord",
+                    "daily_operations": "Opérations Quotidiennes",
+                    "reports_analysis": "Rapports et Analyse",
+                    "warehouse_management": "Gestion des Entrepôts",
+                    "users": "Utilisateurs",
+                    "settings": "Paramètres",
+                    "logout": "Déconnexion",
+                    "total_products_label": "Total Produits",
+                    "unique_items": "articles uniques",
+                    "total_value_label": "Valeur Totale",
+                    "inventory_value": "Valeur du Stock",
+                    "low_stock_label": "Stock Bas",
+                    "needs_attention": "nécessite attention",
+                    "out_of_stock_label": "Rupture de Stock",
+                    "zero_quantity": "quantité zéro",
+                    "add_product": "Ajouter Produit",
+                    "import_products": "Importer",
+                    "export_products": "Exporter",
+                    "search": "Recherche",
+                    "category": "Catégorie",
+                    "warehouse": "Entrepôt",
+                    "status": "Statut",
+                    "all_categories": "Toutes catégories",
+                    "all_warehouses": "Tous les entrepôts",
+                    "all_status": "Tous statuts",
+                    "available": "Disponible",
+                    "low_stock": "Stock Bas",
+                    "out_of_stock": "Rupture",
+                    "code": "Code",
+                    "product_name": "Nom Produit",
+                    "quantity": "Quantité",
+                    "price": "Prix",
+                    "value": "Valeur",
+                    "actions": "Actions",
+                    "showing_results": "Affichage",
+                    "previous": "Précédent",
+                    "next": "Suivant",
+                    "loading_data": "Chargement des données...",
+                    "add_new_product": "Ajouter Nouveau Produit",
+                    "product_code": "Code Produit",
+                    "barcode": "Code-barres",
+                    "select_category": "Sélectionner Catégorie",
+                    "unit": "Unité",
+                    "selling_price": "Prix de Vente",
+                    "cost_price": "Prix de Revient",
+                    "initial_stock": "Stock Initial",
+                    "reorder_level": "Niveau de Réapprovisionnement",
+                    "select_warehouse": "Sélectionner Entrepôt",
+                    "expiry_date": "Date d'Expiration",
+                    "description": "Description",
+                    "cancel": "Annuler",
+                    "save_product": "Enregistrer Produit",
+                    "product_details": "Détails du Produit",
+                    "close": "Fermer",
+                    "edit": "Modifier",
+                    "delete": "Supprimer",
+                    "view": "Voir",
+                    "confirm_delete": "Confirmer Suppression",
+                    "delete_confirm_message": "Êtes-vous sûr de vouloir supprimer ce produit ?",
+                    "delete_success": "Produit supprimé avec succès",
+                    "add_success": "Produit ajouté avec succès",
+                    "update_success": "Produit mis à jour avec succès",
+                    "loading": "Chargement...",
+                    "saving": "Enregistrement...",
+                    "no_products": "Aucun produit",
+                    "total": "Total",
+                    "stock_value": "Valeur du Stock",
+                    "current_stock": "Stock Actuel",
+                    "unit_price": "Prix Unitaire",
+                    "total_value": "Valeur Totale",
+                    "last_update": "Dernière Mise à Jour",
+                    "created_at": "Date de Création",
+                    "expires_on": "Expire le",
+                    "no_expiry": "Pas de date d'expiration",
+                    "good": "Bon",
+                    "warning": "Avertissement",
+                    "critical": "Critique",
+                    "export_pdf": "Exporter PDF",
+                    "export_excel": "Exporter Excel",
+                    "print": "Imprimer",
+                    "filter": "Filtrer",
+                    "reset": "Réinitialiser",
+                    "apply": "Appliquer"
+                },
+                'en': {
+                    "inventory_management": "Inventory Management",
+                    "system_name": "Warehouse System",
+                    "system_integration": "Welcome, Ahmed Mahmoud",
+                    "user_role": "System Administrator",
+                    "dashboard": "Dashboard",
+                    "daily_operations": "Daily Operations",
+                    "reports_analysis": "Reports & Analysis",
+                    "warehouse_management": "Warehouse Management",
+                    "users": "Users",
+                    "settings": "Settings",
+                    "logout": "Logout",
+                    "total_products_label": "Total Products",
+                    "unique_items": "unique items",
+                    "total_value_label": "Total Value",
+                    "inventory_value": "Inventory Value",
+                    "low_stock_label": "Low Stock",
+                    "needs_attention": "needs attention",
+                    "out_of_stock_label": "Out of Stock",
+                    "zero_quantity": "zero quantity",
+                    "add_product": "Add Product",
+                    "import_products": "Import",
+                    "export_products": "Export",
+                    "search": "Search",
+                    "category": "Category",
+                    "warehouse": "Warehouse",
+                    "status": "Status",
+                    "all_categories": "All Categories",
+                    "all_warehouses": "All Warehouses",
+                    "all_status": "All Status",
+                    "available": "Available",
+                    "low_stock": "Low Stock",
+                    "out_of_stock": "Out of Stock",
+                    "code": "Code",
+                    "product_name": "Product Name",
+                    "quantity": "Quantity",
+                    "price": "Price",
+                    "value": "Value",
+                    "actions": "Actions",
+                    "showing_results": "Showing",
+                    "previous": "Previous",
+                    "next": "Next",
+                    "loading_data": "Loading data...",
+                    "add_new_product": "Add New Product",
+                    "product_code": "Product Code",
+                    "barcode": "Barcode",
+                    "select_category": "Select Category",
+                    "unit": "Unit",
+                    "selling_price": "Selling Price",
+                    "cost_price": "Cost Price",
+                    "initial_stock": "Initial Stock",
+                    "reorder_level": "Reorder Level",
+                    "select_warehouse": "Select Warehouse",
+                    "expiry_date": "Expiry Date",
+                    "description": "Description",
+                    "cancel": "Cancel",
+                    "save_product": "Save Product",
+                    "product_details": "Product Details",
+                    "close": "Close",
+                    "edit": "Edit",
+                    "delete": "Delete",
+                    "view": "View",
+                    "confirm_delete": "Confirm Delete",
+                    "delete_confirm_message": "Are you sure you want to delete this product?",
+                    "delete_success": "Product deleted successfully",
+                    "add_success": "Product added successfully",
+                    "update_success": "Product updated successfully",
+                    "loading": "Loading...",
+                    "saving": "Saving...",
+                    "no_products": "No products",
+                    "total": "Total",
+                    "stock_value": "Stock Value",
+                    "current_stock": "Current Stock",
+                    "unit_price": "Unit Price",
+                    "total_value": "Total Value",
+                    "last_update": "Last Update",
+                    "created_at": "Created At",
+                    "expires_on": "Expires on",
+                    "no_expiry": "No expiry date",
+                    "good": "Good",
+                    "warning": "Warning",
+                    "critical": "Critical",
+                    "export_pdf": "Export PDF",
+                    "export_excel": "Export Excel",
+                    "print": "Print",
+                    "filter": "Filter",
+                    "reset": "Reset",
+                    "apply": "Apply"
+                },
+                'ru': {
+                    "inventory_management": "Управление Запасами",
+                    "system_name": "Система Склада",
+                    "system_integration": "Добро пожаловать,Ибрахим Амир",
+                    "user_role": "Администратор Системы",
+                    "dashboard": "Панель Управления",
+                    "daily_operations": "Ежедневные Операции",
+                    "reports_analysis": "Отчеты и Анализ",
+                    "warehouse_management": "Управление Складами",
+                    "users": "Пользователи",
+                    "settings": "Настройки",
+                    "logout": "Выход",
+                    "total_products_label": "Всего Продуктов",
+                    "unique_items": "уникальных товаров",
+                    "total_value_label": "Общая Стоимость",
+                    "inventory_value": "Стоимость Запасов",
+                    "low_stock_label": "Низкий Запас",
+                    "needs_attention": "требует внимания",
+                    "out_of_stock_label": "Нет в Наличии",
+                    "zero_quantity": "количество ноль",
+                    "add_product": "Добавить Товар",
+                    "import_products": "Импорт",
+                    "export_products": "Экспорт",
+                    "search": "Поиск",
+                    "category": "Категория",
+                    "warehouse": "Склад",
+                    "status": "Статус",
+                    "all_categories": "Все Категории",
+                    "all_warehouses": "Все Склады",
+                    "all_status": "Все Статусы",
+                    "available": "Доступно",
+                    "low_stock": "Низкий Запас",
+                    "out_of_stock": "Нет в Наличии",
+                    "code": "Код",
+                    "product_name": "Название Товара",
+                    "quantity": "Количество",
+                    "price": "Цена",
+                    "value": "Стоимость",
+                    "actions": "Действия",
+                    "showing_results": "Показано",
+                    "previous": "Предыдущий",
+                    "next": "Следующий",
+                    "loading_data": "Загрузка данных...",
+                    "add_new_product": "Добавить Новый Товар",
+                    "product_code": "Код Товара",
+                    "barcode": "Штрих-код",
+                    "select_category": "Выбрать Категорию",
+                    "unit": "Единица",
+                    "selling_price": "Цена Продажи",
+                    "cost_price": "Себестоимость",
+                    "initial_stock": "Начальный Запас",
+                    "reorder_level": "Уровень Заказа",
+                    "select_warehouse": "Выбрать Склад",
+                    "expiry_date": "Срок Годности",
+                    "description": "Описание",
+                    "cancel": "Отмена",
+                    "save_product": "Сохранить Товар",
+                    "product_details": "Детали Товара",
+                    "close": "Закрыть",
+                    "edit": "Редактировать",
+                    "delete": "Удалить",
+                    "view": "Просмотр",
+                    "confirm_delete": "Подтвердить Удаление",
+                    "delete_confirm_message": "Вы уверены, что хотите удалить этот товар?",
+                    "delete_success": "Товар удален успешно",
+                    "add_success": "Товар добавлен успешно",
+                    "update_success": "Товар обновлен успешно",
+                    "loading": "Загрузка...",
+                    "saving": "Сохранение...",
+                    "no_products": "Нет товаров",
+                    "total": "Всего",
+                    "stock_value": "Стоимость Запаса",
+                    "current_stock": "Текущий Запас",
+                    "unit_price": "Цена за Единицу",
+                    "total_value": "Общая Стоимость",
+                    "last_update": "Последнее Обновление",
+                    "created_at": "Дата Создания",
+                    "expires_on": "Истекает",
+                    "no_expiry": "Нет срока годности",
+                    "good": "Хорошо",
+                    "warning": "Предупреждение",
+                    "critical": "Критический",
+                    "export_pdf": "Экспорт PDF",
+                    "export_excel": "Экспорт Excel",
+                    "print": "Печать",
+                    "filter": "Фильтр",
+                    "reset": "Сброс",
+                    "apply": "Применить"
+                },
+                'ar': {
+                    "inventory_management": "إدارة المخزون",
+                    "system_name": "نظام المخازن",
+                    "system_integration": "مرحباً،Ибрахим Амир",
+                    "user_role": "مدير النظام",
+                    "dashboard": "لوحة التحكم",
+                    "daily_operations": "العمليات اليومية",
+                    "reports_analysis": "التقارير والتحليل",
+                    "warehouse_management": "إدارة المخازن",
+                    "users": "المستخدمون",
+                    "settings": "الإعدادات",
+                    "logout": "تسجيل الخروج",
+                    "total_products_label": "إجمالي المنتجات",
+                    "unique_items": "عنصر فريد",
+                    "total_value_label": "إجمالي القيمة",
+                    "inventory_value": "قيمة المخزون",
+                    "low_stock_label": "منخفض المخزون",
+                    "needs_attention": "يحتاج اهتمام",
+                    "out_of_stock_label": "نفد من المخزون",
+                    "zero_quantity": "كمية صفر",
+                    "add_product": "إضافة منتج",
+                    "import_products": "استيراد",
+                    "export_products": "تصدير",
+                    "search": "بحث",
+                    "category": "الفئة",
+                    "warehouse": "المخزن",
+                    "status": "الحالة",
+                    "all_categories": "جميع الفئات",
+                    "all_warehouses": "جميع المخازن",
+                    "all_status": "جميع الحالات",
+                    "available": "متوفر",
+                    "low_stock": "منخفض",
+                    "out_of_stock": "نفد",
+                    "code": "الرمز",
+                    "product_name": "اسم المنتج",
+                    "quantity": "الكمية",
+                    "price": "السعر",
+                    "value": "القيمة",
+                    "actions": "الإجراءات",
+                    "showing_results": "عرض",
+                    "previous": "السابق",
+                    "next": "التالي",
+                    "loading_data": "جاري تحميل البيانات...",
+                    "add_new_product": "إضافة منتج جديد",
+                    "product_code": "رمز المنتج",
+                    "barcode": "الباركود",
+                    "select_category": "اختر الفئة",
+                    "unit": "وحدة القياس",
+                    "selling_price": "سعر البيع",
+                    "cost_price": "سعر التكلفة",
+                    "initial_stock": "الكمية الأولية",
+                    "reorder_level": "حد إعادة الطلب",
+                    "select_warehouse": "اختر المخزن",
+                    "expiry_date": "تاريخ الصلاحية",
+                    "description": "الوصف",
+                    "cancel": "إلغاء",
+                    "save_product": "حفظ المنتج",
+                    "product_details": "تفاصيل المنتج",
+                    "close": "إغلاق",
+                    "edit": "تعديل",
+                    "delete": "حذف",
+                    "view": "عرض",
+                    "confirm_delete": "تأكيد الحذف",
+                    "delete_confirm_message": "هل أنت متأكد من حذف هذا المنتج؟",
+                    "delete_success": "تم حذف المنتج بنجاح",
+                    "add_success": "تم إضافة المنتج بنجاح",
+                    "update_success": "تم تحديث المنتج بنجاح",
+                    "loading": "جاري التحميل...",
+                    "saving": "جاري الحفظ...",
+                    "no_products": "لا توجد منتجات",
+                    "total": "الإجمالي",
+                    "stock_value": "قيمة المخزون",
+                    "current_stock": "الكمية الحالية",
+                    "unit_price": "سعر الوحدة",
+                    "total_value": "القيمة الإجمالية",
+                    "last_update": "آخر تحديث",
+                    "created_at": "تاريخ الإضافة",
+                    "expires_on": "ينتهي في",
+                    "no_expiry": "لا يوجد تاريخ صلاحية",
+                    "good": "جيد",
+                    "warning": "تحذير",
+                    "critical": "حرج",
+                    "export_pdf": "تصدير PDF",
+                    "export_excel": "تصدير Excel",
+                    "print": "طباعة",
+                    "filter": "تصفية",
+                    "reset": "إعادة تعيين",
+                    "apply": "تطبيق"
+                }
+            },
+            
+            // Initialize the language switcher
+            init: function() {
+                this.loadSavedLanguage();
+                this.setupEventListeners();
+            },
+            
+            // Load saved language from localStorage or browser
+            loadSavedLanguage: function() {
+                const savedLang = localStorage.getItem('preferredLang');
+                const browserLang = navigator.language.split('-')[0];
+                const availableLangs = Object.keys(this.languages);
+                
+                let langToLoad = savedLang;
+                
+                if (!langToLoad || !availableLangs.includes(langToLoad)) {
+                    langToLoad = availableLangs.includes(browserLang) ? browserLang : 'ar';
+                }
+                
+                this.switchLanguage(langToLoad);
+            },
+            
+            // Switch to a specific language
+            switchLanguage: async function(langCode) {
+                if (this.currentLang === langCode) return;
+                
+                console.log('Switching to language:', langCode);
+                
+                try {
+                    // Use built-in translations
+                    if (this.builtInTranslations[langCode]) {
+                        this.translations[langCode] = this.builtInTranslations[langCode];
+                    } else {
+                        // Fallback to Arabic if no built-in translation
+                        this.translations[langCode] = this.builtInTranslations['ar'];
+                    }
+                    
+                    // Update current language
+                    this.currentLang = langCode;
+                    
+                    // Save preference
+                    localStorage.setItem('preferredLang', langCode);
+                    
+                    // Apply translations
+                    this.applyTranslations(this.translations[langCode]);
+                    
+                    // Update UI direction and language
+                    this.updatePageDirection(langCode);
+                    
+                    // Update active button
+                    this.updateActiveButton(langCode);
+                    
+                    // Update page title
+                    if (this.translations[langCode].inventory_management) {
+                        document.title = this.translations[langCode].inventory_management;
+                    }
+                    
+                    // Recharger les données dynamiques avec la nouvelle langue
+                    await this.reloadDynamicData();
+                    
+                    console.log('Language switched to:', langCode);
+                    
+                } catch (error) {
+                    console.error('Failed to load language:', error);
+                    // Fallback to built-in translations
+                    if (this.builtInTranslations[langCode]) {
+                        this.translations[langCode] = this.builtInTranslations[langCode];
+                        this.currentLang = langCode;
+                        this.applyTranslations(this.translations[langCode]);
+                        this.updatePageDirection(langCode);
+                        this.updateActiveButton(langCode);
+                    } else if (langCode !== 'ar') {
+                        this.switchLanguage('ar');
+                    }
+                }
+            },
+            
+            // Apply translations to all elements
+            applyTranslations: function(translationData) {
+                // Translate text elements
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (translationData[key]) {
+                        element.textContent = translationData[key];
+                    } else {
+                        console.warn('Translation key not found:', key);
+                    }
+                });
+                
+                // Translate placeholders
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                    const key = element.getAttribute('data-i18n-placeholder');
+                    if (translationData[key]) {
+                        element.placeholder = translationData[key];
+                    }
+                });
+            },
+            
+            // Update page direction (RTL/LTR)
+            updatePageDirection: function(langCode) {
+                const html = document.documentElement;
+                const body = document.body;
+                
+                // Remove existing direction classes
+                body.classList.remove('ltr');
+                
+                if (langCode === 'ar') {
+                    html.dir = 'rtl';
+                    html.lang = 'ar';
+                } else {
+                    html.dir = 'ltr';
+                    html.lang = langCode;
+                    body.classList.add('ltr');
+                }
+                
+                // Force reflow to ensure styles are applied correctly
+                document.body.offsetHeight;
+            },
+            
+            // Update active language button
+            updateActiveButton: function(langCode) {
+                document.querySelectorAll('.lang-btn').forEach(button => {
+                    button.classList.remove('active');
+                    if (button.getAttribute('data-lang') === langCode) {
+                        button.classList.add('active');
+                    }
+                });
+            },
+            
+            // Setup event listeners for language buttons
+            setupEventListeners: function() {
+                document.querySelectorAll('.lang-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const lang = e.target.getAttribute('data-lang');
+                        this.switchLanguage(lang);
+                    });
+                });
+            },
+            
+            // Recharger les données dynamiques
+            reloadDynamicData: async function() {
+                try {
+                    console.log('🔄 Rechargement des données dynamiques pour la langue:', this.currentLang);
+                    
+                    // Recharger les données des produits, catégories et entrepôts
+                    await loadInventoryData();
+                    
+                } catch (error) {
+                    console.error('❌ Erreur lors du rechargement des données:', error);
+                }
+            }
+        };
+    </script>
+    
+    <!-- Custom JS -->
+    <script>
+        // WMS Global Object avec données traduites
+        const WMS = {
+            // Sidebar Management
+            toggleSidebar: function() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.querySelector('.main-content');
+                if (sidebar) sidebar.classList.toggle('hidden');
+                if (mainContent) mainContent.classList.toggle('full-width');
+            },
+            
+            // Modal Management
+            openModal: function(modalId) {
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    modal.show();
+                }
+            },
+            
+            closeModal: function(modalId) {
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+                    }
+                }
+            },
+            
+            // Alert System
+            showAlert: function(message, type = 'info', duration = 5000) {
+                const alertContainer = document.getElementById('alertContainer');
+                
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type} alert-custom fade-in`;
+                alert.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>
+                        <div class="flex-grow-1">${message}</div>
+                        <button class="btn btn-link text-${type === 'success' ? 'success' : type === 'danger' ? 'danger' : type === 'warning' ? 'warning' : 'info'} p-0" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                alertContainer.appendChild(alert);
+                
+                // Auto remove after duration
+                if (duration > 0) {
+                    setTimeout(() => {
+                        if (alert.parentElement) {
+                            alert.remove();
+                        }
+                    }, duration);
+                }
+            },
+            
+            // Confirm Action
+            confirmAction: function(message, callback) {
+                if (confirm(message)) {
+                    callback();
+                }
+            },
+            
+            // Format Numbers
+            formatNumber: function(num) {
+                return new Intl.NumberFormat('ar-EG').format(num);
+            },
+            
+            // Format Currency
+            formatCurrency: function(num) {
+                return new Intl.NumberFormat('ar-EG', {
+                    style: 'currency',
+                    currency: 'EGP'
+                }).format(num);
+            },
+            
+            // Check if stock is low
+            isLowStock: function(currentStock, reorderLevel) {
+                return currentStock <= reorderLevel;
+            },
+            
+            // Fetch Data avec données traduites
+            fetchData: async function(endpoint) {
+                console.log(`Fetching data from: ${endpoint}`, 'Langue:', languageSwitcher.currentLang);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Obtenir la langue courante
+                const currentLang = languageSwitcher.currentLang;
+                
+                // Données traduites par langue
+                const translations = {
+                    'en': {
+                        'products': [
+                            { id: 1, code: 'LPT001', name: 'Laptop', category: 'Electronics', current_stock: 50, price: 25000, unit: 'Piece', warehouse_id: 'WH001', reorder_level: 10, cost: 20000, barcode: '1234567890123' },
+                            { id: 2, code: 'MS001', name: 'Wireless Mouse', category: 'Electronics', current_stock: 200, price: 150, unit: 'Piece', warehouse_id: 'WH001', reorder_level: 50, cost: 100, barcode: '1234567890124' },
+                            { id: 3, code: 'KB001', name: 'Keyboard', category: 'Electronics', current_stock: 150, price: 200, unit: 'Piece', warehouse_id: 'WH001', reorder_level: 30, cost: 150, barcode: '1234567890125' },
+                            { id: 4, code: 'MN001', name: '24-inch Monitor', category: 'Electronics', current_stock: 80, price: 4000, unit: 'Piece', warehouse_id: 'WH002', reorder_level: 20, cost: 3500, barcode: '1234567890126' },
+                            { id: 5, code: 'PR001', name: 'Laser Printer', category: 'Computers', current_stock: 25, price: 5000, unit: 'Piece', warehouse_id: 'WH002', reorder_level: 5, cost: 4000, barcode: '1234567890127' },
+                            { id: 6, code: 'PP001', name: 'A4 Paper', category: 'Stationery', current_stock: 500, price: 30, unit: 'Pack', warehouse_id: 'WH003', reorder_level: 100, cost: 20, barcode: '1234567890128' },
+                            { id: 7, code: 'CH001', name: 'Office Chair', category: 'Office Furniture', current_stock: 40, price: 1500, unit: 'Piece', warehouse_id: 'WH003', reorder_level: 10, cost: 1200, barcode: '1234567890129' },
+                            { id: 8, code: 'TB001', name: 'Wooden Desk', category: 'Office Furniture', current_stock: 20, price: 2500, unit: 'Piece', warehouse_id: 'WH003', reorder_level: 5, cost: 2000, barcode: '1234567890130' },
+                            { id: 9, code: 'HP001', name: 'Headphones', category: 'Electronics', current_stock: 100, price: 300, unit: 'Piece', warehouse_id: 'WH001', reorder_level: 25, cost: 200, barcode: '1234567890131' },
+                            { id: 10, code: 'USB001', name: 'USB Flash 64GB', category: 'Electronics', current_stock: 300, price: 120, unit: 'Piece', warehouse_id: 'WH002', reorder_level: 50, cost: 80, barcode: '1234567890132' }
+                        ],
+                        'categories': [
+                            { id: 1, name: 'Electronics' },
+                            { id: 2, name: 'Computers' },
+                            { id: 3, name: 'Stationery' },
+                            { id: 4, name: 'Office Furniture' },
+                            { id: 5, name: 'Office Supplies' }
+                        ],
+                        'warehouses': [
+                            { id: 1, code: 'WH001', name: 'Main Warehouse', location: 'Cairo' },
+                            { id: 2, code: 'WH002', name: 'Branch 1 Warehouse', location: 'Giza' },
+                            { id: 3, code: 'WH003', name: 'Branch 2 Warehouse', location: 'Alexandria' }
+                        ]
+                    },
+                    'fr': {
+                        'products': [
+                            { id: 1, code: 'LPT001', name: 'Ordinateur portable', category: 'Électronique', current_stock: 50, price: 25000, unit: 'Pièce', warehouse_id: 'WH001', reorder_level: 10, cost: 20000, barcode: '1234567890123' },
+                            { id: 2, code: 'MS001', name: 'Souris sans fil', category: 'Électronique', current_stock: 200, price: 150, unit: 'Pièce', warehouse_id: 'WH001', reorder_level: 50, cost: 100, barcode: '1234567890124' },
+                            { id: 3, code: 'KB001', name: 'Clavier', category: 'Électronique', current_stock: 150, price: 200, unit: 'Pièce', warehouse_id: 'WH001', reorder_level: 30, cost: 150, barcode: '1234567890125' },
+                            { id: 4, code: 'MN001', name: 'Moniteur 24 pouces', category: 'Électronique', current_stock: 80, price: 4000, unit: 'Pièce', warehouse_id: 'WH002', reorder_level: 20, cost: 3500, barcode: '1234567890126' },
+                            { id: 5, code: 'PR001', name: 'Imprimante laser', category: 'Informatique', current_stock: 25, price: 5000, unit: 'Pièce', warehouse_id: 'WH002', reorder_level: 5, cost: 4000, barcode: '1234567890127' },
+                            { id: 6, code: 'PP001', name: 'Papier A4', category: 'Papeterie', current_stock: 500, price: 30, unit: 'Paquet', warehouse_id: 'WH003', reorder_level: 100, cost: 20, barcode: '1234567890128' },
+                            { id: 7, code: 'CH001', name: 'Chaise de bureau', category: 'Mobilier de bureau', current_stock: 40, price: 1500, unit: 'Pièce', warehouse_id: 'WH003', reorder_level: 10, cost: 1200, barcode: '1234567890129' },
+                            { id: 8, code: 'TB001', name: 'Bureau en bois', category: 'Mobilier de bureau', current_stock: 20, price: 2500, unit: 'Pièce', warehouse_id: 'WH003', reorder_level: 5, cost: 2000, barcode: '1234567890130' },
+                            { id: 9, code: 'HP001', name: 'Casque audio', category: 'Électronique', current_stock: 100, price: 300, unit: 'Pièce', warehouse_id: 'WH001', reorder_level: 25, cost: 200, barcode: '1234567890131' },
+                            { id: 10, code: 'USB001', name: 'Clé USB 64GB', category: 'Électronique', current_stock: 300, price: 120, unit: 'Pièce', warehouse_id: 'WH002', reorder_level: 50, cost: 80, barcode: '1234567890132' }
+                        ],
+                        'categories': [
+                            { id: 1, name: 'Électronique' },
+                            { id: 2, name: 'Informatique' },
+                            { id: 3, name: 'Papeterie' },
+                            { id: 4, name: 'Mobilier de bureau' },
+                            { id: 5, name: 'Fournitures de bureau' }
+                        ],
+                        'warehouses': [
+                            { id: 1, code: 'WH001', name: 'Entrepôt Principal', location: 'Le Caire' },
+                            { id: 2, code: 'WH002', name: 'Entrepôt Filiale 1', location: 'Gizeh' },
+                            { id: 3, code: 'WH003', name: 'Entrepôt Filiale 2', location: 'Alexandrie' }
+                        ]
+                    },
+                    'ru': {
+                        'products': [
+                            { id: 1, code: 'LPT001', name: 'Ноутбук', category: 'Электроника', current_stock: 50, price: 25000, unit: 'Штука', warehouse_id: 'WH001', reorder_level: 10, cost: 20000, barcode: '1234567890123' },
+                            { id: 2, code: 'MS001', name: 'Беспроводная мышь', category: 'Электроника', current_stock: 200, price: 150, unit: 'Штука', warehouse_id: 'WH001', reorder_level: 50, cost: 100, barcode: '1234567890124' },
+                            { id: 3, code: 'KB001', name: 'Клавиатура', category: 'Электроника', current_stock: 150, price: 200, unit: 'Штука', warehouse_id: 'WH001', reorder_level: 30, cost: 150, barcode: '1234567890125' },
+                            { id: 4, code: 'MN001', name: '24-дюймовый монитор', category: 'Электроника', current_stock: 80, price: 4000, unit: 'Штука', warehouse_id: 'WH002', reorder_level: 20, cost: 3500, barcode: '1234567890126' },
+                            { id: 5, code: 'PR001', name: 'Лазерный принтер', category: 'Компьютеры', current_stock: 25, price: 5000, unit: 'Штука', warehouse_id: 'WH002', reorder_level: 5, cost: 4000, barcode: '1234567890127' },
+                            { id: 6, code: 'PP001', name: 'Бумага А4', category: 'Канцелярия', current_stock: 500, price: 30, unit: 'Пачка', warehouse_id: 'WH003', reorder_level: 100, cost: 20, barcode: '1234567890128' },
+                            { id: 7, code: 'CH001', name: 'Офисный стул', category: 'Офисная мебель', current_stock: 40, price: 1500, unit: 'Штука', warehouse_id: 'WH003', reorder_level: 10, cost: 1200, barcode: '1234567890129' },
+                            { id: 8, code: 'TB001', name: 'Деревянный стол', category: 'Офисная мебель', current_stock: 20, price: 2500, unit: 'Штука', warehouse_id: 'WH003', reorder_level: 5, cost: 2000, barcode: '1234567890130' },
+                            { id: 9, code: 'HP001', name: 'Наушники', category: 'Электроника', current_stock: 100, price: 300, unit: 'Штука', warehouse_id: 'WH001', reorder_level: 25, cost: 200, barcode: '1234567890131' },
+                            { id: 10, code: 'USB001', name: 'USB флеш 64GB', category: 'Электроника', current_stock: 300, price: 120, unit: 'Штука', warehouse_id: 'WH002', reorder_level: 50, cost: 80, barcode: '1234567890132' }
+                        ],
+                        'categories': [
+                            { id: 1, name: 'Электроника' },
+                            { id: 2, name: 'Компьютеры' },
+                            { id: 3, name: 'Канцелярия' },
+                            { id: 4, name: 'Офисная мебель' },
+                            { id: 5, name: 'Офисные принадлежности' }
+                        ],
+                        'warehouses': [
+                            { id: 1, code: 'WH001', name: 'Главный Склад', location: 'Каир' },
+                            { id: 2, code: 'WH002', name: 'Склад Филиала 1', location: 'Гиза' },
+                            { id: 3, code: 'WH003', name: 'Склад Филиала 2', location: 'Александрия' }
+                        ]
+                    },
+                    'ar': {
+                        'products': [
+                            { id: 1, code: 'LPT001', name: 'كمبيوتر محمول', category: 'إلكترونيات', current_stock: 50, price: 25000, unit: 'قطعة', warehouse_id: 'WH001', reorder_level: 10, cost: 20000, barcode: '1234567890123' },
+                            { id: 2, code: 'MS001', name: 'ماوس لاسلكي', category: 'إلكترونيات', current_stock: 200, price: 150, unit: 'قطعة', warehouse_id: 'WH001', reorder_level: 50, cost: 100, barcode: '1234567890124' },
+                            { id: 3, code: 'KB001', name: 'لوحة مفاتيح', category: 'إلكترونيات', current_stock: 150, price: 200, unit: 'قطعة', warehouse_id: 'WH001', reorder_level: 30, cost: 150, barcode: '1234567890125' },
+                            { id: 4, code: 'MN001', name: 'شاشة 24 بوصة', category: 'إلكترونيات', current_stock: 80, price: 4000, unit: 'قطعة', warehouse_id: 'WH002', reorder_level: 20, cost: 3500, barcode: '1234567890126' },
+                            { id: 5, code: 'PR001', name: 'طابعة ليزر', category: 'أجهزة كمبيوتر', current_stock: 25, price: 5000, unit: 'قطعة', warehouse_id: 'WH002', reorder_level: 5, cost: 4000, barcode: '1234567890127' },
+                            { id: 6, code: 'PP001', name: 'ورق A4', category: 'قرطاسية', current_stock: 500, price: 30, unit: 'رزمة', warehouse_id: 'WH003', reorder_level: 100, cost: 20, barcode: '1234567890128' },
+                            { id: 7, code: 'CH001', name: 'كرسي مكتب', category: 'أثاث مكتبي', current_stock: 40, price: 1500, unit: 'قطعة', warehouse_id: 'WH003', reorder_level: 10, cost: 1200, barcode: '1234567890129' },
+                            { id: 8, code: 'TB001', name: 'مكتب خشبي', category: 'أثاث مكتبي', current_stock: 20, price: 2500, unit: 'قطعة', warehouse_id: 'WH003', reorder_level: 5, cost: 2000, barcode: '1234567890130' },
+                            { id: 9, code: 'HP001', name: 'سماعات رأس', category: 'إلكترونيات', current_stock: 100, price: 300, unit: 'قطعة', warehouse_id: 'WH001', reorder_level: 25, cost: 200, barcode: '1234567890131' },
+                            { id: 10, code: 'USB001', name: 'فلاش USB 64GB', category: 'إلكترونيات', current_stock: 300, price: 120, unit: 'قطعة', warehouse_id: 'WH002', reorder_level: 50, cost: 80, barcode: '1234567890132' }
+                        ],
+                        'categories': [
+                            { id: 1, name: 'إلكترونيات' },
+                            { id: 2, name: 'أجهزة كمبيوتر' },
+                            { id: 3, name: 'قرطاسية' },
+                            { id: 4, name: 'أثاث مكتبي' },
+                            { id: 5, name: 'مستلزمات مكتبية' }
+                        ],
+                        'warehouses': [
+                            { id: 1, code: 'WH001', name: 'المخزن الرئيسي', location: 'القاهرة' },
+                            { id: 2, code: 'WH002', name: 'مخزن الفرع الأول', location: 'الجيزة' },
+                            { id: 3, code: 'WH003', name: 'مخزن الفرع الثاني', location: 'الإسكندرية' }
+                        ]
+                    }
+                };
+                
+                // Mock data for demonstration
+                if (endpoint.includes('products')) {
+                    return {
+                        success: true,
+                        data: translations[currentLang]?.products || translations['ar'].products
+                    };
+                }
+                
+                if (endpoint.includes('categories')) {
+                    return {
+                        success: true,
+                        data: translations[currentLang]?.categories || translations['ar'].categories
+                    };
+                }
+                
+                if (endpoint.includes('warehouses')) {
+                    return {
+                        success: true,
+                        data: translations[currentLang]?.warehouses || translations['ar'].warehouses
+                    };
+                }
+                
+                return { success: true, data: [] };
+            },
+            
+            // Post Data (mock function)
+            postData: async function(endpoint, data) {
+                console.log(`Posting data to: ${endpoint}`, data);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                const currentLang = languageSwitcher.currentLang;
+                const translations = languageSwitcher.builtInTranslations[currentLang] || languageSwitcher.builtInTranslations['ar'];
+                
+                return {
+                    success: true,
+                    message: translations.add_success || 'تمت العملية بنجاح',
+                    data: { ...data, id: 'P' + Date.now() }
+                };
+            },
+            
+            // Delete Data (mock function)
+            deleteData: async function(endpoint, id) {
+                console.log(`Deleting data from: ${endpoint}, ID: ${id}`);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                const currentLang = languageSwitcher.currentLang;
+                const translations = languageSwitcher.builtInTranslations[currentLang] || languageSwitcher.builtInTranslations['ar'];
+                
+                return {
+                    success: true,
+                    message: translations.delete_success || 'تم الحذف بنجاح'
+                };
+            }
+        };
+        
+        // Global variables
+        let allProducts = [];
+        let categories = [];
+        let warehouses = [];
+        let formErrors = {};
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 تهيئة صفحة إدارة المخزون...');
+            
+            // Initialize language switcher
+            languageSwitcher.init();
+            
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Load initial data
+            await loadInventoryData();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Show welcome message
+            setTimeout(() => {
+                const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+                if (translations && translations.inventory_management) {
+                    WMS.showAlert(`مرحباً بك في صفحة ${translations.inventory_management}!`, 'info');
+                }
+            }, 1000);
+        });
+        
+        // ==================== FUNCTIONS ====================
+        
+        function toggleSidebar() {
+            WMS.toggleSidebar();
+        }
+        
+        async function loadInventoryData() {
+            try {
+                console.log('🔍 تحميل بيانات المخزون...', 'اللغة:', languageSwitcher.currentLang);
+                
+                const [productsData, categoriesData, warehousesData] = await Promise.all([
+                    WMS.fetchData('products'),
+                    WMS.fetchData('categories'),
+                    WMS.fetchData('warehouses')
+                ]);
+                
+                if (productsData && productsData.data) { 
+                    allProducts = productsData.data; 
+                    console.log(`✅ ${allProducts.length} منتج تم تحميله`);
+                }
+                if (categoriesData && categoriesData.data) {
+                    categories = categoriesData.data;
+                }
+                if (warehousesData && warehousesData.data) {
+                    warehouses = warehousesData.data;
+                }
+                
+                displayInventory(allProducts);
+                updateSummaryCards();
+                populateCategoryFilters();
+                populateWarehouseFilters();
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحميل البيانات:', error);
+                const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+                WMS.showAlert(translations?.error_loading || 'حدث خطأ في تحميل البيانات', 'danger');
+            }
+        }
+        
+        function setupEventListeners() {
+            const searchInput = document.getElementById('searchInput');
+            const categoryFilter = document.getElementById('categoryFilter');
+            const warehouseFilter = document.getElementById('warehouseFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            
+            if (searchInput) searchInput.addEventListener('input', debounce(filterInventory, 300));
+            if (categoryFilter) categoryFilter.addEventListener('change', filterInventory);
+            if (warehouseFilter) warehouseFilter.addEventListener('change', filterInventory);
+            if (statusFilter) statusFilter.addEventListener('change', filterInventory);
+        }
+        
+        function displayInventory(products) {
+            const tbody = document.getElementById('inventoryTableBody');
+            if (!tbody) {
+                console.error('❌ لم يتم العثور على جسم الجدول');
+                return;
+            }
+            
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            
+            if (products.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="text-center py-5">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-0">${translations?.no_products || 'لا توجد منتجات'}</p>
+                        </td>
+                    </tr>`;
+                document.getElementById('currentCount').textContent = '0';
+                document.getElementById('totalCount').textContent = allProducts.length.toString();
+                return;
+            }
+            
+            tbody.innerHTML = products.map((product, index) => {
+                const value = (product.current_stock || 0) * (product.price || 0);
+                const isLow = WMS.isLowStock(product.current_stock, product.reorder_level);
+                const isOutOfStock = product.current_stock === 0;
+                const statusClass = isOutOfStock ? 'badge-danger' : isLow ? 'badge-warning' : 'badge-success';
+                const statusText = isOutOfStock ? translations?.out_of_stock : 
+                                 isLow ? translations?.low_stock : 
+                                 translations?.available;
+                
+                return `
+                    <tr class="hover-bg" data-product-id="${product.id}">
+                        <td>${String(index + 1).padStart(3, '0')}</td>
+                        <td class="fw-bold font-monospace">${product.code || '-'}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-box text-primary me-2"></i>
+                                <div>
+                                    <div class="fw-bold">${product.name}</div>
+                                    ${product.barcode ? `<small class="text-muted">${product.barcode}</small>` : ''}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark">${product.category || '-'}</span>
+                        </td>
+                        <td class="fw-bold ${isOutOfStock ? 'text-danger' : isLow ? 'text-warning' : 'text-success'}">
+                            ${WMS.formatNumber(product.current_stock)} ${product.unit || ''}
+                        </td>
+                        <td>${WMS.formatCurrency(product.price || 0)}</td>
+                        <td class="fw-bold text-primary">${WMS.formatCurrency(value)}</td>
+                        <td>
+                            <span class="text-muted">${getWarehouseName(product.warehouse_id)}</span>
+                        </td>
+                        <td>
+                            <span class="badge ${statusClass}">${statusText}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button onclick="viewProduct(${product.id})" class="btn btn-sm btn-outline-primary" title="${translations?.view || 'عرض'}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="editProduct(${product.id})" class="btn btn-sm btn-outline-success" title="${translations?.edit || 'تعديل'}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteProduct(${product.id})" class="btn btn-sm btn-outline-danger" title="${translations?.delete || 'حذف'}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.getElementById('currentCount').textContent = products.length.toString();
+            document.getElementById('totalCount').textContent = allProducts.length.toString();
+        }
+        
+        function getWarehouseName(warehouseCode) {
+            const warehouse = warehouses.find(w => w.code === warehouseCode);
+            return warehouse ? warehouse.name : 'غير محدد';
+        }
+        
+        function populateCategoryFilters() {
+            const categoryFilter = document.getElementById('categoryFilter');
+            const categorySelect = document.getElementById('categorySelect');
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            
+            if (categoryFilter) {
+                categoryFilter.innerHTML = '<option value="">' + (translations?.all_categories || 'جميع الفئات') + '</option>' + 
+                    categories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('');
+            }
+            if (categorySelect) {
+                categorySelect.innerHTML = '<option value="">' + (translations?.select_category || 'اختر الفئة') + '</option>' + 
+                    categories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('');
+            }
+        }
+        
+        function populateWarehouseFilters() {
+            const warehouseFilter = document.getElementById('warehouseFilter');
+            const warehouseSelect = document.getElementById('warehouseSelect');
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            
+            if (warehouseFilter) {
+                warehouseFilter.innerHTML = '<option value="">' + (translations?.all_warehouses || 'جميع المخازن') + '</option>' + 
+                    warehouses.map(wh => `<option value="${wh.name}">${wh.name}</option>`).join('');
+            }
+            if (warehouseSelect) {
+                warehouseSelect.innerHTML = '<option value="">' + (translations?.select_warehouse || 'اختر المخزن') + '</option>' + 
+                    warehouses.map(wh => `<option value="${wh.code}">${wh.name}</option>`).join('');
+            }
+        }
+        
+        function filterInventory() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const warehouseFilter = document.getElementById('warehouseFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            let filtered = allProducts.filter(product => {
+                const matchesSearch = !searchTerm || 
+                    product.name.toLowerCase().includes(searchTerm) || 
+                    (product.code && product.code.toLowerCase().includes(searchTerm)) ||
+                    (product.barcode && product.barcode.toLowerCase().includes(searchTerm));
+                
+                const matchesCategory = !categoryFilter || product.category === categoryFilter;
+                const matchesWarehouse = !warehouseFilter || getWarehouseName(product.warehouse_id) === warehouseFilter;
+                
+                let matchesStatus = true;
+                if (statusFilter) {
+                    const isLow = WMS.isLowStock(product.current_stock, product.reorder_level);
+                    const isOutOfStock = product.current_stock === 0;
+                    
+                    if (statusFilter === 'available') matchesStatus = !isLow && !isOutOfStock;
+                    else if (statusFilter === 'low_stock') matchesStatus = isLow && !isOutOfStock;
+                    else if (statusFilter === 'out_of_stock') matchesStatus = isOutOfStock;
+                }
+                
+                return matchesSearch && matchesCategory && matchesWarehouse && matchesStatus;
+            });
+            
+            displayInventory(filtered);
+        }
+        
+        function updateSummaryCards() {
+            const totalProducts = allProducts.length;
+            const totalValue = allProducts.reduce((sum, p) => sum + (p.current_stock * p.price), 0);
+            const lowStockCount = allProducts.filter(p => WMS.isLowStock(p.current_stock, p.reorder_level) && p.current_stock > 0).length;
+            const outOfStockCount = allProducts.filter(p => p.current_stock === 0).length;
+            
+            document.getElementById('totalProducts').textContent = WMS.formatNumber(totalProducts);
+            document.getElementById('totalValue').textContent = WMS.formatCurrency(totalValue);
+            document.getElementById('lowStockCount').textContent = WMS.formatNumber(lowStockCount);
+            document.getElementById('outOfStockCount').textContent = WMS.formatNumber(outOfStockCount);
+        }
+        
+        // ==================== VALIDATION FUNCTIONS ====================
+        
+        async function validateAndAddProduct() {
+            formErrors = {};
+            hideAllErrors();
+            
+            validateProductName();
+            validateProductCode();
+            validateBarcode();
+            validateCategory();
+            validateUnit();
+            validatePrice();
+            validateCost();
+            validateStock();
+            validateReorderLevel();
+            validateWarehouse();
+            validateExpiryDate();
+            
+            if (Object.keys(formErrors).length > 0) {
+                showFormErrors();
+                return;
+            }
+            
+            await addProduct();
+        }
+        
+        function validateProductName() {
+            const nameInput = document.getElementById('productName');
+            const errorElement = document.getElementById('nameError');
+            const value = nameInput.value.trim();
+            
+            if (!value) {
+                showError('name', 'اسم المنتج مطلوب', errorElement, nameInput);
+                return false;
+            }
+            
+            if (value.length < 2) {
+                showError('name', 'اسم المنتج يجب أن يكون على الأقل حرفين', errorElement, nameInput);
+                return false;
+            }
+            
+            hideError('name', errorElement, nameInput);
+            return true;
+        }
+        
+        function validateProductCode() {
+            const codeInput = document.getElementById('productCode');
+            const errorElement = document.getElementById('codeError');
+            const value = codeInput.value.trim();
+            
+            if (!value) {
+                showError('code', 'رمز المنتج مطلوب', errorElement, codeInput);
+                return false;
+            }
+            
+            const isDuplicate = allProducts.some(product => 
+                product.code && product.code.toLowerCase() === value.toLowerCase()
+            );
+            
+            if (isDuplicate) {
+                showError('code', 'رمز المنتج موجود مسبقاً', errorElement, codeInput);
+                return false;
+            }
+            
+            hideError('code', errorElement, codeInput);
+            return true;
+        }
+        
+        function validateBarcode() {
+            const barcodeInput = document.getElementById('productBarcode');
+            const errorElement = document.getElementById('barcodeError');
+            const value = barcodeInput.value.trim();
+            
+            if (value && !/^[0-9]+$/.test(value)) {
+                showError('barcode', 'الباركود يجب أن يحتوي على أرقام فقط', errorElement, barcodeInput);
+                return false;
+            }
+            
+            if (value) {
+                const isDuplicate = allProducts.some(product => 
+                    product.barcode && product.barcode === value
+                );
+                
+                if (isDuplicate) {
+                    showError('barcode', 'الباركود موجود مسبقاً', errorElement, barcodeInput);
+                    return false;
+                }
+            }
+            
+            hideError('barcode', errorElement, barcodeInput);
+            return true;
+        }
+        
+        function validateCategory() {
+            const categorySelect = document.getElementById('categorySelect');
+            const errorElement = document.getElementById('categoryError');
+            const value = categorySelect.value;
+            
+            if (!value) {
+                showError('category', 'يجب اختيار الفئة', errorElement, categorySelect);
+                return false;
+            }
+            
+            hideError('category', errorElement, categorySelect);
+            return true;
+        }
+        
+        function validateUnit() {
+            const unitInput = document.getElementById('productUnit');
+            const errorElement = document.getElementById('unitError');
+            const value = unitInput.value.trim();
+            
+            if (!value) {
+                showError('unit', 'وحدة القياس مطلوبة', errorElement, unitInput);
+                return false;
+            }
+            
+            hideError('unit', errorElement, unitInput);
+            return true;
+        }
+        
+        function validatePrice() {
+            const priceInput = document.getElementById('productPrice');
+            const errorElement = document.getElementById('priceError');
+            const value = parseFloat(priceInput.value);
+            
+            if (isNaN(value) || value < 0) {
+                showError('price', 'السعر يجب أن يكون رقم موجب', errorElement, priceInput);
+                return false;
+            }
+            
+            hideError('price', errorElement, priceInput);
+            return true;
+        }
+        
+        function validateCost() {
+            const costInput = document.getElementById('productCost');
+            const errorElement = document.getElementById('costError');
+            const priceInput = document.getElementById('productPrice');
+            const costValue = parseFloat(costInput.value);
+            const priceValue = parseFloat(priceInput.value);
+            
+            if (isNaN(costValue) || costValue < 0) {
+                showError('cost', 'التكلفة يجب أن تكون رقم موجب', errorElement, costInput);
+                return false;
+            }
+            
+            if (costValue > priceValue) {
+                showError('cost', 'التكلفة لا يمكن أن تكون أعلى من سعر البيع', errorElement, costInput);
+                return false;
+            }
+            
+            hideError('cost', errorElement, costInput);
+            return true;
+        }
+        
+        function validateStock() {
+            const stockInput = document.getElementById('productStock');
+            const errorElement = document.getElementById('stockError');
+            const value = parseInt(stockInput.value);
+            
+            if (isNaN(value) || value < 0) {
+                showError('stock', 'الكمية يجب أن تكون رقم موجب', errorElement, stockInput);
+                return false;
+            }
+            
+            hideError('stock', errorElement, stockInput);
+            return true;
+        }
+        
+        function validateReorderLevel() {
+            const reorderInput = document.getElementById('reorderLevel');
+            const errorElement = document.getElementById('reorderError');
+            const value = parseInt(reorderInput.value);
+            
+            if (isNaN(value) || value < 0) {
+                showError('reorder', 'حد إعادة الطلب يجب أن يكون رقم موجب', errorElement, reorderInput);
+                return false;
+            }
+            
+            hideError('reorder', errorElement, reorderInput);
+            return true;
+        }
+        
+        function validateWarehouse() {
+            const warehouseSelect = document.getElementById('warehouseSelect');
+            const errorElement = document.getElementById('warehouseError');
+            const value = warehouseSelect.value;
+            
+            if (!value) {
+                showError('warehouse', 'يجب اختيار المخزن', errorElement, warehouseSelect);
+                return false;
+            }
+            
+            hideError('warehouse', errorElement, warehouseSelect);
+            return true;
+        }
+        
+        function validateExpiryDate() {
+            const expiryInput = document.getElementById('expiryDate');
+            const errorElement = document.getElementById('expiryError');
+            const value = expiryInput.value;
+            
+            if (value) {
+                const expiryDate = new Date(value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (expiryDate < today) {
+                    showError('expiry', 'تاريخ الصلاحية لا يمكن أن يكون في الماضي', errorElement, expiryInput);
+                    return false;
+                }
+            }
+            
+            hideError('expiry', errorElement, expiryInput);
+            return true;
+        }
+        
+        function showError(field, message, errorElement, inputElement) {
+            formErrors[field] = message;
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            inputElement.classList.add('is-invalid');
+        }
+        
+        function hideError(field, errorElement, inputElement) {
+            delete formErrors[field];
+            errorElement.style.display = 'none';
+            inputElement.classList.remove('is-invalid');
+        }
+        
+        function hideAllErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+            document.querySelectorAll('.form-control, .form-select').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+            document.getElementById('formErrors').style.display = 'none';
+        }
+        
+        function showFormErrors() {
+            const errorSummary = document.getElementById('formErrors');
+            const errorList = Object.values(formErrors).map(error => 
+                `<li>${error}</li>`
+            ).join('');
+            
+            errorSummary.innerHTML = `
+                <strong>يوجد أخطاء في النموذج:</strong>
+                <ul class="mb-0 mt-2">${errorList}</ul>
+            `;
+            errorSummary.style.display = 'block';
+            errorSummary.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        async function addProduct() {
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${translations?.saving || 'جاري الحفظ...'}`;
+                
+                const formData = {
+                    name: document.getElementById('productName').value.trim(),
+                    code: document.getElementById('productCode').value.trim(),
+                    barcode: document.getElementById('productBarcode').value.trim() || null,
+                    category: document.getElementById('categorySelect').value,
+                    unit: document.getElementById('productUnit').value.trim(),
+                    price: parseFloat(document.getElementById('productPrice').value),
+                    cost: parseFloat(document.getElementById('productCost').value),
+                    current_stock: parseInt(document.getElementById('productStock').value),
+                    reorder_level: parseInt(document.getElementById('reorderLevel').value),
+                    warehouse_id: document.getElementById('warehouseSelect').value,
+                    expiry_date: document.getElementById('expiryDate').value || null,
+                    description: document.getElementById('productDescription').value.trim() || null
+                };
+                
+                const result = await WMS.postData('products', formData);
+                
+                if (result && result.success) {
+                    WMS.showAlert(result.message, 'success');
+                    WMS.closeModal('addProductModal');
+                    document.getElementById('addProductForm').reset();
+                    await loadInventoryData();
+                } else {
+                    throw new Error(result?.message || 'فشل في إضافة المنتج');
+                }
+            } catch (error) {
+                console.error('❌ خطأ أثناء إضافة المنتج:', error);
+                WMS.showAlert(error.message || 'حدث خطأ أثناء إضافة المنتج', 'danger');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+        
+        function viewProduct(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) {
+                console.error('المنتج غير موجود:', productId);
+                return;
+            }
+            
+            const value = (product.current_stock || 0) * (product.price || 0);
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            
+            const modalContent = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">${translations?.code || 'الرمز'}</label>
+                            <p class="form-control-static">${product.code || '-'}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">${translations?.product_name || 'اسم المنتج'}</label>
+                            <p class="form-control-static">${product.name || '-'}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">${translations?.category || 'الفئة'}</label>
+                            <p class="form-control-static">${product.category || '-'}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">${translations?.unit || 'وحدة القياس'}</label>
+                            <p class="form-control-static">${product.unit || '-'}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">${translations?.current_stock || 'الكمية الحالية'}</label>
+                            <p class="form-control-static fw-bold ${product.current_stock === 0 ? 'text-danger' : 
+                               WMS.isLowStock(product.current_stock, product.reorder_level) ? 'text-warning' : 'text-success'}">
+                                ${WMS.formatNumber(product.current_stock)} ${product.unit || ''}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">${translations?.reorder_level || 'حد إعادة الطلب'}</label>
+                            <p class="form-control-static">${WMS.formatNumber(product.reorder_level)}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">${translations?.unit_price || 'سعر الوحدة'}</label>
+                            <p class="form-control-static">${WMS.formatCurrency(product.price)}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">${translations?.cost_price || 'سعر التكلفة'}</label>
+                            <p class="form-control-static">${WMS.formatCurrency(product.cost)}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">${translations?.total_value || 'القيمة الإجمالية'}</label>
+                            <p class="form-control-static fw-bold text-primary">${WMS.formatCurrency(value)}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">${translations?.warehouse || 'المخزن'}</label>
+                            <p class="form-control-static">${getWarehouseName(product.warehouse_id)}</p>
+                        </div>
+                    </div>
+                    ${product.description ? `
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">${translations?.description || 'الوصف'}</label>
+                            <p class="form-control-static">${product.description}</p>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            document.getElementById('productDetailContent').innerHTML = modalContent;
+            WMS.openModal('productDetailModal');
+        }
+        
+        function editProduct(productId) {
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            WMS.showAlert(translations?.update_success || 'سيتم إضافة وظيفة التعديل في التحديث القادم', 'info');
+        }
+        
+        function deleteProduct(productId) {
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            WMS.confirmAction(translations?.delete_confirm_message || 'هل أنت متأكد من حذف هذا المنتج؟', async () => {
+                const result = await WMS.deleteData('products', productId);
+                if (result && result.success) {
+                    WMS.showAlert(result.message, 'success');
+                    await loadInventoryData();
+                }
+            });
+        }
+        
+        function openAddProductModal() {
+            hideAllErrors();
+            document.getElementById('addProductForm').reset();
+            WMS.openModal('addProductModal');
+        }
+        
+        function importProducts() {
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            WMS.showAlert(translations?.import_products || 'سيتم إضافة وظيفة الاستيراد في التحديث القادم', 'info');
+        }
+        
+        function exportProducts() {
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            WMS.showAlert(translations?.export_products || 'سيتم إضافة وظيفة التصدير في التحديث القادم', 'info');
+        }
+        
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // ==================== EXPORT FUNCTIONS ====================
+        window.toggleSidebar = toggleSidebar;
+        window.openAddProductModal = openAddProductModal;
+        window.importProducts = importProducts;
+        window.exportProducts = exportProducts;
+        window.validateAndAddProduct = validateAndAddProduct;
+        window.validateProductName = validateProductName;
+        window.validateProductCode = validateProductCode;
+        window.validateBarcode = validateBarcode;
+        window.validateCategory = validateCategory;
+        window.validateUnit = validateUnit;
+        window.validatePrice = validatePrice;
+        window.validateCost = validateCost;
+        window.validateStock = validateStock;
+        window.validateReorderLevel = validateReorderLevel;
+        window.validateWarehouse = validateWarehouse;
+        window.validateExpiryDate = validateExpiryDate;
+        window.viewProduct = viewProduct;
+        window.editProduct = editProduct;
+        window.deleteProduct = deleteProduct;
+        window.filterInventory = filterInventory;
+        window.WMS = WMS;
+    </script>
+    <script src="js/languageSwitcher.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

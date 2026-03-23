@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление Пользователями - Система Управления Складами</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Roboto (pour russe) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #c0392b;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --sidebar-width: 280px;
+        }
+        
+        /* Language Switcher */
+        .language-switcher-header {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-right: 15px;
+        }
+        
+        .lang-btn {
+            padding: 3px 8px;
+            border: 2px solid transparent;
+            background: transparent;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 11px;
+            color: var(--dark-color);
+            min-width: 25px;
+            text-align: center;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+            border-color: var(--secondary-color);
+        }
+        
+        /* LTR Support (par défaut pour russe) */
+        body {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        .header-title,
+        .card-header-custom h5,
+        .form-label-custom,
+        .modal-title-custom,
+        .table-custom th,
+        .table-custom td,
+        .dropdown-menu,
+        .pagination,
+        .card-footer,
+        .sidebar-user div,
+        .nav-link span,
+        .sidebar-logo h3,
+        .sidebar-logo small,
+        .main-footer .text-white-50 {
+            text-align: left;
+            direction: ltr;
+        }
+        
+        .sidebar-nav {
+            text-align: left;
+        }
+        
+        .nav-link {
+            flex-direction: row;
+        }
+        
+        .nav-link i {
+            margin-right: 15px;
+            margin-left: 0;
+        }
+        
+        .nav-link:hover {
+            transform: translateX(5px);
+        }
+        
+        #sidebar {
+            right: auto;
+            left: 0;
+            border-left: none;
+            border-right: 4px solid var(--secondary-color);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        }
+        
+        #sidebar.hidden {
+            margin-right: 0;
+            margin-left: calc(-1 * var(--sidebar-width));
+        }
+        
+        .main-content {
+            margin-right: 0;
+            margin-left: var(--sidebar-width);
+        }
+        
+        .main-content.full-width {
+            margin-left: 0;
+        }
+        
+        .header-title i {
+            margin-left: 0;
+            margin-right: 10px;
+        }
+        
+        .language-switcher-header {
+            margin-left: 0;
+            margin-right: 15px;
+        }
+        
+        .action-buttons {
+            flex-direction: row;
+        }
+        
+        .table-custom th {
+            text-align: left;
+        }
+        
+        .text-end {
+            text-align: left !important;
+        }
+        
+        .text-start {
+            text-align: right !important;
+        }
+        
+        .dropdown-menu {
+            text-align: left;
+        }
+        
+        .pagination {
+            padding-right: 0;
+            padding-left: 0;
+        }
+        
+        .input-group > .input-group-text {
+            border-left: 1px solid #ced4da;
+            border-right: none;
+        }
+        
+        .input-group > .form-control {
+            border-right: 1px solid #ced4da;
+            border-left: none;
+        }
+        
+        .error-message {
+            text-align: left;
+        }
+        
+        .btn-custom {
+            flex-direction: row;
+        }
+        
+        .btn-custom i {
+            order: -1;
+        }
+        
+        .d-flex.gap-3 {
+            flex-direction: row;
+        }
+        
+        .modal-footer {
+            flex-direction: row-reverse;
+        }
+        
+        * {
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color) 0%, #1a252f 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1030;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        #sidebar.hidden {
+            margin-right: calc(-1 * var(--sidebar-width));
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sidebar-logo i {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-user {
+            padding: 1rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-user img {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 1rem 1.5rem;
+            margin: 0.2rem 0.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            color: white;
+            background: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+        }
+        
+        .main-content {
+            margin-right: var(--sidebar-width);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+        
+        .main-content.full-width {
+            margin-right: 0;
+        }
+        
+        /* Header Styles */
+        .main-header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        
+        .header-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .header-title i {
+            color: var(--secondary-color);
+            margin-right: 10px;
+        }
+        
+        /* Card Styles */
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .card-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.2rem 1.5rem;
+            border-bottom: none;
+            border-radius: 15px 15px 0 0 !important;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .table-custom {
+            margin: 0;
+        }
+        
+        .table-custom thead {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+        }
+        
+        .table-custom th {
+            font-weight: 600;
+            padding: 1rem;
+            border: none;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .table-custom th:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .table-custom tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .table-custom tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+            transform: scale(1.002);
+        }
+        
+        .table-custom td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        /* Badge Styles */
+        .badge-custom {
+            padding: 0.5em 1em;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: none;
+        }
+        
+        .badge-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .badge-warning {
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+        }
+        
+        .badge-danger {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            color: white;
+        }
+        
+        .badge-info {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: white;
+        }
+        
+        .badge-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+        
+        .badge-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+        
+        /* Button Styles */
+        .btn-custom {
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .btn-outline-light {
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .btn-outline-light:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-view {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .btn-view:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-edit {
+            background: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+        }
+        
+        .btn-edit:hover {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-delete {
+            background: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
+        }
+        
+        .btn-delete:hover {
+            background: #c0392b;
+            color: white;
+        }
+        
+        /* Modal Styles */
+        .modal-custom {
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content-custom {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .modal-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+        
+        .modal-title-custom {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .btn-close-custom {
+            color: white;
+            opacity: 0.8;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-close-custom:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        
+        /* Form Styles */
+        .form-label-custom {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control-custom, .form-select-custom {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .form-control-custom:focus, .form-select-custom:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15);
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Alert Styles */
+        .alert-custom {
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        /* User Avatar */
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .avatar-manager { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .avatar-supervisor { background: linear-gradient(135deg, #f39c12, #d35400); color: white; }
+        .avatar-employee { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            #sidebar {
+                margin-right: calc(-1 * var(--sidebar-width));
+            }
+            
+            #sidebar.hidden {
+                margin-right: 0;
+            }
+            
+            .main-content {
+                margin-right: 0;
+            }
+            
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+            
+            .language-switcher-header {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 1.4rem;
+            }
+            
+            .card-header-custom {
+                padding: 1rem;
+            }
+            
+            .btn-custom {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar" class="d-flex flex-column">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-warehouse"></i>
+                <div>
+                    <h3 class="mb-0 fw-bold">Система Склада</h3>
+                    <small class="text-white-50">Интегрированное Управление</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Info -->
+        <div class="sidebar-user d-flex align-items-center gap-3">
+            <img src="https://ui-avatars.com/api/?name=Ахмед+Махмуд&background=3498db&color=fff&size=50&rounded=true" 
+                 class="rounded-circle" alt="User">
+            <div>
+                <h6 class="mb-0 fw-bold">Ахмед Махмуд</h6>
+                <small class="text-white-50">Администратор Системы</small>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="sidebar-nav flex-grow-1">
+            <a href="dashboard.html" class="nav-link">
+                <i class="fas fa-home"></i>
+                <span>Панель Управления</span>
+            </a>
+            <a href="inventory.html" class="nav-link">
+                <i class="fas fa-boxes"></i>
+                <span>Управление Запасами</span>
+            </a>
+            <a href="transactions.html" class="nav-link">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Ежедневные Операции</span>
+            </a>
+            <a href="reports.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i>
+                <span>Отчеты и Анализ</span>
+            </a>
+            <a href="warehouses.html" class="nav-link">
+                <i class="fas fa-warehouse"></i>
+                <span>Управление Складами</span>
+            </a>
+            <a href="users.html" class="nav-link active">
+                <i class="fas fa-users"></i>
+                <span>Пользователи</span>
+            </a>
+            <a href="settings.html" class="nav-link">
+                <i class="fas fa-cog"></i>
+                <span>Настройки</span>
+            </a>
+        </nav>
+        
+        <!-- Logout Button -->
+        <div class="p-3 mt-auto">
+            <a href="index.html" class="btn btn-danger w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Выйти</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="main-header d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <button onclick="WMS.toggleSidebar()" class="btn btn-outline-primary d-lg-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="header-title">
+                    <i class="fas fa-users"></i>
+                    <span>Управление Пользователями</span>
+                </h1>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <!-- Language Switcher -->
+                <div class="language-switcher-header d-none d-lg-flex">
+                    <button class="lang-btn" data-lang="fr">FR</button>
+                    <button class="lang-btn" data-lang="ar">AR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn active" data-lang="ru">RU</button>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="d-none d-md-flex gap-3">
+                    <div class="text-end">
+                        <small class="text-muted d-block">Всего Пользователей</small>
+                        <span class="fw-bold text-primary" id="totalUsers">0</span>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted d-block">Менеджеры</small>
+                        <span class="fw-bold text-danger" id="totalManagers">0</span>
+                    </div>
+                </div>
+                
+                <!-- Add User Button -->
+                <button onclick="openAddUserModal()" class="btn btn-primary btn-custom">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Добавить Пользователя</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Alert Container -->
+        <div id="alertContainer" class="container mt-3"></div>
+
+        <!-- Main Content -->
+        <main class="container py-4">
+            <!-- Statistics Cards -->
+            <div class="stats-cards fade-in">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="stat-value text-primary" id="statsTotal">0</h3>
+                    <p class="stat-label">Всего Пользователей</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-danger bg-opacity-10 text-danger">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3 class="stat-value text-danger" id="statsManagers">0</h3>
+                    <p class="stat-label">Менеджеры</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3 class="stat-value text-warning" id="statsSupervisors">0</h3>
+                    <p class="stat-label">Супервайзеры</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <h3 class="stat-value text-success" id="statsActive">0</h3>
+                    <p class="stat-label">Активные</p>
+                </div>
+            </div>
+
+            <!-- Users Table Card -->
+            <div class="card card-custom fade-in">
+                <div class="card-header-custom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        <span>Список Пользователей</span>
+                    </h5>
+                    <div class="d-flex gap-2">
+                        <button onclick="exportUsers()" class="btn btn-success btn-custom">
+                            <i class="fas fa-file-excel"></i>
+                            <span>Экспорт Excel</span>
+                        </button>
+                        <button onclick="refreshUsers()" class="btn btn-outline-light btn-custom">
+                            <i class="fas fa-redo"></i>
+                            <span>Обновить</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Search and Filter -->
+                    <div class="p-3 bg-light border-bottom">
+                        <div class="row g-2">
+                            <div class="col-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0">
+                                        <i class="fas fa-search text-muted"></i>
+                                    </span>
+                                    <input type="text" id="searchUser" class="form-control border-start-0" 
+                                            placeholder="Поиск пользователей...">
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <select id="roleFilter" class="form-select form-select-custom">
+                                    <option value="">Все Роли</option>
+                                    <option value="Менеджер">Менеджер</option>
+                                    <option value="Супервайзер">Супервайзер</option>
+                                    <option value="Сотрудник">Сотрудник</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <select id="statusFilter" class="form-select form-select-custom">
+                                    <option value="">Все Статусы</option>
+                                    <option value="Активен">Активен</option>
+                                    <option value="Неактивен">Неактивен</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Table -->
+                    <div class="table-container">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-custom" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th width="60"></th>
+                                        <th onclick="sortUsers('name')">Имя <i class="fas fa-sort ms-1"></i></th>
+                                        <th onclick="sortUsers('email')">Email <i class="fas fa-sort ms-1"></i></th>
+                                        <th onclick="sortUsers('phone')">Телефон <i class="fas fa-sort ms-1"></i></th>
+                                        <th onclick="sortUsers('role')">Роль <i class="fas fa-sort ms-1"></i></th>
+                                        <th onclick="sortUsers('warehouse')">Склад <i class="fas fa-sort ms-1"></i></th>
+                                        <th onclick="sortUsers('status')">Статус <i class="fas fa-sort ms-1"></i></th>
+                                        <th width="120">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <tr>
+                                        <td colspan="8" class="text-center py-5">
+                                            <div class="loading-spinner mx-auto mb-3"></div>
+                                            <p class="text-muted mb-0">Загрузка пользователей...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                    <div class="text-muted">
+                        <span id="totalItems">0</span> пользователь
+                    </div>
+                    <nav>
+                        <ul class="pagination mb-0" id="pagination">
+                            <li class="page-item disabled"><a class="page-link" href="#">Предыдущий</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item disabled"><a class="page-link" href="#">Следующий</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal fade modal-custom" id="addUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title modal-title-custom">
+                        <i class="fas fa-user-plus me-2"></i>
+                        <span id="modalTitle">Добавить Нового Пользователя</span>
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="addUserForm" onsubmit="event.preventDefault(); saveUser();">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <!-- User Name -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Полное Имя *</label>
+                                <input type="text" class="form-control form-control-custom" id="userName" required>
+                                <div class="invalid-feedback" id="nameError"></div>
+                            </div>
+                            
+                            <!-- User Email -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Email Адрес *</label>
+                                <input type="email" class="form-control form-control-custom" id="userEmail" required>
+                                <div class="invalid-feedback" id="emailError"></div>
+                            </div>
+                            
+                            <!-- Phone -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Номер Телефона *</label>
+                                <input type="tel" class="form-control form-control-custom" id="userPhone" required>
+                                <div class="invalid-feedback" id="phoneError"></div>
+                            </div>
+                            
+                            <!-- Role -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Роль *</label>
+                                <select class="form-select form-select-custom" id="userRole" required>
+                                    <option value="">Выбрать Роль</option>
+                                    <option value="Менеджер">Менеджер</option>
+                                    <option value="Супервайзер">Супервайзер</option>
+                                    <option value="Сотрудник">Сотрудник</option>
+                                </select>
+                                <div class="invalid-feedback" id="roleError"></div>
+                            </div>
+                            
+                            <!-- Warehouse -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Ответственный Склад</label>
+                                <select class="form-select form-select-custom" id="userWarehouse">
+                                    <option value="">Выбрать Склад</option>
+                                    <option value="W001">Главный Склад</option>
+                                    <option value="W002">Склад Распределения</option>
+                                    <option value="W003">Розничный Склад</option>
+                                    <option value="W004">Склад Техобслуживания</option>
+                                </select>
+                                <div class="invalid-feedback" id="warehouseError"></div>
+                            </div>
+                            
+                            <!-- Status -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Статус *</label>
+                                <select class="form-select form-select-custom" id="userStatus" required>
+                                    <option value="">Выбрать Статус</option>
+                                    <option value="Активен">Активен</option>
+                                    <option value="Неактивен">Неактивен</option>
+                                </select>
+                                <div class="invalid-feedback" id="statusError"></div>
+                            </div>
+                            
+                            <!-- Password -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Пароль *</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control form-control-custom" id="userPassword" required>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility()">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" id="passwordError"></div>
+                                <small class="text-muted">Должно быть не менее 8 символов</small>
+                            </div>
+                            
+                            <!-- Confirm Password -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Подтвердить Пароль *</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control form-control-custom" id="confirmPassword" required>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="toggleConfirmPasswordVisibility()">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" id="confirmPasswordError"></div>
+                            </div>
+                            
+                            <!-- Permissions -->
+                            <div class="col-12">
+                                <label class="form-label-custom mb-3">Права</label>
+                                <div class="row">
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="permInventory">
+                                            <label class="form-check-label" for="permInventory">Управление Запасами</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="permTransactions">
+                                            <label class="form-check-label" for="permTransactions">Ежедневные Операции</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="permReports">
+                                            <label class="form-check-label" for="permReports">Отчеты</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="permUsers">
+                                            <label class="form-check-label" for="permUsers">Управление Пользователями</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Error Summary -->
+                        <div class="alert alert-danger mt-3 d-none" id="formErrors">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Ошибки в форме:</strong>
+                            <ul class="mb-0 mt-2" id="errorList"></ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                            <span>Отмена</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-custom" id="submitBtn">
+                            <i class="fas fa-save"></i>
+                            <span id="saveButtonText">Сохранить Пользователя</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View User Modal -->
+    <div class="modal fade modal-custom" id="viewUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title modal-title-custom">
+                        <i class="fas fa-user me-2"></i>
+                        <span>Информация о Пользователе</span>
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h4 id="viewUserName" class="mb-2"></h4>
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span id="viewUserRole" class="badge badge-primary badge-custom"></span>
+                                <span id="viewUserStatus" class="badge badge-success badge-custom"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div id="viewUserAvatar" class="user-avatar mx-auto ms-md-0" style="width: 80px; height: 80px; font-size: 2rem;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted mb-3">Основная Информация</h6>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Email Адрес:</small>
+                                        <div class="fw-bold" id="viewUserEmail"></div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Номер Телефона:</small>
+                                        <div class="fw-bold" id="viewUserPhone"></div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Ответственный Склад:</small>
+                                        <div class="fw-bold" id="viewUserWarehouse"></div>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">Дата Создания:</small>
+                                        <div class="fw-bold" id="viewUserCreatedAt"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted mb-3">Права</h6>
+                                    <div id="viewUserPermissions" class="d-flex flex-wrap gap-2">
+                                        <!-- Permissions will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>
+                        <span>Закрыть</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // WMS Global Object
+        const WMS = {
+            // Sidebar Management
+            toggleSidebar: function() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.querySelector('.main-content');
+                if (sidebar) sidebar.classList.toggle('hidden');
+                if (mainContent) mainContent.classList.toggle('full-width');
+            },
+            
+            // Modal Management
+            openModal: function(modalId) {
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    modal.show();
+                }
+            },
+            
+            closeModal: function(modalId) {
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+                    }
+                }
+            },
+            
+            // Alert System
+            showAlert: function(message, type = 'info', duration = 5000) {
+                const alertContainer = document.getElementById('alertContainer');
+                
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type} alert-custom fade-in`;
+                alert.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>
+                        <div class="flex-grow-1">${message}</div>
+                        <button class="btn btn-link text-${type === 'success' ? 'success' : type === 'danger' ? 'danger' : type === 'warning' ? 'warning' : 'info'} p-0" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                alertContainer.appendChild(alert);
+                
+                // Auto remove after duration
+                if (duration > 0) {
+                    setTimeout(() => {
+                        if (alert.parentElement) {
+                            alert.remove();
+                        }
+                    }, duration);
+                }
+            },
+            
+            // Confirm Action
+            confirmAction: function(message, callback) {
+                if (confirm(message)) {
+                    callback();
+                }
+            },
+            
+            // Format Numbers - Используем английские цифры
+            formatNumber: function(num) {
+                try {
+                    return new Intl.NumberFormat('en-US').format(num);
+                } catch (e) {
+                    return num.toString();
+                }
+            },
+            
+            // Fetch Data (mock function)
+            fetchData: async function(endpoint) {
+                console.log(`Fetching data from: ${endpoint}`);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Mock data in Russian
+                if (endpoint.includes('users')) {
+                    const mockUsers = [
+                        {
+                            id: 'U001',
+                            name: 'Ибрахим Ахмир',
+                            email: 'amir@company.com',
+                            phone: '+7(903) 845-71-65',
+                            role: 'Менеджер',
+                            warehouse_id: 'W001',
+                            status: 'Активен',
+                            avatar_color: 'avatar-manager',
+                            created_at: '2024-01-15',
+                            permissions: ['Управление Запасами', 'Ежедневные Операции', 'Отчеты', 'Управление Пользователями']
+                        },
+                        {
+                            id: 'U002',
+                            name: 'Иван Иванов',
+                            email: ' ivan.ivanov1985@mail.ru',
+                            phone: '+7 (912) 345-67-89',
+                            role: 'Супервайзер',
+                            warehouse_id: 'W002',
+                            status: 'Активен',
+                            avatar_color: 'avatar-supervisor',
+                            created_at: '2024-01-20',
+                            permissions: ['Управление Запасами', 'Ежедневные Операции', 'Отчеты']
+                        },
+                        {
+                            id: 'U003',
+                            name: 'Дмитрий Петров',
+                            email: 'dmitry.petrov@gmail.com',
+                            phone: '+7 (905) 123-45-67',
+                            role: 'Сотрудник',
+                            warehouse_id: 'W001',
+                            status: 'Активен',
+                            avatar_color: 'avatar-employee',
+                            created_at: '2024-02-01',
+                            permissions: ['Управление Запасами', 'Ежедневные Операции']
+                        },
+                        {
+                            id: 'U004',
+                            name: ' mikhail.k@list.ru',
+                            email: 'ali@company.com',
+                            phone: '+7 (925) 777-88-99',
+                            role: 'Сотрудник',
+                            warehouse_id: 'W003',
+                            status: 'Неактивен',
+                            avatar_color: 'avatar-employee',
+                            created_at: '2024-02-15',
+                            permissions: ['Управление Запасами']
+                        },
+                        {
+                            id: 'U005',
+                            name: 'сония Юсеф',
+                            email: 'soniac@company.com',
+                            phone: '+7 (916) 555-44-33',
+                            role: 'Супервайзер',
+                            warehouse_id: 'W004',
+                            status: 'Активен',
+                            avatar_color: 'avatar-supervisor',
+                            created_at: '2024-03-01',
+                            permissions: ['Управление Запасами', 'Ежедневные Операции', 'Отчеты']
+                        }
+                    ];
+                    
+                    return {
+                        success: true,
+                        data: mockUsers
+                    };
+                }
+                
+                if (endpoint.includes('warehouses')) {
+                    return {
+                        success: true,
+                        data: [
+                            { id: 'W001', name: 'Главный Склад' },
+                            { id: 'W002', name: 'Склад Распределения' },
+                            { id: 'W003', name: 'Розничный Склад' },
+                            { id: 'W004', name: 'Склад Техобслуживания' }
+                        ]
+                    };
+                }
+                
+                return { success: true, data: [] };
+            },
+            
+            // Post Data (mock function)
+            postData: async function(endpoint, data) {
+                console.log(`Posting data to: ${endpoint}`, data);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                return {
+                    success: true,
+                    message: 'Операция выполнена успешно',
+                    data: { ...data, id: 'U' + Date.now().toString().slice(-6) }
+                };
+            },
+            
+            // Put Data (mock function)
+            putData: async function(endpoint, id, data) {
+                console.log(`Updating data at: ${endpoint}, ID: ${id}`, data);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                return {
+                    success: true,
+                    message: 'Обновление выполнено успешно',
+                    data: { ...data, id: id }
+                };
+            },
+            
+            // Delete Data (mock function)
+            deleteData: async function(endpoint, id) {
+                console.log(`Deleting data from: ${endpoint}, ID: ${id}`);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                return {
+                    success: true,
+                    message: 'Удаление выполнено успешно'
+                };
+            },
+            
+            // Export to Excel
+            exportTableToExcel: function(tableId, filename) {
+                const table = document.getElementById(tableId);
+                if (!table) return;
+                
+                let html = table.outerHTML;
+                let blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+                let url = URL.createObjectURL(blob);
+                
+                let a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.showAlert('Данные успешно экспортированы', 'success');
+            }
+        };
+        
+        // Global variables
+        let users = [];
+        let warehouses = [];
+        let currentEditUserId = null;
+        let currentSortColumn = 'name';
+        let currentSortDirection = 'asc';
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize language switcher
+            setupLanguageSwitcher();
+            
+            // Setup event listeners
+            document.getElementById('searchUser').addEventListener('input', filterUsers);
+            document.getElementById('roleFilter').addEventListener('change', filterUsers);
+            document.getElementById('statusFilter').addEventListener('change', filterUsers);
+            
+            // Load data
+            await loadUsers();
+            
+            // Show welcome message
+            setTimeout(() => {
+                WMS.showAlert('Добро пожаловать в систему управления пользователями', 'info');
+            }, 1000);
+        });
+        
+        // Setup language switcher
+        function setupLanguageSwitcher() {
+            const savedLang = localStorage.getItem('preferredLang') || 'ru';
+            changeLanguage(savedLang);
+            
+            document.querySelectorAll('.lang-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    if (lang) {
+                        changeLanguage(lang);
+                    }
+                });
+            });
+        }
+        
+        // Change language
+        function changeLanguage(lang) {
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Update page direction
+            if (lang === 'ar') {
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = 'ar';
+                document.body.classList.remove('ltr');
+            } else {
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = lang;
+                document.body.classList.add('ltr');
+            }
+            
+            // Save preference
+            localStorage.setItem('preferredLang', lang);
+        }
+        
+        // Load users
+        async function loadUsers() {
+            try {
+                // Load users and warehouses
+                const [usersData, warehousesData] = await Promise.all([
+                    WMS.fetchData('users?limit=100'),
+                    WMS.fetchData('warehouses?limit=100')
+                ]);
+                
+                if (usersData && usersData.data) {
+                    users = usersData.data;
+                    if (warehousesData && warehousesData.data) {
+                        warehouses = warehousesData.data;
+                    }
+                    displayUsers();
+                    updateStats();
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки данных:', error);
+                WMS.showAlert('Произошла ошибка при загрузке данных', 'danger');
+            }
+        }
+        
+        // Display users in table
+        function displayUsers(usersToDisplay = users) {
+            const tbody = document.getElementById('usersTableBody');
+            if (!tbody) return;
+            
+            if (usersToDisplay.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-2">Нет зарегистрированных пользователей</p>
+                            <button class="btn btn-primary btn-sm" onclick="openAddUserModal()">
+                                <i class="fas fa-user-plus me-2"></i>Добавить нового пользователя
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('totalItems').textContent = '0';
+                return;
+            }
+            
+            // Sort users
+            const sortedUsers = sortUsersArray(usersToDisplay, currentSortColumn, currentSortDirection);
+            
+            tbody.innerHTML = sortedUsers.map(user => {
+                const warehouse = getWarehouseName(user.warehouse_id);
+                const roleBadge = {
+                    'Менеджер': 'badge-danger',
+                    'Супервайзер': 'badge-warning',
+                    'Сотрудник': 'badge-info'
+                }[user.role] || 'badge-secondary';
+                
+                const statusBadge = user.status === 'Активен' ? 'badge-success' : 'badge-danger';
+                const avatarClass = user.avatar_color || getAvatarClassByRole(user.role);
+                const initials = getInitials(user.name);
+                
+                return `
+                    <tr class="fade-in">
+                        <td>
+                            <div class="${avatarClass} user-avatar">${initials}</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold">${user.name}</div>
+                            <small class="text-muted">ID: ${user.id}</small>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-envelope text-muted me-2"></i>
+                                ${user.email}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-phone text-muted me-2"></i>
+                                ${user.phone}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge ${roleBadge} badge-custom">
+                                <i class="fas ${user.role === 'Менеджер' ? 'fa-user-shield' : user.role === 'Супервайзер' ? 'fa-user-tie' : 'fa-user'} ms-1"></i>
+                                ${user.role}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-warehouse text-muted me-2"></i>
+                                ${warehouse}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge ${statusBadge} badge-custom">
+                                <i class="fas ${user.status === 'Активен' ? 'fa-check-circle' : 'fa-times-circle'} ms-1"></i>
+                                ${user.status}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button onclick="viewUser('${user.id}')" class="btn-action btn-view" data-bs-toggle="tooltip" title="Просмотреть детали">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="editUser('${user.id}')" class="btn-action btn-edit" data-bs-toggle="tooltip" title="Редактировать пользователя">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteUser('${user.id}')" class="btn-action btn-delete" data-bs-toggle="tooltip" title="Удалить пользователя">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // Update total items with international numbers
+            document.getElementById('totalItems').textContent = WMS.formatNumber(usersToDisplay.length);
+        }
+        
+        // Sort users array
+        function sortUsersArray(usersArray, column, direction) {
+            return [...usersArray].sort((a, b) => {
+                let aValue, bValue;
+                
+                switch(column) {
+                    case 'name':
+                        aValue = a.name;
+                        bValue = b.name;
+                        break;
+                    case 'email':
+                        aValue = a.email;
+                        bValue = b.email;
+                        break;
+                    case 'phone':
+                        aValue = a.phone;
+                        bValue = b.phone;
+                        break;
+                    case 'role':
+                        aValue = a.role;
+                        bValue = b.role;
+                        break;
+                    case 'warehouse':
+                        aValue = getWarehouseName(a.warehouse_id);
+                        bValue = getWarehouseName(b.warehouse_id);
+                        break;
+                    case 'status':
+                        aValue = a.status;
+                        bValue = b.status;
+                        break;
+                    default:
+                        aValue = a.name;
+                        bValue = b.name;
+                }
+                
+                if (direction === 'asc') {
+                    return aValue.localeCompare(bValue, 'ru');
+                } else {
+                    return bValue.localeCompare(aValue, 'ru');
+                }
+            });
+        }
+        
+        // Sort users by column
+        function sortUsers(column) {
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'asc';
+            }
+            
+            // Update sort icons
+            document.querySelectorAll('th i').forEach(icon => {
+                icon.className = 'fas fa-sort ms-1 text-muted';
+            });
+            
+            const currentHeader = document.querySelector(`th[onclick="sortUsers('${column}')"]`);
+            const icon = currentHeader?.querySelector('i');
+            if (icon) {
+                icon.className = `fas fa-sort-${currentSortDirection === 'asc' ? 'up' : 'down'} ms-1 text-primary`;
+            }
+            
+            displayUsers();
+        }
+        
+        // Get warehouse name by ID
+        function getWarehouseName(warehouseId) {
+            if (!warehouseId) return 'Не указан';
+            const warehouse = warehouses.find(w => w.id === warehouseId);
+            return warehouse ? warehouse.name : 'Не указан';
+        }
+        
+        // Get avatar class by role
+        function getAvatarClassByRole(role) {
+            switch(role) {
+                case 'Менеджер': return 'avatar-manager';
+                case 'Супервайзер': return 'avatar-supervisor';
+                case 'Сотрудник': return 'avatar-employee';
+                default: return 'avatar-employee';
+            }
+        }
+        
+        // Get initials from name
+        function getInitials(name) {
+            return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase();
+        }
+        
+        // Update statistics
+        function updateStats(usersToCount = users) {
+            const total = usersToCount.length;
+            const managers = usersToCount.filter(u => u.role === 'Менеджер').length;
+            const supervisors = usersToCount.filter(u => u.role === 'Супервайзер').length;
+            const active = usersToCount.filter(u => u.status === 'Активен').length;
+            
+            document.getElementById('totalUsers').textContent = WMS.formatNumber(total);
+            document.getElementById('totalManagers').textContent = WMS.formatNumber(managers);
+            document.getElementById('statsTotal').textContent = WMS.formatNumber(total);
+            document.getElementById('statsManagers').textContent = WMS.formatNumber(managers);
+            document.getElementById('statsSupervisors').textContent = WMS.formatNumber(supervisors);
+            document.getElementById('statsActive').textContent = WMS.formatNumber(active);
+        }
+        
+        // Filter users
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchUser').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            const filtered = users.filter(user => {
+                const matchesSearch = !searchTerm || 
+                    user.name.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm) ||
+                    user.phone.includes(searchTerm);
+                
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                const matchesStatus = !statusFilter || user.status === statusFilter;
+                
+                return matchesSearch && matchesRole && matchesStatus;
+            });
+            
+            displayUsers(filtered);
+            updateStats(filtered);
+        }
+        
+        // Open add user modal
+        function openAddUserModal() {
+            currentEditUserId = null;
+            
+            document.getElementById('modalTitle').textContent = 'Добавить Нового Пользователя';
+            document.getElementById('saveButtonText').textContent = 'Сохранить Пользователя';
+            document.getElementById('addUserForm').reset();
+            
+            // Reset errors
+            document.getElementById('addUserForm').querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('formErrors').classList.add('d-none');
+            
+            const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
+            modal.show();
+        }
+        
+        // Toggle password visibility
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('userPassword');
+            const icon = event.target.querySelector('i') || event.target;
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+        
+        // Toggle confirm password visibility
+        function toggleConfirmPasswordVisibility() {
+            const passwordInput = document.getElementById('confirmPassword');
+            const icon = event.target.querySelector('i') || event.target;
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+        
+        // Save user
+        async function saveUser() {
+            const form = document.getElementById('addUserForm');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Reset errors
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('formErrors').classList.add('d-none');
+            
+            // Get form values
+            const name = document.getElementById('userName').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            const phone = document.getElementById('userPhone').value.trim();
+            const role = document.getElementById('userRole').value;
+            const warehouse = document.getElementById('userWarehouse').value;
+            const status = document.getElementById('userStatus').value;
+            const password = document.getElementById('userPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Get permissions
+            const permissions = [];
+            if (document.getElementById('permInventory').checked) permissions.push('Управление Запасами');
+            if (document.getElementById('permTransactions').checked) permissions.push('Ежедневные Операции');
+            if (document.getElementById('permReports').checked) permissions.push('Отчеты');
+            if (document.getElementById('permUsers').checked) permissions.push('Управление Пользователями');
+            
+            // Validation
+            const errors = [];
+            
+            if (!name) errors.push('Полное имя обязательно');
+            if (!email) errors.push('Email адрес обязателен');
+            if (!phone) errors.push('Номер телефона обязателен');
+            if (!role) errors.push('Роль обязательна');
+            if (!status) errors.push('Статус обязателен');
+            if (!password) errors.push('Пароль обязателен');
+            if (password.length < 8) errors.push('Пароль должен быть не менее 8 символов');
+            if (password !== confirmPassword) errors.push('Пароли не совпадают');
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email && !emailRegex.test(email)) errors.push('Email адрес недействителен');
+            
+            // Check if email already exists (for new users)
+            if (!currentEditUserId) {
+                const emailExists = users.some(u => u.email.toLowerCase() === email.toLowerCase());
+                if (emailExists) errors.push('Email уже используется');
+            }
+            
+            if (errors.length > 0) {
+                document.getElementById('errorList').innerHTML = errors.map(error => `<li>${error}</li>`).join('');
+                document.getElementById('formErrors').classList.remove('d-none');
+                return;
+            }
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Сохранение...';
+                
+                const userData = {
+                    name,
+                    email,
+                    phone,
+                    role,
+                    warehouse_id: warehouse || null,
+                    status,
+                    permissions,
+                    avatar_color: getAvatarClassByRole(role),
+                    created_at: currentEditUserId ? undefined : new Date().toISOString().split('T')[0]
+                };
+                
+                let result;
+                
+                if (currentEditUserId) {
+                    // Update existing user
+                    result = await WMS.putData('users', currentEditUserId, userData);
+                } else {
+                    // Add new user
+                    result = await WMS.postData('users', userData);
+                }
+                
+                if (result && result.success) {
+                    const successMessage = currentEditUserId ? 
+                        'Пользователь успешно обновлен' : 
+                        'Пользователь успешно добавлен';
+                    
+                    WMS.showAlert(successMessage, 'success');
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+                    if (modal) modal.hide();
+                    
+                    // Refresh data
+                    await loadUsers();
+                } else {
+                    throw new Error(result?.message || 'Не удалось сохранить пользователя');
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка сохранения пользователя:', error);
+                WMS.showAlert(error.message || 'Произошла ошибка при сохранении пользователя', 'danger');
+            } finally {
+                submitBtn.disabled = false;
+                const buttonText = currentEditUserId ? 
+                    'Обновить Пользователя' : 
+                    'Сохранить Пользователя';
+                submitBtn.innerHTML = '<i class="fas fa-save"></i><span id="saveButtonText">' + buttonText + '</span>';
+            }
+        }
+        
+        // Edit user
+        function editUser(id) {
+            const user = users.find(u => u.id === id);
+            if (!user) {
+                WMS.showAlert('Пользователь не найден', 'warning');
+                return;
+            }
+            
+            currentEditUserId = id;
+            
+            document.getElementById('modalTitle').textContent = 'Редактировать Пользователя';
+            document.getElementById('saveButtonText').textContent = 'Обновить Пользователя';
+            
+            // Fill form with user data
+            document.getElementById('userName').value = user.name;
+            document.getElementById('userEmail').value = user.email;
+            document.getElementById('userPhone').value = user.phone;
+            document.getElementById('userRole').value = user.role;
+            document.getElementById('userWarehouse').value = user.warehouse_id || '';
+            document.getElementById('userStatus').value = user.status;
+            document.getElementById('userPassword').value = '********'; // Placeholder
+            document.getElementById('confirmPassword').value = '********';
+            
+            // Set permissions
+            if (user.permissions) {
+                document.getElementById('permInventory').checked = user.permissions.includes('Управление Запасами');
+                document.getElementById('permTransactions').checked = user.permissions.includes('Ежедневные Операции');
+                document.getElementById('permReports').checked = user.permissions.includes('Отчеты');
+                document.getElementById('permUsers').checked = user.permissions.includes('Управление Пользователями');
+            }
+            
+            // Reset errors
+            document.getElementById('addUserForm').querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.getElementById('formErrors').classList.add('d-none');
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
+            modal.show();
+        }
+        
+        // View user details
+        function viewUser(id) {
+            const user = users.find(u => u.id === id);
+            if (!user) {
+                WMS.showAlert('Пользователь не найден', 'warning');
+                return;
+            }
+            
+            // Fill view modal with user data
+            document.getElementById('viewUserName').textContent = user.name;
+            document.getElementById('viewUserRole').textContent = user.role;
+            document.getElementById('viewUserStatus').textContent = user.status;
+            document.getElementById('viewUserEmail').textContent = user.email;
+            document.getElementById('viewUserPhone').textContent = user.phone;
+            document.getElementById('viewUserWarehouse').textContent = getWarehouseName(user.warehouse_id);
+            document.getElementById('viewUserCreatedAt').textContent = user.created_at;
+            
+            // Set avatar
+            const avatarDiv = document.getElementById('viewUserAvatar');
+            avatarDiv.className = `${user.avatar_color || getAvatarClassByRole(user.role)} user-avatar`;
+            avatarDiv.textContent = getInitials(user.name);
+            
+            // Set permissions
+            const permissionsDiv = document.getElementById('viewUserPermissions');
+            if (user.permissions && user.permissions.length > 0) {
+                permissionsDiv.innerHTML = user.permissions.map(perm => {
+                    return `<span class="badge badge-info badge-custom">${perm}</span>`;
+                }).join('');
+            } else {
+                permissionsDiv.innerHTML = '<span class="text-muted">Нет указанных прав</span>';
+            }
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('viewUserModal'));
+            modal.show();
+        }
+        
+        // Delete user
+        async function deleteUser(id) {
+            const user = users.find(u => u.id === id);
+            if (!user) return;
+            
+            // Prevent deleting the current user
+            if (user.email === 'ahmed@company.com') {
+                WMS.showAlert('Нельзя удалить текущего пользователя', 'warning');
+                return;
+            }
+            
+            WMS.confirmAction(`Вы уверены, что хотите удалить пользователя "${user.name}"?`, async () => {
+                const result = await WMS.deleteData('users', id);
+                if (result && result.success) {
+                    WMS.showAlert('Пользователь успешно удален', 'success');
+                    
+                    // Remove from local array and refresh display
+                    users = users.filter(u => u.id !== id);
+                    displayUsers();
+                    updateStats();
+                }
+            });
+        }
+        
+        // Export users to Excel
+        function exportUsers() {
+            WMS.exportTableToExcel('usersTable', 'Пользователи.xlsx');
+        }
+        
+        // Refresh users
+        function refreshUsers() {
+            loadUsers();
+            WMS.showAlert('Данные обновлены', 'info');
+        }
+        
+        // Export functions to global scope
+        window.openAddUserModal = openAddUserModal;
+        window.editUser = editUser;
+        window.viewUser = viewUser;
+        window.deleteUser = deleteUser;
+        window.exportUsers = exportUsers;
+        window.refreshUsers = refreshUsers;
+        window.filterUsers = filterUsers;
+        window.sortUsers = sortUsers;
+        window.togglePasswordVisibility = togglePasswordVisibility;
+        window.toggleConfirmPasswordVisibility = toggleConfirmPasswordVisibility;
+        window.WMS = WMS;
+        window.changeLanguage = changeLanguage;
+    </script>
+    <script src="js/languageSwitcher.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

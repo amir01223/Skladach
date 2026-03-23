@@ -1,0 +1,3186 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="operations_title">العمليات اليومية - نظام إدارة المخازن</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #c0392b;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --sidebar-width: 280px;
+            
+            /* Dashboard Colors */
+            --card-blue: linear-gradient(135deg, #3498db, #2980b9);
+            --card-green: linear-gradient(135deg, #27ae60, #2ecc71);
+            --card-orange: linear-gradient(135deg, #f39c12, #e67e22);
+            --card-purple: linear-gradient(135deg, #9b59b6, #8e44ad);
+            --card-red: linear-gradient(135deg, #e74c3c, #c0392b);
+            --card-teal: linear-gradient(135deg, #1abc9c, #16a085);
+        }
+        
+        /* Language Switcher */
+        .language-switcher-header {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-left: 15px;
+        }
+        
+        body.ltr .language-switcher-header {
+            margin-left: 0;
+            margin-right: 15px;
+        }
+        
+        .lang-btn {
+            padding: 3px 8px;
+            border: 2px solid transparent;
+            background: transparent;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 11px;
+            color: var(--dark-color);
+            min-width: 25px;
+            text-align: center;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .lang-btn.active {
+            background: var(--card-blue);
+            color: white;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+            border-color: var(--secondary-color);
+        }
+        
+        /* RTL/LTR Support */
+        body.ltr {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        body.ltr .header-title,
+        body.ltr .operation-title,
+        body.ltr .operation-desc,
+        body.ltr .card-header-custom h5,
+        body.ltr .form-label-custom,
+        body.ltr .modal-title-custom,
+        body.ltr .table-custom th,
+        body.ltr .table-custom td,
+        body.ltr .dropdown-menu,
+        body.ltr .pagination,
+        body.ltr .card-footer,
+        body.ltr .sidebar-user div,
+        body.ltr .nav-link span,
+        body.ltr .sidebar-logo h3,
+        body.ltr .sidebar-logo small,
+        body.ltr .text-end {
+            text-align: left;
+            direction: ltr;
+        }
+        
+        body.ltr .nav-link {
+            flex-direction: row;
+        }
+        
+        body.ltr .nav-link i {
+            margin-right: 0;
+            margin-left: 15px;
+        }
+        
+        body.ltr #sidebar {
+            right: auto;
+            left: 0;
+            border-left: none;
+            border-right: 4px solid var(--secondary-color);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        }
+        
+        body.ltr #sidebar.hidden {
+            transform: translateX(calc(-1 * var(--sidebar-width)));
+        }
+        
+        body.ltr .main-content {
+            margin-right: 0;
+            margin-left: var(--sidebar-width);
+        }
+        
+        body.ltr .main-content.full-width {
+            margin-left: 0;
+        }
+        
+        body.ltr .header-title i {
+            margin-left: 0;
+            margin-right: 10px;
+        }
+        
+        body.ltr .action-buttons {
+            flex-direction: row;
+        }
+        
+        body.ltr .table-custom th {
+            text-align: left;
+        }
+        
+        body.ltr .dropdown-menu {
+            text-align: left;
+        }
+        
+        body.ltr .pagination {
+            padding-right: 0;
+            padding-left: 0;
+        }
+        
+        body.ltr .input-group > .input-group-text {
+            border-left: 1px solid #ced4da;
+            border-right: none;
+        }
+        
+        body.ltr .input-group > .form-control {
+            border-right: 1px solid #ced4da;
+            border-left: none;
+        }
+        
+        body.ltr .error-message {
+            text-align: left;
+        }
+        
+        body.ltr .btn-custom {
+            flex-direction: row;
+        }
+        
+        body.ltr .btn-custom i {
+            order: -1;
+        }
+        
+        body.ltr .d-flex.gap-3 {
+            flex-direction: row;
+        }
+        
+        body.ltr .modal-footer {
+            flex-direction: row-reverse;
+        }
+        
+        /* Base styles */
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* ==================== SIDEBAR CORRECTIONS ==================== */
+        
+        #sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color) 0%, #1a252f 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            max-height: 100vh;
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1050 !important;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--secondary-color);
+            right: 0;
+            top: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        #sidebar.hidden {
+            transform: translateX(var(--sidebar-width));
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sidebar-logo i {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-user {
+            padding: 1rem 1.5rem;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-user img {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        
+        /* ==================== NAVIGATION - FIX AFFICHAGE ==================== */
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+            text-align: right;
+            flex-grow: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+        
+        body.ltr .sidebar-nav {
+            text-align: left;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 1rem 1.5rem;
+            margin: 0.2rem 0.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(-5px);
+        }
+        
+        body.ltr .nav-link:hover {
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            color: white;
+            background: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+            flex-shrink: 0;
+        }
+        
+        .main-content {
+            margin-right: var(--sidebar-width);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .main-content.full-width {
+            margin-right: 0;
+        }
+        
+        /* Header Styles */
+        .main-header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        
+        .header-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .header-title i {
+            color: var(--secondary-color);
+            margin-left: 10px;
+        }
+        
+        /* Operations Cards */
+        .operations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .operation-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .operation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5));
+        }
+        
+        .operation-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .operation-card.receive {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .operation-card.issue {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .operation-card.transfer {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .operation-card.return {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+        
+        .operation-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.2);
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .operation-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .operation-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Card Styles */
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .card-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.2rem 1.5rem;
+            border-bottom: none;
+            border-radius: 15px 15px 0 0 !important;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .table-custom {
+            margin: 0;
+        }
+        
+        .table-custom thead {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+        }
+        
+        .table-custom th {
+            font-weight: 600;
+            padding: 1rem;
+            border: none;
+            white-space: nowrap;
+            text-align: right;
+        }
+        
+        .table-custom tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .table-custom tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+            transform: scale(1.002);
+        }
+        
+        .table-custom td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        /* Badge Styles */
+        .badge-custom {
+            padding: 0.5em 1em;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: none;
+        }
+        
+        .badge-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .badge-warning {
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+        }
+        
+        .badge-danger {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            color: white;
+        }
+        
+        .badge-info {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: white;
+        }
+        
+        .badge-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+        
+        /* Button Styles */
+        .btn-custom {
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .btn-outline-light {
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .btn-outline-light:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-view {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .btn-view:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-delete {
+            background: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
+        }
+        
+        .btn-delete:hover {
+            background: #c0392b;
+            color: white;
+        }
+        
+        /* Modal Styles */
+        .modal-custom {
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content-custom {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .modal-header-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+        
+        .modal-title-custom {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .btn-close-custom {
+            color: white;
+            opacity: 0.8;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-close-custom:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        
+        /* Form Styles */
+        .form-label-custom {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control-custom, .form-select-custom {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .form-control-custom:focus, .form-select-custom:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15);
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Alert Styles */
+        .alert-custom {
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Error Message Styles */
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .error-summary {
+            background-color: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stock-info {
+            background-color: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* ==================== BOUTON LOGOUT - FIX POSITION ==================== */
+        
+        .logout-container {
+            padding: 1rem;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+            width: 100%;
+        }
+        
+        /* Responsive - Logique corrigée */
+        @media (max-width: 992px) {
+            #sidebar {
+                transform: translateX(var(--sidebar-width));
+                position: fixed;
+                z-index: 1050 !important;
+            }
+            
+            #sidebar.hidden {
+                transform: translateX(0) !important;
+            }
+            
+            body.ltr #sidebar {
+                transform: translateX(calc(-1 * var(--sidebar-width)));
+            }
+            
+            body.ltr #sidebar.hidden {
+                transform: translateX(0) !important;
+            }
+            
+            .main-content {
+                margin-right: 0 !important;
+                margin-left: 0 !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 1.4rem;
+            }
+            
+            .card-header-custom {
+                padding: 1rem;
+            }
+            
+            .btn-custom {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .operations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar" class="d-flex flex-column">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-warehouse"></i>
+                <div>
+                    <h3 class="mb-0 fw-bold" data-i18n="system_name">نظام المخازن</h3>
+                    <small class="text-white-50" data-i18n="system_integration">الإدارة المتكاملة</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Info -->
+        <div class="sidebar-user d-flex align-items-center gap-3">
+            <img src="https://ui-avatars.com/api/?name=أحمد+محمود&background=3498db&color=fff&size=50&rounded=true" 
+                 class="rounded-circle" alt="User">
+            <div>
+                <h6 class="mb-0 fw-bold">Ибрахим Амир</h6>
+                <small class="text-white-50" data-i18n="user_role">مدير النظام</small>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="sidebar-nav flex-grow-1">
+            <a href="dashboard.html" class="nav-link">
+                <i class="fas fa-home"></i>
+                <span data-i18n="dashboard">لوحة التحكم</span>
+            </a>
+            <a href="inventory.html" class="nav-link">
+                <i class="fas fa-boxes"></i>
+                <span data-i18n="inventory_management">إدارة المخزون</span>
+            </a>
+            <a href="transactions.html" class="nav-link active">
+                <i class="fas fa-exchange-alt"></i>
+                <span data-i18n="daily_operations">العمليات اليومية</span>
+            </a>
+            <a href="reports.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i>
+                <span data-i18n="reports_analysis">التقارير والتحليل</span>
+            </a>
+            <a href="warehouses.html" class="nav-link">
+                <i class="fas fa-warehouse"></i>
+                <span data-i18n="warehouse_management">إدارة المخازن</span>
+            </a>
+            <a href="users.html" class="nav-link">
+                <i class="fas fa-users"></i>
+                                <span data-i18n="users">المستخدمون</span>
+            </a>
+            <a href="settings.html" class="nav-link">
+                <i class="fas fa-cog"></i>
+                <span data-i18n="settings">الإعدادات</span>
+            </a>
+        </nav>
+        
+        <!-- Logout Button - CORRECTED -->
+        <div class="logout-container">
+            <a href="index.html" class="btn btn-danger w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
+                <i class="fas fa-sign-out-alt"></i>
+                <span data-i18n="logout">تسجيل الخروج</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="main-header d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <button onclick="toggleSidebar()" class="btn btn-outline-primary d-lg-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="header-title">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span data-i18n="operations_title">العمليات اليومية</span>
+                </h1>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <!-- Language Switcher -->
+                <div class="language-switcher-header d-none d-lg-flex">
+                    <button class="lang-btn" data-lang="fr">FR</button>
+                    <button class="lang-btn active" data-lang="ar">AR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="ru">RU</button>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="d-none d-md-flex gap-3">
+                    <div class="text-end">
+                        <small class="text-muted d-block" data-i18n="total_operations">إجمالي العمليات</small>
+                        <span class="fw-bold text-primary english-numbers" id="totalTransactions">0</span>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted d-block" data-i18n="today_operations">عمليات اليوم</small>
+                        <span class="fw-bold text-success english-numbers" id="todayTransactions">0</span>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-custom" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-plus"></i>
+                        <span data-i18n="new_operation">عملية جديدة</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="openOperationModal('receive')"><i class="fas fa-arrow-down text-success me-2"></i><span data-i18n="receive_goods">استلام بضاعة</span></a></li>
+                        <li><a class="dropdown-item" href="#" onclick="openOperationModal('issue')"><i class="fas fa-arrow-up text-danger me-2"></i><span data-i18n="issue_goods">صرف بضاعة</span></a></li>
+                        <li><a class="dropdown-item" href="#" onclick="openOperationModal('transfer')"><i class="fas fa-exchange-alt text-primary me-2"></i><span data-i18n="transfer_between_warehouses">تحويل بين مخازن</span></a></li>
+                        <li><a class="dropdown-item" href="#" onclick="openOperationModal('return')"><i class="fas fa-undo text-warning me-2"></i><span data-i18n="return_goods">إرجاع بضاعة</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- Alert Container -->
+        <div id="alertContainer" class="container mt-3"></div>
+
+        <!-- Main Content -->
+        <main class="container py-4">
+            <!-- Operations Grid -->
+            <div class="operations-grid fade-in">
+                <div class="operation-card receive" onclick="openOperationModal('receive')">
+                    <div class="operation-icon">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <h3 class="operation-title" data-i18n="receive_card_title">إذن استلام بضاعة</h3>
+                    <p class="operation-desc" data-i18n="receive_card_desc">تسجيل بضاعة واردة للمخزن</p>
+                </div>
+                
+                <div class="operation-card issue" onclick="openOperationModal('issue')">
+                    <div class="operation-icon">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <h3 class="operation-title" data-i18n="issue_card_title">إذن صرف بضاعة</h3>
+                    <p class="operation-desc" data-i18n="issue_card_desc">صرف بضاعة من المخزن للعملاء</p>
+                </div>
+                
+                <div class="operation-card transfer" onclick="openOperationModal('transfer')">
+                    <div class="operation-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3 class="operation-title" data-i18n="transfer_card_title">تحويل بين مخازن</h3>
+                    <p class="operation-desc" data-i18n="transfer_card_desc">نقل بضائع بين المخازن المختلفة</p>
+                </div>
+                
+                <div class="operation-card return" onclick="openOperationModal('return')">
+                    <div class="operation-icon">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <h3 class="operation-title" data-i18n="return_card_title">إذن إرجاع</h3>
+                    <p class="operation-desc" data-i18n="return_card_desc">إرجاع بضاعة من العملاء للمخزن</p>
+                </div>
+            </div>
+
+            <!-- Transactions Table Card -->
+            <div class="card card-custom fade-in">
+                <div class="card-header-custom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>
+                        <span data-i18n="operations_log">سجل العمليات</span>
+                    </h5>
+                    <div class="d-flex gap-2">
+                        <button onclick="WMS.exportTableToExcel('transactionsTable', 'العمليات.xlsx')" 
+                                class="btn btn-success btn-custom">
+                            <i class="fas fa-file-excel"></i>
+                            <span data-i18n="export_excel">تصدير Excel</span>
+                        </button>
+                        <button onclick="printTransactions()" class="btn btn-outline-light btn-custom">
+                            <i class="fas fa-print"></i>
+                            <span data-i18n="print">طباعة</span>
+                        </button>
+                        <button onclick="refreshTransactions()" class="btn btn-outline-light btn-custom">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Filters -->
+                    <div class="p-3 bg-light border-bottom">
+                        <div class="row g-2">
+                            <div class="col-12 col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0">
+                                        <i class="fas fa-search text-muted"></i>
+                                    </span>
+                                    <input type="text" id="searchTransaction" class="form-control border-start-0" 
+                                           placeholder="ابحث في العمليات..." data-i18n-placeholder="search_operations_placeholder">
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <select id="typeFilter" class="form-select form-select-custom">
+                                    <option value="" data-i18n="all_types">جميع الأنواع</option>
+                                    <option value="وارد" data-i18n="incoming">وارد</option>
+                                    <option value="صادر" data-i18n="outgoing">صادر</option>
+                                    <option value="تحويل" data-i18n="transfer">تحويل</option>
+                                    <option value="إرجاع" data-i18n="return">إرجاع</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <input type="date" id="dateFilter" class="form-control form-control-custom english-numbers">
+                            </div>
+                            <div class="col-12 col-md-2">
+                                <button onclick="filterTransactions()" class="btn btn-primary w-100 btn-custom">
+                                    <i class="fas fa-filter"></i>
+                                    <span data-i18n="filter">تصفية</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Table -->
+                    <div class="table-container">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-custom" id="transactionsTable">
+                                <thead>
+                                    <tr>
+                                        <th width="120" data-i18n="date">التاريخ</th>
+                                        <th width="100" data-i18n="type">النوع</th>
+                                        <th data-i18n="product">المنتج</th>
+                                        <th width="100" data-i18n="quantity">الكمية</th>
+                                        <th width="150" data-i18n="warehouse">المخزن</th>
+                                        <th width="150" data-i18n="user">المستخدم</th>
+                                        <th width="120" data-i18n="reference">المرجع</th>
+                                        <th width="120" data-i18n="actions">الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactionsTableBody">
+                                    <tr>
+                                        <td colspan="8" class="text-center py-5">
+                                            <div class="loading-spinner mx-auto mb-3"></div>
+                                            <p class="text-muted mb-0" data-i18n="loading_operations">جاري تحميل العمليات...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                    <div class="text-muted">
+                        <span id="totalItems" class="english-numbers">0</span>
+                        <span data-i18n="operation"> عملية</span>
+                    </div>
+                    <nav>
+                        <ul class="pagination mb-0" id="pagination">
+                            <li class="page-item disabled"><a class="page-link" href="#" data-i18n="previous">السابق</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item disabled"><a class="page-link" href="#" data-i18n="next">التالي</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals (Receive, Issue, Transfer, Return) -->
+    <!-- Receive Modal -->
+    <div class="modal fade modal-custom" id="receiveModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title modal-title-custom">
+                        <i class="fas fa-arrow-down me-2"></i>
+                        <span data-i18n="receive_modal_title">إذن استلام بضاعة</span>
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="receiveForm" onsubmit="event.preventDefault(); validateAndAddTransaction('وارد', 'receiveForm');">
+                    <div class="modal-body">
+                        <div id="receiveFormErrors" class="error-summary d-none"></div>
+                        
+                        <div class="row g-3">
+                            <!-- Product -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="product_label">المنتج *</label>
+                                <select class="form-select form-select-custom" id="receiveProductSelect" name="product_id" required onchange="validateReceiveProduct()">
+                                    <option value="" data-i18n="select_product">اختر المنتج</option>
+                                </select>
+                                <div class="error-message" id="receiveProductError"></div>
+                            </div>
+                            
+                            <!-- Quantity -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="quantity_label">الكمية *</label>
+                                <input type="number" class="form-control form-control-custom english-numbers" id="receiveQuantity" name="quantity" min="1" required onblur="validateReceiveQuantity()">
+                                <div class="error-message" id="receiveQuantityError"></div>
+                            </div>
+                            
+                            <!-- Warehouse -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="warehouse_label">المخزن *</label>
+                                <select class="form-select form-select-custom" id="receiveWarehouseSelect" name="warehouse_id" required onchange="validateReceiveWarehouse()">
+                                    <option value="" data-i18n="select_warehouse">اختر المخزن</option>
+                                </select>
+                                <div class="error-message" id="receiveWarehouseError"></div>
+                            </div>
+                            
+                            <!-- Reference -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="reference_label">رقم المرجع *</label>
+                                <input type="text" class="form-control form-control-custom ltr-field" id="receiveReference" name="reference" required onblur="validateReceiveReference()">
+                                <div class="error-message" id="receiveReferenceError"></div>
+                            </div>
+                            
+                            <!-- Notes -->
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="notes_label">ملاحظات</label>
+                                <textarea class="form-control form-control-custom" id="receiveNotes" name="notes" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                            <span data-i18n="cancel">إلغاء</span>
+                        </button>
+                        <button type="submit" class="btn btn-success btn-custom" id="receiveSubmitBtn">
+                            <i class="fas fa-save"></i>
+                            <span data-i18n="save_receipt">تسجيل الاستلام</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue Modal -->
+    <div class="modal fade modal-custom" id="issueModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title modal-title-custom">
+                        <i class="fas fa-arrow-up me-2"></i>
+                        <span data-i18n="issue_modal_title">إذن صرف بضاعة</span>
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="issueForm" onsubmit="event.preventDefault(); validateAndAddTransaction('صادر', 'issueForm');">
+                    <div class="modal-body">
+                        <div id="issueFormErrors" class="error-summary d-none"></div>
+                        <div id="issueStockInfo" class="stock-info d-none">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                                <span class="fw-bold me-1" data-i18n="inventory_info">معلومات المخزون:</span>
+                                <span id="currentStockText" class="text-primary english-numbers"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <!-- Product -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="product_label">المنتج *</label>
+                                <select class="form-select form-select-custom" id="issueProductSelect" name="product_id" required onchange="validateIssueProduct()">
+                                    <option value="" data-i18n="select_product">اختر المنتج</option>
+                                </select>
+                                <div class="error-message" id="issueProductError"></div>
+                            </div>
+                            
+                            <!-- Quantity -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="quantity_label">الكمية *</label>
+                                <input type="number" class="form-control form-control-custom english-numbers" id="issueQuantity" name="quantity" min="1" required onblur="validateIssueQuantity()">
+                                <div class="error-message" id="issueQuantityError"></div>
+                            </div>
+                            
+                            <!-- Warehouse -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="warehouse_label">المخزن *</label>
+                                <select class="form-select form-select-custom" id="issueWarehouseSelect" name="warehouse_id" required onchange="validateIssueWarehouse()">
+                                    <option value="" data-i18n="select_warehouse">اختر المخزن</option>
+                                </select>
+                                <div class="error-message" id="issueWarehouseError"></div>
+                            </div>
+                            
+                            <!-- Customer -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="customer_label">العميل *</label>
+                                <input type="text" class="form-control form-control-custom" id="issueCustomer" name="customer" required onblur="validateIssueCustomer()">
+                                <div class="error-message" id="issueCustomerError"></div>
+                            </div>
+                            
+                            <!-- Reference -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="invoice_number_label">رقم الفاتورة *</label>
+                                <input type="text" class="form-control form-control-custom ltr-field" id="issueReference" name="reference" required onblur="validateIssueReference()">
+                                <div class="error-message" id="issueReferenceError"></div>
+                            </div>
+                            
+                            <!-- Price -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="selling_price_label">سعر البيع</label>
+                                <input type="number" step="0.01" min="0" class="form-control form-control-custom english-numbers" id="issuePrice" name="price" onblur="validateIssuePrice()">
+                                <div class="error-message" id="issuePriceError"></div>
+                            </div>
+                            
+                            <!-- Notes -->
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="notes_label">ملاحظات</label>
+                                <textarea class="form-control form-control-custom" id="issueNotes" name="notes" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                            <span data-i18n="cancel">إلغاء</span>
+                        </button>
+                        <button type="submit" class="btn btn-danger btn-custom" id="issueSubmitBtn">
+                            <i class="fas fa-save"></i>
+                            <span data-i18n="save_issue">تسجيل الصرف</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transfer Modal -->
+    <div class="modal fade modal-custom" id="transferModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title modal-title-custom">
+                        <i class="fas fa-exchange-alt me-2"></i>
+                        <span data-i18n="transfer_modal_title">تحويل بين مخازن</span>
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="transferForm" onsubmit="event.preventDefault(); validateAndAddTransaction('تحويل', 'transferForm');">
+                    <div class="modal-body">
+                        <div id="transferFormErrors" class="error-summary d-none"></div>
+                        <div id="transferStockInfo" class="stock-info d-none">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                                <span class="fw-bold me-1" data-i18n="inventory_info">معلومات المخزون:</span>
+                                <span id="transferStockText" class="text-primary english-numbers"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <!-- Product -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="product_label">المنتج *</label>
+                                <select class="form-select form-select-custom" id="transferProductSelect" name="product_id" required onchange="validateTransferProduct()">
+                                    <option value="" data-i18n="select_product">اختر المنتج</option>
+                                </select>
+                                <div class="error-message" id="transferProductError"></div>
+                            </div>
+                            
+                            <!-- Quantity -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="quantity_label">الكمية *</label>
+                                <input type="number" class="form-control form-control-custom english-numbers" id="transferQuantity" name="quantity" min="1" required onblur="validateTransferQuantity()">
+                                <div class="error-message" id="transferQuantityError"></div>
+                            </div>
+                            
+                            <!-- From Warehouse -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="from_warehouse_label">من المخزن *</label>
+                                <select class="form-select form-select-custom" id="fromWarehouseSelect" name="from_warehouse_id" required onchange="validateFromWarehouse()">
+                                    <option value="" data-i18n="select_source_warehouse">اختر المخزن المصدر</option>
+                                </select>
+                                <div class="error-message" id="fromWarehouseError"></div>
+                            </div>
+                            
+                            <!-- To Warehouse -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="to_warehouse_label">إلى المخزن *</label>
+                                <select class="form-select form-select-custom" id="toWarehouseSelect" name="to_warehouse_id" required onchange="validateToWarehouse()">
+                                    <option value="" data-i18n="select_destination_warehouse">اختر المخزن الوجهة</option>
+                                </select>
+                                <div class="error-message" id="toWarehouseError"></div>
+                            </div>
+                            
+                            <!-- Reference -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="reference_label">رقم المرجع *</label>
+                                <input type="text" class="form-control form-control-custom ltr-field" id="transferReference" name="reference" required onblur="validateTransferReference()">
+                                <div class="error-message" id="transferReferenceError"></div>
+                            </div>
+                            
+                            <!-- Notes -->
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="transfer_reason_label">سبب التحويل</label>
+                                <textarea class="form-control form-control-custom" id="transferNotes" name="notes" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                            <span data-i18n="cancel">إلغاء</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-custom" id="transferSubmitBtn">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span data-i18n="execute_transfer">تنفيذ التحويل</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Return Modal -->
+    <div class="modal fade modal-custom" id="returnModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-content-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title modal-title-custom">
+                        <i class="fas fa-undo me-2"></i>
+                        <span data-i18n="return_modal_title">إذن إرجاع بضاعة</span>
+                    </h5>
+                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="returnForm" onsubmit="event.preventDefault(); validateAndAddTransaction('إرجاع', 'returnForm');">
+                    <div class="modal-body">
+                        <div id="returnFormErrors" class="error-summary d-none"></div>
+                        
+                        <div class="row g-3">
+                            <!-- Product -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="product_label">المنتج *</label>
+                                <select class="form-select form-select-custom" id="returnProductSelect" name="product_id" required onchange="validateReturnProduct()">
+                                    <option value="" data-i18n="select_product">اختر المنتج</option>
+                                </select>
+                                <div class="error-message" id="returnProductError"></div>
+                            </div>
+                            
+                            <!-- Quantity -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="quantity_label">الكمية *</label>
+                                <input type="number" class="form-control form-control-custom english-numbers" id="returnQuantity" name="quantity" min="1" required onblur="validateReturnQuantity()">
+                                <div class="error-message" id="returnQuantityError"></div>
+                            </div>
+                            
+                            <!-- Warehouse -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="warehouse_label">المخزن *</label>
+                                <select class="form-select form-select-custom" id="returnWarehouseSelect" name="warehouse_id" required onchange="validateReturnWarehouse()">
+                                    <option value="" data-i18n="select_warehouse">اختر المخزن</option>
+                                </select>
+                                <div class="error-message" id="returnWarehouseError"></div>
+                            </div>
+                            
+                            <!-- Customer -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="customer_label">العميل *</label>
+                                <input type="text" class="form-control form-control-custom" id="returnCustomer" name="customer" required onblur="validateReturnCustomer()">
+                                <div class="error-message" id="returnCustomerError"></div>
+                            </div>
+                            
+                            <!-- Reference -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="return_invoice_number_label">رقم فاتورة الإرجاع *</label>
+                                <input type="text" class="form-control form-control-custom ltr-field" id="returnReference" name="reference" required onblur="validateReturnReference()">
+                                <div class="error-message" id="returnReferenceError"></div>
+                            </div>
+                            
+                            <!-- Return Reason -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom" data-i18n="return_reason_label">سبب الإرجاع *</label>
+                                <select class="form-select form-select-custom" id="returnReason" name="return_reason" required onchange="validateReturnReason()">
+                                    <option value="" data-i18n="select_reason">اختر السبب</option>
+                                    <option value="تالف" data-i18n="damaged">تالف</option>
+                                    <option value="خطأ في الطلب" data-i18n="order_error">خطأ في الطلب</option>
+                                    <option value="عدم المطابقة" data-i18n="non_conformity">عدم المطابقة للمواصفات</option>
+                                    <option value="آخر" data-i18n="other_reasons">أسباب أخرى</option>
+                                </select>
+                                <div class="error-message" id="returnReasonError"></div>
+                            </div>
+                            
+                            <!-- Notes -->
+                            <div class="col-12">
+                                <label class="form-label-custom" data-i18n="notes_label">ملاحظات</label>
+                                <textarea class="form-control form-control-custom" id="returnNotes" name="notes" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                            <span data-i18n="cancel">إلغاء</span>
+                        </button>
+                        <button type="submit" class="btn btn-warning btn-custom" id="returnSubmitBtn">
+                            <i class="fas fa-undo"></i>
+                            <span data-i18n="save_return">تسجيل الإرجاع</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Language Switcher JS -->
+    <script>
+        // Language Switcher Configuration avec traductions intégrées
+        const languageSwitcher = {
+            currentLang: 'ar',
+            translations: {},
+            
+            // Available languages
+            languages: {
+                'ar': { name: 'العربية' },
+                'fr': { name: 'Français' },
+                'en': { name: 'English' },
+                'ru': { name: 'Русский' }
+            },
+            
+            // Traductions intégrées - COMPLÈTES
+            builtInTranslations: {
+                'fr': {
+                    "operations_title": "Opérations Quotidiennes",
+                    "system_name": "Système d'Entrepôt",
+                    "system_integration": "Gestion Intégrée",
+                    "user_role": "Administrateur Système",
+                    "dashboard": "Tableau de Bord",
+                    "inventory_management": "Gestion des Stocks",
+                    "daily_operations": "Opérations Quotidiennes",
+                    "reports_analysis": "Rapports et Analyse",
+                    "warehouse_management": "Gestion des Entrepôts",
+                    "users": "Utilisateurs",
+                    "settings": "Paramètres",
+                    "logout": "Déconnexion",
+                    "total_operations": "Total Opérations",
+                    "today_operations": "Opérations Aujourd'hui",
+                    "new_operation": "Nouvelle Opération",
+                    "receive_goods": "Réception Marchandise",
+                    "issue_goods": "Émission Marchandise",
+                    "transfer_between_warehouses": "Transfert entre Entrepôts",
+                    "return_goods": "Retour Marchandise",
+                    "receive_card_title": "Autorisation Réception",
+                    "receive_card_desc": "Enregistrement marchandise entrante",
+                    "issue_card_title": "Autorisation Émission",
+                    "issue_card_desc": "Émission marchandise aux clients",
+                    "transfer_card_title": "Transfert entre Entrepôts",
+                    "transfer_card_desc": "Transfert marchandises entre entrepôts",
+                    "return_card_title": "Autorisation Retour",
+                    "return_card_desc": "Retour marchandise des clients",
+                    "operations_log": "Journal des Opérations",
+                    "export_excel": "Exporter Excel",
+                    "print": "Imprimer",
+                    "search_operations_placeholder": "Rechercher opérations...",
+                    "all_types": "Tous Types",
+                    "incoming": "Entrant",
+                    "outgoing": "Sortant",
+                    "transfer": "Transfert",
+                    "return": "Retour",
+                    "filter": "Filtrer",
+                    "date": "Date",
+                    "type": "Type",
+                    "product": "Produit",
+                    "quantity": "Quantité",
+                    "warehouse": "Entrepôt",
+                    "user": "Utilisateur",
+                    "reference": "Référence",
+                    "actions": "Actions",
+                    "loading_operations": "Chargement opérations...",
+                    "operation": "opération",
+                    "previous": "Précédent",
+                    "next": "Suivant",
+                    "receive_modal_title": "Autorisation Réception Marchandise",
+                    "product_label": "Produit *",
+                    "select_product": "Choisir Produit",
+                    "quantity_label": "Quantité *",
+                    "warehouse_label": "Entrepôt *",
+                    "select_warehouse": "Choisir Entrepôt",
+                    "reference_label": "Numéro Référence *",
+                    "notes_label": "Notes",
+                    "cancel": "Annuler",
+                    "save_receipt": "Enregistrer Réception",
+                    "inventory_info": "Info Stock:",
+                    "issue_modal_title": "Autorisation Émission Marchandise",
+                    "customer_label": "Client *",
+                    "invoice_number_label": "Numéro Facture *",
+                    "selling_price_label": "Prix Vente",
+                    "save_issue": "Enregistrer Émission",
+                    "transfer_modal_title": "Transfert entre Entrepôts",
+                    "from_warehouse_label": "De l'Entrepôt *",
+                    "select_source_warehouse": "Choisir Entrepôt Source",
+                    "to_warehouse_label": "À l'Entrepôt *",
+                    "select_destination_warehouse": "Choisir Entrepôt Destination",
+                    "transfer_reason_label": "Raison Transfert",
+                    "execute_transfer": "Exécuter Transfert",
+                    "return_modal_title": "Autorisation Retour Marchandise",
+                    "return_invoice_number_label": "Numéro Facture Retour *",
+                    "return_reason_label": "Raison Retour *",
+                    "select_reason": "Choisir Raison",
+                    "damaged": "Endommagé",
+                    "order_error": "Erreur Commande",
+                    "non_conformity": "Non Conformité Spécifications",
+                    "other_reasons": "Autres Raisons",
+                    "save_return": "Enregistrer Retour",
+                    "no_operations": "Aucune opération enregistrée",
+                    "no_results": "Aucun résultat correspondant à la recherche",
+                    "view_details": "Voir les détails",
+                    "delete_operation": "Supprimer l'opération",
+                    "available_stock": "Stock disponible",
+                    "operation_saved": "Opération enregistrée avec succès",
+                    "operation_deleted": "Opération supprimée avec succès",
+                    "confirm_delete": "Êtes-vous sûr de vouloir supprimer cette opération ?",
+                    "saving": "Enregistrement...",
+                    "from": "De",
+                    "to": "À",
+                    "form_errors": "Erreurs dans le formulaire",
+                    "operation_details": "Détails de l'opération",
+                    "customer": "Client",
+                    "selling_price": "Prix de vente",
+                    "return_reason": "Motif du retour"
+                },
+                'en': {
+                    "operations_title": "Daily Operations",
+                    "system_name": "Warehouse System",
+                    "system_integration": "Integrated Management",
+                    "user_role": "System Administrator",
+                    "dashboard": "Dashboard",
+                    "inventory_management": "Inventory Management",
+                    "daily_operations": "Daily Operations",
+                    "reports_analysis": "Reports & Analysis",
+                    "warehouse_management": "Warehouse Management",
+                    "users": "Users",
+                    "settings": "Settings",
+                    "logout": "Logout",
+                    "total_operations": "Total Operations",
+                    "today_operations": "Today's Operations",
+                    "new_operation": "New Operation",
+                    "receive_goods": "Receive Goods",
+                    "issue_goods": "Issue Goods",
+                    "transfer_between_warehouses": "Transfer between Warehouses",
+                    "return_goods": "Return Goods",
+                    "receive_card_title": "Receive Authorization",
+                    "receive_card_desc": "Register incoming goods",
+                    "issue_card_title": "Issue Authorization",
+                    "issue_card_desc": "Issue goods to customers",
+                    "transfer_card_title": "Transfer between Warehouses",
+                    "transfer_card_desc": "Transfer goods between warehouses",
+                    "return_card_title": "Return Authorization",
+                    "return_card_desc": "Return goods from customers",
+                    "operations_log": "Operations Log",
+                    "export_excel": "Export Excel",
+                    "print": "Print",
+                    "search_operations_placeholder": "Search operations...",
+                    "all_types": "All Types",
+                    "incoming": "Incoming",
+                    "outgoing": "Outgoing",
+                    "transfer": "Transfer",
+                    "return": "Return",
+                    "filter": "Filter",
+                    "date": "Date",
+                    "type": "Type",
+                    "product": "Product",
+                    "quantity": "Quantity",
+                    "warehouse": "Warehouse",
+                    "user": "User",
+                    "reference": "Reference",
+                    "actions": "Actions",
+                    "loading_operations": "Loading operations...",
+                    "operation": "operation",
+                    "previous": "Previous",
+                    "next": "Next",
+                    "receive_modal_title": "Goods Receive Authorization",
+                    "product_label": "Product *",
+                    "select_product": "Select Product",
+                    "quantity_label": "Quantity *",
+                    "warehouse_label": "Warehouse *",
+                    "select_warehouse": "Select Warehouse",
+                    "reference_label": "Reference Number *",
+                    "notes_label": "Notes",
+                    "cancel": "Cancel",
+                    "save_receipt": "Save Receipt",
+                    "inventory_info": "Inventory Info:",
+                    "issue_modal_title": "Goods Issue Authorization",
+                    "customer_label": "Customer *",
+                    "invoice_number_label": "Invoice Number *",
+                    "selling_price_label": "Selling Price",
+                    "save_issue": "Save Issue",
+                    "transfer_modal_title": "Transfer between Warehouses",
+                    "from_warehouse_label": "From Warehouse *",
+                    "select_source_warehouse": "Select Source Warehouse",
+                    "to_warehouse_label": "To Warehouse *",
+                    "select_destination_warehouse": "Select Destination Warehouse",
+                    "transfer_reason_label": "Transfer Reason",
+                    "execute_transfer": "Execute Transfer",
+                    "return_modal_title": "Goods Return Authorization",
+                    "return_invoice_number_label": "Return Invoice Number *",
+                    "return_reason_label": "Return Reason *",
+                    "select_reason": "Select Reason",
+                    "damaged": "Damaged",
+                    "order_error": "Order Error",
+                    "non_conformity": "Non-conformity to Specifications",
+                    "other_reasons": "Other Reasons",
+                    "save_return": "Save Return",
+                    "no_operations": "No operations recorded",
+                    "no_results": "No matching results found",
+                    "view_details": "View details",
+                    "delete_operation": "Delete operation",
+                    "available_stock": "Available stock",
+                    "operation_saved": "Operation saved successfully",
+                    "operation_deleted": "Operation deleted successfully",
+                    "confirm_delete": "Are you sure you want to delete this operation?",
+                    "saving": "Saving...",
+                    "from": "From",
+                    "to": "To",
+                    "form_errors": "Form errors",
+                    "operation_details": "Operation details",
+                    "customer": "Customer",
+                    "selling_price": "Selling price",
+                    "return_reason": "Return reason"
+                },
+                'ru': {
+                    "operations_title": "Ежедневные Операции",
+                    "system_name": "Система Склада",
+                    "system_integration": "Интегрированное Управление",
+                    "user_role": "Администратор Системы",
+                    "dashboard": "Панель Управления",
+                    "inventory_management": "Управление Запасами",
+                    "daily_operations": "Ежедневные Операции",
+                    "reports_analysis": "Отчеты и Анализ",
+                    "warehouse_management": "Управление Складами",
+                    "users": "Пользователи",
+                    "settings": "Настройки",
+                    "logout": "Выйти",
+                    "total_operations": "Всего Операций",
+                    "today_operations": "Операций Сегодня",
+                    "new_operation": "Новая Операция",
+                    "receive_goods": "Прием Товара",
+                    "issue_goods": "Выдача Товара",
+                    "transfer_between_warehouses": "Перевод между Складами",
+                    "return_goods": "Возврат Товара",
+                    "receive_card_title": "Разрешение Приема",
+                    "receive_card_desc": "Регистрация входящего товара",
+                    "issue_card_title": "Разрешение Выдачи",
+                    "issue_card_desc": "Выдача товара клиентам",
+                    "transfer_card_title": "Перевод между Складами",
+                    "transfer_card_desc": "Перевод товаров между складами",
+                    "return_card_title": "Разрешение Возврата",
+                    "return_card_desc": "Возврат товара от клиентов",
+                    "operations_log": "Журнал Операций",
+                    "export_excel": "Экспорт Excel",
+                    "print": "Печать",
+                    "search_operations_placeholder": "Поиск операций...",
+                    "all_types": "Все Типы",
+                    "incoming": "Входящий",
+                    "outgoing": "Исходящий",
+                    "transfer": "Перевод",
+                    "return": "Возврат",
+                    "filter": "Фильтр",
+                    "date": "Дата",
+                    "type": "Тип",
+                    "product": "Продукт",
+                    "quantity": "Количество",
+                    "warehouse": "Склад",
+                    "user": "Пользователь",
+                    "reference": "Ссылка",
+                    "actions": "Действия",
+                    "loading_operations": "Загрузка операций...",
+                    "operation": "операция",
+                    "previous": "Предыдущий",
+                    "next": "Следующий",
+                    "receive_modal_title": "Разрешение Приема Товара",
+                    "product_label": "Продукт *",
+                    "select_product": "Выбрать Продукт",
+                    "quantity_label": "Количество *",
+                    "warehouse_label": "Склад *",
+                    "select_warehouse": "Выбрать Склад",
+                    "reference_label": "Номер Ссылки *",
+                    "notes_label": "Примечания",
+                    "cancel": "Отмена",
+                    "save_receipt": "Сохранить Прием",
+                    "inventory_info": "Информация о Запасах:",
+                    "issue_modal_title": "Разрешение Выдачи Товара",
+                    "customer_label": "Клиент *",
+                    "invoice_number_label": "Номер Счета *",
+                    "selling_price_label": "Цена Продажи",
+                    "save_issue": "Сохранить Выдачу",
+                    "transfer_modal_title": "Перевод между Складами",
+                    "from_warehouse_label": "Из Склада *",
+                    "select_source_warehouse": "Выбрать Склад-Источник",
+                    "to_warehouse_label": "На Склад *",
+                    "select_destination_warehouse": "Выбрать Склад-Назначение",
+                    "transfer_reason_label": "Причина Перевода",
+                    "execute_transfer": "Выполнить Перевод",
+                    "return_modal_title": "Разрешение Возврата Товара",
+                    "return_invoice_number_label": "Номер Счета Возврата *",
+                    "return_reason_label": "Причина Возврата *",
+                    "select_reason": "Выбрать Причину",
+                    "damaged": "Поврежден",
+                    "order_error": "Ошибка Заказа",
+                    "non_conformity": "Несоответствие Спецификациям",
+                    "other_reasons": "Другие Причины",
+                    "save_return": "Сохранить Возврат",
+                    "no_operations": "Нет зарегистрированных операций",
+                    "no_results": "Совпадений не найдено",
+                    "view_details": "Посмотреть детали",
+                    "delete_operation": "Удалить операцию",
+                    "available_stock": "Доступный запас",
+                    "operation_saved": "Операция успешно сохранена",
+                    "operation_deleted": "Операция успешно удалена",
+                    "confirm_delete": "Вы уверены, что хотите удалить эту операцию?",
+                    "saving": "Сохранение...",
+                    "from": "Из",
+                    "to": "В",
+                    "form_errors": "Ошибки формы",
+                    "operation_details": "Детали операции",
+                    "customer": "Клиент",
+                    "selling_price": "Цена продажи",
+                      "user_name": "Ибрахим Амир",
+"user_role": "Системный администратор",
+                    "return_reason": "Причина возврата"
+                },
+                'ar': {
+                    "operations_title": "العمليات اليومية",
+                    "system_name": "نظام المخازن",
+                    "system_integration": "الإدارة المتكاملة",
+                    "user_role": "مدير النظام",
+                    "dashboard": "لوحة التحكم",
+                    "inventory_management": "إدارة المخزون",
+                    "daily_operations": "العمليات اليومية",
+                    "reports_analysis": "التقارير والتحليل",
+                    "warehouse_management": "إدارة المخازن",
+                    "users": "المستخدمون",
+                    "settings": "الإعدادات",
+                    "logout": "تسجيل الخروج",
+                    "total_operations": "إجمالي العمليات",
+                    "today_operations": "عمليات اليوم",
+                    "new_operation": "عملية جديدة",
+                    "receive_goods": "استلام بضاعة",
+                    "issue_goods": "صرف بضاعة",
+                    "transfer_between_warehouses": "تحويل بين مخازن",
+                    "return_goods": "إرجاع بضاعة",
+                    "receive_card_title": "إذن استلام بضاعة",
+                    "receive_card_desc": "تسجيل بضاعة واردة للمخزن",
+                    "issue_card_title": "إذن صرف بضاعة",
+                    "issue_card_desc": "صرف بضاعة من المخزن للعملاء",
+                    "transfer_card_title": "تحويل بين مخازن",
+                    "transfer_card_desc": "نقل بضائع بين المخازن المختلفة",
+                    "return_card_title": "إذن إرجاع",
+                    "return_card_desc": "إرجاع بضاعة من العملاء للمخزن",
+                    "operations_log": "سجل العمليات",
+                    "export_excel": "تصدير Excel",
+                    "print": "طباعة",
+                    "search_operations_placeholder": "ابحث في العمليات...",
+                    "all_types": "جميع الأنواع",
+                    "incoming": "وارد",
+                    "outgoing": "صادر",
+                    "transfer": "تحويل",
+                    "return": "إرجاع",
+                    "filter": "تصفية",
+                    "date": "التاريخ",
+                    "type": "النوع",
+                    "product": "المنتج",
+                    "quantity": "الكمية",
+                    "warehouse": "المخزن",
+                    "user": "المستخدم",
+                    "reference": "المرجع",
+                    "actions": "الإجراءات",
+                    "loading_operations": "جاري تحميل العمليات...",
+                    "operation": "عملية",
+                    "previous": "السابق",
+                    "next": "التالي",
+                    "receive_modal_title": "إذن استلام بضاعة",
+                    "product_label": "المنتج *",
+                    "select_product": "اختر المنتج",
+                    "quantity_label": "الكمية *",
+                    "warehouse_label": "المخزن *",
+                    "select_warehouse": "اختر المخزن",
+                    "reference_label": "رقم المرجع *",
+                    "notes_label": "ملاحظات",
+                    "cancel": "إلغاء",
+                    "save_receipt": "تسجيل الاستلام",
+                    "inventory_info": "معلومات المخزون:",
+                    "issue_modal_title": "إذن صرف بضاعة",
+                    "customer_label": "العميل *",
+                    "invoice_number_label": "رقم الفاتورة *",
+                    "selling_price_label": "سعر البيع",
+                    "save_issue": "تسجيل الصرف",
+                    "transfer_modal_title": "تحويل بين مخازن",
+                    "from_warehouse_label": "من المخزن *",
+                    "select_source_warehouse": "اختر المخزن المصدر",
+                    "to_warehouse_label": "إلى المخزن *",
+                    "select_destination_warehouse": "اختر المخزن الوجهة",
+                    "transfer_reason_label": "سبب التحويل",
+                    "execute_transfer": "تنفيذ التحويل",
+                    "return_modal_title": "إذن إرجاع بضاعة",
+                    "return_invoice_number_label": "رقم فاتورة الإرجاع *",
+                    "return_reason_label": "سبب الإرجاع *",
+                    "select_reason": "اختر السبب",
+                    "damaged": "تالف",
+                    "order_error": "خطأ في الطلب",
+                    "non_conformity": "عدم المطابقة للمواصفات",
+                    "other_reasons": "أسباب أخرى",
+                    "save_return": "تسجيل الإرجاع",
+                    "no_operations": "لا توجد عمليات مسجلة",
+                    "no_results": "لا توجد نتائج مطابقة للبحث",
+                    "view_details": "عرض التفاصيل",
+                    "delete_operation": "حذف العملية",
+                    "available_stock": "المخزون المتاح",
+                    "operation_saved": "تم تسجيل العملية بنجاح",
+                    "operation_deleted": "تم حذف العملية بنجاح",
+                    "confirm_delete": "هل أنت متأكد من حذف هذه العملية؟",
+                    "saving": "جاري الحفظ...",
+                    "from": "من",
+                    "to": "إلى",
+                    "form_errors": "أخطاء في النموذج",
+                    "operation_details": "تفاصيل العملية",
+                    "customer": "العميل",
+                    "selling_price": "سعر البيع",
+                    "return_reason": "سبب الإرجاع"
+                }
+            },
+            
+            // Initialize the language switcher
+            init: function() {
+                this.loadSavedLanguage();
+                this.setupEventListeners();
+            },
+            
+            // Load saved language from localStorage or browser
+            loadSavedLanguage: function() {
+                const savedLang = localStorage.getItem('preferredLang');
+                const browserLang = navigator.language.split('-')[0];
+                const availableLangs = Object.keys(this.languages);
+                
+                let langToLoad = savedLang;
+                
+                if (!langToLoad || !availableLangs.includes(langToLoad)) {
+                    langToLoad = availableLangs.includes(browserLang) ? browserLang : 'ar';
+                }
+                
+                this.switchLanguage(langToLoad);
+            },
+            
+            // Switch to a specific language
+            switchLanguage: async function(langCode) {
+                if (this.currentLang === langCode) return;
+                
+                console.log('Switching to language:', langCode);
+                
+                try {
+                    // Use built-in translations
+                    if (this.builtInTranslations[langCode]) {
+                        this.translations[langCode] = this.builtInTranslations[langCode];
+                    } else {
+                        // Fallback to Arabic if no built-in translation
+                        this.translations[langCode] = this.builtInTranslations['ar'];
+                    }
+                    
+                    // Update current language
+                    this.currentLang = langCode;
+                    
+                    // Save preference
+                    localStorage.setItem('preferredLang', langCode);
+                    
+                    // Apply translations
+                    this.applyTranslations(this.translations[langCode]);
+                    
+                    // Update UI direction and language
+                    this.updatePageDirection(langCode);
+                    
+                    // Update active button
+                    this.updateActiveButton(langCode);
+                    
+                    // Update page title
+                    if (this.translations[langCode].operations_title) {
+                        document.title = this.translations[langCode].operations_title;
+                    }
+                    
+                    // Recharger les données dynamiques avec la nouvelle langue
+                    await this.reloadDynamicData();
+                    
+                    console.log('Language switched to:', langCode);
+                    
+                } catch (error) {
+                    console.error('Failed to load language:', error);
+                    // Fallback to built-in translations
+                    if (this.builtInTranslations[langCode]) {
+                        this.translations[langCode] = this.builtInTranslations[langCode];
+                        this.currentLang = langCode;
+                        this.applyTranslations(this.translations[langCode]);
+                        this.updatePageDirection(langCode);
+                        this.updateActiveButton(langCode);
+                    } else if (langCode !== 'ar') {
+                        this.switchLanguage('ar');
+                    }
+                }
+            },
+            
+            // Apply translations to all elements
+            applyTranslations: function(translationData) {
+                // Translate text elements
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (translationData[key]) {
+                        element.textContent = translationData[key];
+                    } else {
+                        console.warn('Translation key not found:', key);
+                    }
+                });
+                
+                // Translate placeholders
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                    const key = element.getAttribute('data-i18n-placeholder');
+                    if (translationData[key]) {
+                        element.placeholder = translationData[key];
+                    }
+                });
+            },
+            
+            // Update page direction (RTL/LTR)
+            updatePageDirection: function(langCode) {
+                const html = document.documentElement;
+                const body = document.body;
+                
+                // Remove existing direction classes
+                body.classList.remove('ltr');
+                
+                if (langCode === 'ar') {
+                    html.dir = 'rtl';
+                    html.lang = 'ar';
+                } else {
+                    html.dir = 'ltr';
+                    html.lang = langCode;
+                    body.classList.add('ltr');
+                }
+                
+                // Force reflow to ensure styles are applied correctly
+                document.body.offsetHeight;
+            },
+            
+            // Update active language button
+            updateActiveButton: function(langCode) {
+                document.querySelectorAll('.lang-btn').forEach(button => {
+                    button.classList.remove('active');
+                    if (button.getAttribute('data-lang') === langCode) {
+                        button.classList.add('active');
+                    }
+                });
+            },
+            
+            // Setup event listeners for language buttons
+            setupEventListeners: function() {
+                document.querySelectorAll('.lang-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const lang = e.target.getAttribute('data-lang');
+                        this.switchLanguage(lang);
+                    });
+                });
+            },
+            
+            // Recharger les données dynamiques
+            reloadDynamicData: async function() {
+                try {
+                    console.log('🔄 Rechargement des données dynamiques pour la langue:', this.currentLang);
+                    
+                    // Recharger les données des produits, entrepôts et transactions
+                    await loadTransactionsData();
+                    
+                    // Mettre à jour les statistiques
+                    updateStats();
+                    
+                } catch (error) {
+                    console.error('❌ Erreur lors du rechargement des données:', error);
+                }
+            }
+        };
+    </script>
+    
+    <!-- Custom JS -->
+    <script>
+        // WMS Global Object
+        const WMS = {
+            // Sidebar Management - CORRECTED
+            toggleSidebar: function() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.querySelector('.main-content');
+                if (sidebar) sidebar.classList.toggle('hidden');
+                if (mainContent) mainContent.classList.toggle('full-width');
+            },
+            
+            // Modal Management
+            openModal: function(modalId) {
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    modal.show();
+                }
+            },
+            
+            closeModal: function(modalId) {
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+                    }
+                }
+            },
+            
+            // Alert System
+            showAlert: function(message, type = 'info', duration = 5000) {
+                const alertContainer = document.getElementById('alertContainer');
+                
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type} alert-custom fade-in`;
+                alert.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>
+                        <div class="flex-grow-1">${message}</div>
+                        <button class="btn btn-link text-${type === 'success' ? 'success' : type === 'danger' ? 'danger' : type === 'warning' ? 'warning' : 'info'} p-0" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                alertContainer.appendChild(alert);
+                
+                // Auto remove after duration
+                if (duration > 0) {
+                    setTimeout(() => {
+                        if (alert.parentElement) {
+                            alert.remove();
+                        }
+                    }, duration);
+                }
+            },
+            
+            // Confirm Action
+            confirmAction: function(message, callback) {
+                if (confirm(message)) {
+                    callback();
+                }
+            },
+            
+            // Format Numbers in English (always)
+            formatNumber: function(num) {
+                return new Intl.NumberFormat('en-US').format(num);
+            },
+            
+            // Format Currency in English
+            formatCurrency: function(num) {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(num);
+            },
+            
+            // Format Date in English (YYYY-MM-DD)
+            formatDateEnglish: function(dateString) {
+                if (!dateString) return '-';
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            },
+            
+            // Format Time in English
+            formatTimeEnglish: function(date) {
+                return date.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+            },
+            
+            // Fetch Data (mock function) avec données traduites
+            fetchData: async function(endpoint) {
+                console.log(`Fetching data from: ${endpoint}`);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Obtenir la langue courante
+                const currentLang = languageSwitcher.currentLang;
+                
+                // Données traduites par langue
+                const translations = {
+                    'en': {
+                        'products': [
+                            { id: 'P001', name: 'Laptop', code: 'LPT001', current_stock: 50, unit: 'Piece', reorder_level: 10 },
+                            { id: 'P002', name: 'Wireless Mouse', code: 'MS001', current_stock: 200, unit: 'Piece', reorder_level: 50 },
+                            { id: 'P003', name: 'Keyboard', code: 'KB001', current_stock: 150, unit: 'Piece', reorder_level: 30 },
+                            { id: 'P004', name: '24-inch Monitor', code: 'MN001', current_stock: 80, unit: 'Piece', reorder_level: 20 },
+                            { id: 'P005', name: 'Laser Printer', code: 'PR001', current_stock: 25, unit: 'Piece', reorder_level: 5 }
+                        ],
+                        'warehouses': [
+                            { id: 'W001', name: 'Main Warehouse' },
+                            { id: 'W002', name: 'Branch 1 Warehouse' },
+                            { id: 'W003', name: 'Branch 2 Warehouse' },
+                            { id: 'W004', name: 'Retail Warehouse' }
+                        ]
+                    },
+                    'fr': {
+                        'products': [
+                            { id: 'P001', name: 'Ordinateur portable', code: 'LPT001', current_stock: 50, unit: 'Pièce', reorder_level: 10 },
+                            { id: 'P002', name: 'Souris sans fil', code: 'MS001', current_stock: 200, unit: 'Pièce', reorder_level: 50 },
+                            { id: 'P003', name: 'Clavier', code: 'KB001', current_stock: 150, unit: 'Pièce', reorder_level: 30 },
+                            { id: 'P004', name: 'Moniteur 24 pouces', code: 'MN001', current_stock: 80, unit: 'Pièce', reorder_level: 20 },
+                            { id: 'P005', name: 'Imprimante laser', code: 'PR001', current_stock: 25, unit: 'Pièce', reorder_level: 5 }
+                        ],
+                        'warehouses': [
+                            { id: 'W001', name: 'Entrepôt Principal' },
+                            { id: 'W002', name: 'Entrepôt Filiale 1' },
+                            { id: 'W003', name: 'Entrepôt Filiale 2' },
+                            { id: 'W004', name: 'Entrepôt de Détail' }
+                        ]
+                    },
+                    'ru': {
+                        'products': [
+                            { id: 'P001', name: 'Ноутбук', code: 'LPT001', current_stock: 50, unit: 'Штука', reorder_level: 10 },
+                            { id: 'P002', name: 'Беспроводная мышь', code: 'MS001', current_stock: 200, unit: 'Штука', reorder_level: 50 },
+                            { id: 'P003', name: 'Клавиатура', code: 'KB001', current_stock: 150, unit: 'Штука', reorder_level: 30 },
+                            { id: 'P004', name: '24-дюймовый монитор', code: 'MN001', current_stock: 80, unit: 'Штука', reorder_level: 20 },
+                            { id: 'P005', name: 'Лазерный принтер', code: 'PR001', current_stock: 25, unit: 'Штука', reorder_level: 5 }
+                        ],
+                        'warehouses': [
+                            { id: 'W001', name: 'Главный Склад' },
+                            { id: 'W002', name: 'Склад Филиала 1' },
+                            { id: 'W003', name: 'Склад Филиала 2' },
+                            { id: 'W004', name: 'Розничный Склад' }
+                        ]
+                    },
+                    'ar': {
+                        'products': [
+                            { id: 'P001', name: 'كمبيوتر محمول', code: 'LPT001', current_stock: 50, unit: 'قطعة', reorder_level: 10 },
+                            { id: 'P002', name: 'ماوس لاسلكي', code: 'MS001', current_stock: 200, unit: 'قطعة', reorder_level: 50 },
+                            { id: 'P003', name: 'لوحة مفاتيح', code: 'KB001', current_stock: 150, unit: 'قطعة', reorder_level: 30 },
+                            { id: 'P004', name: 'شاشة 24 بوصة', code: 'MN001', current_stock: 80, unit: 'قطعة', reorder_level: 20 },
+                            { id: 'P005', name: 'طابعة ليزر', code: 'PR001', current_stock: 25, unit: 'قطعة', reorder_level: 5 }
+                        ],
+                        'warehouses': [
+                            { id: 'W001', name: 'المخزن الرئيسي' },
+                            { id: 'W002', name: 'مخزن الفرع الأول' },
+                            { id: 'W003', name: 'مخزن الفرع الثاني' },
+                            { id: 'W004', name: 'مخزن التجزئة' }
+                        ]
+                    }
+                };
+                
+                // Mock data for demonstration
+                if (endpoint.includes('products')) {
+                    return {
+                        success: true,
+                        data: translations[currentLang]?.products || translations['ar'].products
+                    };
+                }
+                
+                if (endpoint.includes('warehouses')) {
+                    return {
+                        success: true,
+                        data: translations[currentLang]?.warehouses || translations['ar'].warehouses
+                    };
+                }
+                
+                if (endpoint.includes('transactions')) {
+                    const today = new Date().toISOString().split('T')[0];
+                    
+                    // Obtenir les noms traduits pour les transactions
+                    const currentProducts = translations[currentLang]?.products || translations['ar'].products;
+                    const currentWarehouses = translations[currentLang]?.warehouses || translations['ar'].warehouses;
+                    
+                    const getProductName = (id) => {
+                        const product = currentProducts.find(p => p.id === id);
+                        return product ? product.name : 'غير معروف';
+                    };
+                    
+                    const getWarehouseName = (id) => {
+                        const warehouse = currentWarehouses.find(w => w.id === id);
+                        return warehouse ? warehouse.name : 'غير معروف';
+                    };
+                    
+                    return {
+                        success: true,
+                        data: [
+                            { 
+                                id: 'T001', 
+                                type: 'وارد', 
+                                product_id: 'P001', 
+                                product_name: getProductName('P001'), 
+                                quantity: 10, 
+                                warehouse_id: 'W001', 
+                                warehouse_name: getWarehouseName('W001'), 
+                                reference: 'INV-2023-001', 
+                                date: today, 
+                                user_name: 'катерина Новикова' 
+                            },
+                            { 
+                                id: 'T002', 
+                                type: 'صادر', 
+                                product_id: 'P002', 
+                                product_name: getProductName('P002'), 
+                                quantity: 5, 
+                                warehouse_id: 'W001', 
+                                warehouse_name: getWarehouseName('W001'), 
+                                reference: 'SALE-2023-001', 
+                                date: today, 
+                                user_name:'Анна Волкова'
+                            },
+                            { 
+                                id: 'T003', 
+                                type: 'تحويل', 
+                                product_id: 'P003', 
+                                product_name: getProductName('P003'), 
+                                quantity: 20, 
+                                from_warehouse_id: 'W001', 
+                                from_warehouse_name: getWarehouseName('W001'), 
+                                to_warehouse_id: 'W002', 
+                                to_warehouse_name: getWarehouseName('W002'), 
+                                reference: 'TRF-2023-001', 
+                                date: today, 
+                                user_name: 'Михаил Кузнецов'
+                            },
+                            { 
+                                id: 'T004', 
+                                type: 'إرجاع', 
+                                product_id: 'P004', 
+                                product_name: getProductName('P004'), 
+                                quantity: 2, 
+                                warehouse_id: 'W001', 
+                                warehouse_name: getWarehouseName('W001'), 
+                                reference: 'RET-2023-001', 
+                                customer: 'Библиотека "Знание', 
+                                return_reason: 'تالف', 
+                                date: today, 
+                                user_name: 'Екатерина Новикова'
+                            },
+                           
+                          
+                        ]
+                    };
+                }
+                
+                return { success: true, data: [] };
+            },
+            
+            // Post Data (mock function)
+            postData: async function(endpoint, data) {
+                console.log(`Posting data to: ${endpoint}`, data);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                return {
+                    success: true,
+                    message: 'تمت العملية بنجاح',
+                    data: { ...data, id: 'T' + Date.now() }
+                };
+            },
+            
+            // Delete Data (mock function)
+            deleteData: async function(endpoint, id) {
+                console.log(`Deleting data from: ${endpoint}, ID: ${id}`);
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                return {
+                    success: true,
+                    message: 'تم الحذف بنجاح'
+                };
+            },
+            
+            // Export Table to Excel
+            exportTableToExcel: function(tableId, filename) {
+                const table = document.getElementById(tableId);
+                if (!table) return;
+                
+                let html = table.outerHTML;
+                let blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+                let url = URL.createObjectURL(blob);
+                
+                let a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.showAlert('تم تصدير البيانات بنجاح', 'success');
+            }
+        };
+        
+        // Global variables
+        let products = [], warehouses = [], transactions = [];
+        let transactionErrors = {};
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize language switcher
+            languageSwitcher.init();
+            
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Load data
+            await loadTransactionsData();
+            
+            // Set today's date in date filter
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateFilter').value = today;
+            
+            // Show welcome message
+            setTimeout(() => {
+                const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+                if (translations && translations.daily_operations) {
+                    WMS.showAlert(`مرحباً بك في صفحة ${translations.daily_operations}`, 'info');
+                }
+            }, 1000);
+        });
+        
+        // Load all transactions data
+        async function loadTransactionsData() {
+            try {
+                console.log('🔍 جاري تحميل بيانات العمليات...', 'اللغة:', languageSwitcher.currentLang);
+                
+                const [productsData, warehousesData, transactionsData] = await Promise.all([
+                    WMS.fetchData('products?limit=1000'),
+                    WMS.fetchData('warehouses?limit=100'),
+                    WMS.fetchData('transactions?limit=1000')
+                ]);
+                
+                if (productsData && productsData.data) { 
+                    products = productsData.data; 
+                    console.log(`✅ ${products.length} منتج تم تحميلهم`);
+                }
+                if (warehousesData && warehousesData.data) {
+                    warehouses = warehousesData.data;
+                    console.log(`✅ ${warehouses.length} مخزن تم تحميلهم`);
+                }
+                if (transactionsData && transactionsData.data) { 
+                    transactions = transactionsData.data; 
+                    console.log(`✅ ${transactions.length} عملية تم تحميلهم`);
+                }
+                
+                populateAllSelects();
+                displayTransactions();
+                updateStats();
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحميل البيانات:', error);
+                WMS.showAlert('حدث خطأ في تحميل البيانات', 'danger');
+            }
+        }
+        
+        // Populate all select elements with current language
+        function populateAllSelects() {
+            const currentLang = languageSwitcher.currentLang;
+            const translations = languageSwitcher.translations[currentLang];
+            
+            const productOptions = products.map(p => 
+                `<option value="${p.id}" data-stock="${p.current_stock}" data-unit="${p.unit}">${p.name} (${p.code})</option>`
+            ).join('');
+            
+            const warehouseOptions = warehouses.map(w => 
+                `<option value="${w.id}">${w.name}</option>`
+            ).join('');
+            
+            // جميع سلات المنتجات
+            document.querySelectorAll('[id$="ProductSelect"]').forEach(select => {
+                const selectProductText = translations?.select_product || 'اختر المنتج';
+                select.innerHTML = `<option value="">${selectProductText}</option>` + productOptions;
+            });
+            
+            // جميع سلات المخازن
+            document.querySelectorAll('[id$="WarehouseSelect"]').forEach(select => {
+                if (!select.id.includes('from') && !select.id.includes('to')) {
+                    const selectWarehouseText = translations?.select_warehouse || 'اختر المخزن';
+                    select.innerHTML = `<option value="">${selectWarehouseText}</option>` + warehouseOptions;
+                }
+            });
+            
+            // سلات التحويل الخاصة
+            const fromWarehouseSelect = document.getElementById('fromWarehouseSelect');
+            const toWarehouseSelect = document.getElementById('toWarehouseSelect');
+            
+            if (fromWarehouseSelect) {
+                const selectSourceWarehouseText = translations?.select_source_warehouse || 'اختر المخزن المصدر';
+                fromWarehouseSelect.innerHTML = `<option value="">${selectSourceWarehouseText}</option>` + warehouseOptions;
+            }
+            if (toWarehouseSelect) {
+                const selectDestinationWarehouseText = translations?.select_destination_warehouse || 'اختر المخزن الوجهة';
+                toWarehouseSelect.innerHTML = `<option value="">${selectDestinationWarehouseText}</option>` + warehouseOptions;
+            }
+        }
+        
+        // Display transactions in table
+        function displayTransactions() {
+    const tbody = document.getElementById('transactionsTableBody');
+    if (!tbody) return;
+    
+    const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+    
+    if (transactions.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-2">${translations?.no_operations || 'لا توجد عمليات مسجلة'}</p>
+                    <button class="btn btn-primary btn-sm" onclick="openOperationModal('receive')">
+                        <i class="fas fa-plus me-1"></i>${translations?.new_operation || 'إضافة عملية جديدة'}
+                    </button>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    // Tri par date
+    const sortedTransactions = transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    // Cartes de traduction
+    const typeTranslations = {
+        'وارد': translations?.incoming || 'Entrant',
+        'صادر': translations?.outgoing || 'Sortant',
+        'تحويل': translations?.transfer || 'Transfert',
+        'إرجاع': translations?.return || 'Retour'
+    };
+    
+    // Traductions des noms d'utilisateurs
+    const userNameTranslations = {
+        'Ибрахим Амир': {
+            'en': 'Ahmed Mahmoud',
+            'fr': 'Ahmed Mahmoud',
+            'ru': 'Ибрахим Амир',
+            'ar':'Ибрахим Амир'
+        }
+    };
+    
+    tbody.innerHTML = sortedTransactions.map(transaction => {
+        const badgeClass = {
+            'وارد': 'badge-success',
+            'صادر': 'badge-danger',
+            'تحويل': 'badge-primary',
+            'إرجاع': 'badge-warning'
+        }[transaction.type] || 'badge-info';
+        
+        const badgeIcon = {
+            'وارد': 'fa-arrow-down',
+            'صادر': 'fa-arrow-up',
+            'تحويل': 'fa-exchange-alt',
+            'إرجاع': 'fa-undo'
+        }[transaction.type] || 'fa-question';
+        
+        // Traduire le nom d'utilisateur
+        const userTranslations = userNameTranslations[transaction.user_name];
+        const userName = userTranslations ? 
+            userTranslations[languageSwitcher.currentLang] || transaction.user_name : 
+            transaction.user_name;
+        
+        const product = products.find(p => p.id === transaction.product_id);
+        const unit = product ? product.unit : '';
+        
+        return `
+            <tr class="fade-in">
+                <td>
+                    <div class="fw-bold english-numbers">${WMS.formatDateEnglish(transaction.date) || '-'}</div>
+                </td>
+                <td>
+                    <span class="badge ${badgeClass} badge-custom">
+                        <i class="fas ${badgeIcon} me-1"></i>
+                        ${typeTranslations[transaction.type] || transaction.type}
+                    </span>
+                </td>
+                <td>
+                    <div class="fw-bold">${transaction.product_name || '-'}</div>
+                    ${transaction.customer ? `<div class="text-muted small">${translations?.customer || 'Client'}: ${transaction.customer}</div>` : ''}
+                </td>
+                <td class="fw-bold ${transaction.type === 'وارد' ? 'text-success' : transaction.type === 'صادر' ? 'text-danger' : 'text-primary'}">
+                    <span class="english-numbers">${WMS.formatNumber(transaction.quantity)}</span> ${unit}
+                </td>
+                <td>
+                    <div class="fw-bold">${transaction.warehouse_name || '-'}</div>
+                    ${transaction.from_warehouse_name ? `<div class="text-muted small">${translations?.from || 'De'}: ${transaction.from_warehouse_name}</div>` : ''}
+                    ${transaction.to_warehouse_name ? `<div class="text-muted small">${translations?.to || 'À'}: ${transaction.to_warehouse_name}</div>` : ''}
+                </td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=3498db&color=fff&size=32&rounded=true" 
+                             class="rounded-circle" width="32" height="32" alt="User">
+                        <div>${userName}</div>
+                    </div>
+                </td>
+                <td class="font-monospace ltr-field">${transaction.reference || '-'}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button onclick="viewTransactionDetails('${transaction.id}')" class="btn-action btn-view" data-bs-toggle="tooltip" title="${translations?.view_details || 'Voir les détails'}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="deleteTransaction('${transaction.id}')" class="btn-action btn-delete" data-bs-toggle="tooltip" title="${translations?.delete_operation || 'Supprimer l\'opération'}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    // Mettre à jour le total des éléments
+    document.getElementById('totalItems').textContent = WMS.formatNumber(transactions.length);
+}
+        // Update statistics
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayTransactions = transactions.filter(t => t.date === today);
+            
+            document.getElementById('totalTransactions').textContent = WMS.formatNumber(transactions.length);
+            document.getElementById('todayTransactions').textContent = WMS.formatNumber(todayTransactions.length);
+        }
+        
+        // Open operation modal
+        function openOperationModal(type) {
+            const modals = {
+                'receive': 'receiveModal',
+                'issue': 'issueModal',
+                'transfer': 'transferModal',
+                'return': 'returnModal'
+            };
+            
+            if (modals[type]) {
+                WMS.openModal(modals[type]);
+            }
+        }
+        
+        // Print transactions
+        function printTransactions() {
+            window.print();
+        }
+        
+        // Refresh transactions
+        function refreshTransactions() {
+            loadTransactionsData();
+            WMS.showAlert('تم تحديث البيانات', 'info');
+        }
+        
+        // Filter transactions
+        function filterTransactions() {
+            const searchTerm = document.getElementById('searchTransaction').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            
+            const filtered = transactions.filter(transaction => {
+                const matchesSearch = !searchTerm || 
+                    transaction.product_name?.toLowerCase().includes(searchTerm) ||
+                    transaction.reference?.toLowerCase().includes(searchTerm) ||
+                    transaction.customer?.toLowerCase().includes(searchTerm);
+                
+                const matchesType = !typeFilter || transaction.type === typeFilter;
+                const matchesDate = !dateFilter || transaction.date === dateFilter;
+                
+                return matchesSearch && matchesType && matchesDate;
+            });
+            
+            // Update display with filtered data
+            const tbody = document.getElementById('transactionsTableBody');
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-0">${translations?.no_results || 'لا توجد نتائج مطابقة للبحث'}</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                // Reuse displayTransactions logic for filtered data
+                const originalTransactions = transactions;
+                transactions = filtered;
+                displayTransactions();
+                transactions = originalTransactions;
+            }
+            
+            document.getElementById('totalItems').textContent = WMS.formatNumber(filtered.length);
+        }
+        
+        // ==================== VALIDATION FUNCTIONS ====================
+        
+        async function validateAndAddTransaction(type, formId) {
+            transactionErrors = {};
+            hideAllTransactionErrors(formId);
+            
+            switch(type) {
+                case 'صادر':
+                    validateIssueForm();
+                    break;
+                case 'تحويل':
+                    validateTransferForm();
+                    break;
+                case 'إرجاع':
+                    validateReturnForm();
+                    break;
+                default:
+                    validateReceiveForm();
+            }
+            
+            if (Object.keys(transactionErrors).length > 0) {
+                showTransactionFormErrors(formId);
+                return;
+            }
+            
+            await addTransaction(type, formId);
+        }
+        
+        // Receive Validation
+        function validateReceiveForm() {
+            validateReceiveProduct();
+            validateReceiveQuantity();
+            validateReceiveWarehouse();
+            validateReceiveReference();
+        }
+        
+        function validateReceiveProduct() {
+            const select = document.getElementById('receiveProductSelect');
+            const errorElement = document.getElementById('receiveProductError');
+            const value = select.value;
+            
+            if (!value) {
+                showTransactionError('receiveProduct', 'يجب اختيار المنتج', errorElement, select);
+                return false;
+            }
+            
+            hideTransactionError('receiveProduct', errorElement, select);
+            return true;
+        }
+        
+        function validateReceiveQuantity() {
+            const input = document.getElementById('receiveQuantity');
+            const errorElement = document.getElementById('receiveQuantityError');
+            const value = parseInt(input.value);
+            
+            if (!value || value < 1) {
+                showTransactionError('receiveQuantity', 'الكمية يجب أن تكون رقم موجب', errorElement, input);
+                return false;
+            }
+            
+            hideTransactionError('receiveQuantity', errorElement, input);
+            return true;
+        }
+        
+        function validateReceiveWarehouse() {
+            const select = document.getElementById('receiveWarehouseSelect');
+            const errorElement = document.getElementById('receiveWarehouseError');
+            const value = select.value;
+            
+            if (!value) {
+                showTransactionError('receiveWarehouse', 'يجب اختيار المخزن', errorElement, select);
+                return false;
+            }
+            
+            hideTransactionError('receiveWarehouse', errorElement, select);
+            return true;
+        }
+        
+        function validateReceiveReference() {
+            const input = document.getElementById('receiveReference');
+            const errorElement = document.getElementById('receiveReferenceError');
+            const value = input.value.trim();
+            
+            if (!value) {
+                showTransactionError('receiveReference', 'رقم المرجع مطلوب', errorElement, input);
+                return false;
+            }
+            
+            hideTransactionError('receiveReference', errorElement, input);
+            return true;
+        }
+        
+        // Issue Validation
+        function validateIssueForm() {
+            validateIssueProduct();
+            validateIssueQuantity();
+            validateIssueWarehouse();
+            validateIssueCustomer();
+            validateIssueReference();
+            validateIssuePrice();
+        }
+        
+        function validateIssueProduct() {
+            const select = document.getElementById('issueProductSelect');
+            const errorElement = document.getElementById('issueProductError');
+            const value = select.value;
+            
+            if (!value) {
+                showTransactionError('issueProduct', 'يجب اختيار المنتج', errorElement, select);
+                return false;
+            }
+            
+            updateIssueStockInfo();
+            hideTransactionError('issueProduct', errorElement, select);
+            return true;
+        }
+        
+        function validateIssueQuantity() {
+            const input = document.getElementById('issueQuantity');
+            const errorElement = document.getElementById('issueQuantityError');
+            const value = parseInt(input.value);
+            const productSelect = document.getElementById('issueProductSelect');
+            
+            if (!value || value < 1) {
+                showTransactionError('issueQuantity', 'الكمية يجب أن تكون رقم موجب', errorElement, input);
+                return false;
+            }
+            
+            // التحقق من المخزون
+            if (productSelect.value) {
+                const product = products.find(p => p.id === productSelect.value);
+                const currentStock = product ? product.current_stock : 0;
+                
+                if (value > currentStock) {
+                    const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+                    showTransactionError('issueQuantity', `${translations?.quantity_label || 'الكمية'} المطلوبة (${WMS.formatNumber(value)}) تتجاوز ${translations?.available_stock || 'المخزون المتاح'} (${WMS.formatNumber(currentStock)})`, errorElement, input);
+                    return false;
+                }
+            }
+            
+            hideTransactionError('issueQuantity', errorElement, input);
+            return true;
+        }
+        
+        function validateIssueWarehouse() {
+            const select = document.getElementById('issueWarehouseSelect');
+            const errorElement = document.getElementById('issueWarehouseError');
+            const value = select.value;
+            
+            if (!value) {
+                showTransactionError('issueWarehouse', 'يجب اختيار المخزن', errorElement, select);
+                return false;
+            }
+            
+            updateIssueStockInfo();
+            hideTransactionError('issueWarehouse', errorElement, select);
+            return true;
+        }
+        
+        function validateIssueCustomer() {
+            const input = document.getElementById('issueCustomer');
+            const errorElement = document.getElementById('issueCustomerError');
+            const value = input.value.trim();
+            
+            if (!value) {
+                showTransactionError('issueCustomer', 'اسم العميل مطلوب', errorElement, input);
+                return false;
+            }
+            
+            hideTransactionError('issueCustomer', errorElement, input);
+            return true;
+        }
+        
+        function validateIssueReference() {
+            const input = document.getElementById('issueReference');
+            const errorElement = document.getElementById('issueReferenceError');
+            const value = input.value.trim();
+            
+            if (!value) {
+                showTransactionError('issueReference', 'رقم الفاتورة مطلوب', errorElement, input);
+                return false;
+            }
+            
+            hideTransactionError('issueReference', errorElement, input);
+            return true;
+        }
+        
+        function validateIssuePrice() {
+            const input = document.getElementById('issuePrice');
+            const errorElement = document.getElementById('issuePriceError');
+            const value = parseFloat(input.value);
+            
+            if (input.value && (isNaN(value) || value < 0)) {
+                showTransactionError('issuePrice', 'سعر البيع يجب أن يكون رقم موجب', errorElement, input);
+                return false;
+            }
+            
+            hideTransactionError('issuePrice', errorElement, input);
+            return true;
+        }
+        
+        function updateIssueStockInfo() {
+            const productSelect = document.getElementById('issueProductSelect');
+            const stockInfo = document.getElementById('issueStockInfo');
+            const stockText = document.getElementById('currentStockText');
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            
+            if (productSelect.value) {
+                const product = products.find(p => p.id === productSelect.value);
+                if (product) {
+                    const availableStockText = translations?.available_stock || 'المخزون المتاح';
+                    stockText.textContent = `${availableStockText}: ${WMS.formatNumber(product.current_stock)} ${product.unit}`;
+                    stockInfo.classList.remove('d-none');
+                    
+                    if (product.current_stock <= product.reorder_level) {
+                        stockInfo.style.backgroundColor = 'rgba(243, 156, 18, 0.1)';
+                        stockInfo.style.borderColor = 'rgba(243, 156, 18, 0.3)';
+                        stockText.className = 'text-warning';
+                    }
+                    return;
+                }
+            }
+            
+            stockInfo.classList.add('d-none');
+        }
+        
+        // Transfer Validation
+        function validateTransferForm() {
+            validateTransferProduct();
+            validateTransferQuantity();
+            validateFromWarehouse();
+            validateToWarehouse();
+            validateTransferReference();
+        }
+        
+        function validateTransferProduct() {
+            const select = document.getElementById('transferProductSelect');
+            const errorElement = document.getElementById('transferProductError');
+            if (!select.value) {
+                showTransactionError('transferProduct', 'يجب اختيار المنتج', errorElement, select);
+                return false;
+            }
+            hideTransactionError('transferProduct', errorElement, select);
+            return true;
+        }
+        
+        function validateTransferQuantity() {
+            const input = document.getElementById('transferQuantity');
+            const errorElement = document.getElementById('transferQuantityError');
+            const value = parseInt(input.value);
+            if (!value || value < 1) {
+                showTransactionError('transferQuantity', 'الكمية يجب أن تكون رقم موجب', errorElement, input);
+                return false;
+            }
+            hideTransactionError('transferQuantity', errorElement, input);
+            return true;
+        }
+        
+        function validateFromWarehouse() {
+            const select = document.getElementById('fromWarehouseSelect');
+            const errorElement = document.getElementById('fromWarehouseError');
+            if (!select.value) {
+                showTransactionError('fromWarehouse', 'يجب اختيار المخزن المصدر', errorElement, select);
+                return false;
+            }
+            hideTransactionError('fromWarehouse', errorElement, select);
+            return true;
+        }
+        
+        function validateToWarehouse() {
+            const select = document.getElementById('toWarehouseSelect');
+            const errorElement = document.getElementById('toWarehouseError');
+            const fromSelect = document.getElementById('fromWarehouseSelect');
+            
+            if (!select.value) {
+                showTransactionError('toWarehouse', 'يجب اختيار المخزن الوجهة', errorElement, select);
+                return false;
+            }
+            
+            if (fromSelect.value && select.value === fromSelect.value) {
+                showTransactionError('toWarehouse', 'لا يمكن التحويل لنفس المخزن', errorElement, select);
+                return false;
+            }
+            
+            hideTransactionError('toWarehouse', errorElement, select);
+            return true;
+        }
+        
+        function validateTransferReference() {
+            const input = document.getElementById('transferReference');
+            const errorElement = document.getElementById('transferReferenceError');
+            if (!input.value.trim()) {
+                showTransactionError('transferReference', 'رقم المرجع مطلوب', errorElement, input);
+                return false;
+            }
+            hideTransactionError('transferReference', errorElement, input);
+            return true;
+        }
+        
+        // Return Validation
+        function validateReturnForm() {
+            validateReturnProduct();
+            validateReturnQuantity();
+            validateReturnWarehouse();
+            validateReturnCustomer();
+            validateReturnReference();
+            validateReturnReason();
+        }
+        
+        function validateReturnProduct() {
+            const select = document.getElementById('returnProductSelect');
+            const errorElement = document.getElementById('returnProductError');
+            if (!select.value) {
+                showTransactionError('returnProduct', 'يجب اختيار المنتج', errorElement, select);
+                return false;
+            }
+            hideTransactionError('returnProduct', errorElement, select);
+            return true;
+        }
+        
+        function validateReturnQuantity() {
+            const input = document.getElementById('returnQuantity');
+            const errorElement = document.getElementById('returnQuantityError');
+            const value = parseInt(input.value);
+            if (!value || value < 1) {
+                showTransactionError('returnQuantity', 'الكمية يجب أن تكون رقم موجب', errorElement, input);
+                return false;
+            }
+            hideTransactionError('returnQuantity', errorElement, input);
+            return true;
+        }
+        
+        function validateReturnWarehouse() {
+            const select = document.getElementById('returnWarehouseSelect');
+            const errorElement = document.getElementById('returnWarehouseError');
+            if (!select.value) {
+                showTransactionError('returnWarehouse', 'يجب اختيار المخزن', errorElement, select);
+                return false;
+            }
+            hideTransactionError('returnWarehouse', errorElement, select);
+            return true;
+        }
+        
+        function validateReturnCustomer() {
+            const input = document.getElementById('returnCustomer');
+            const errorElement = document.getElementById('returnCustomerError');
+            if (!input.value.trim()) {
+                showTransactionError('returnCustomer', 'اسم العميل مطلوب', errorElement, input);
+                return false;
+            }
+            hideTransactionError('returnCustomer', errorElement, input);
+            return true;
+        }
+        
+        function validateReturnReference() {
+            const input = document.getElementById('returnReference');
+            const errorElement = document.getElementById('returnReferenceError');
+            if (!input.value.trim()) {
+                showTransactionError('returnReference', 'رقم فاتورة الإرجاع مطلوب', errorElement, input);
+                return false;
+            }
+            hideTransactionError('returnReference', errorElement, input);
+            return true;
+        }
+        
+        function validateReturnReason() {
+            const select = document.getElementById('returnReason');
+            const errorElement = document.getElementById('returnReasonError');
+            if (!select.value) {
+                showTransactionError('returnReason', 'يجب اختيار سبب الإرجاع', errorElement, select);
+                return false;
+            }
+            hideTransactionError('returnReason', errorElement, select);
+            return true;
+        }
+        
+        // ==================== UTILITY FUNCTIONS ====================
+        
+        function showTransactionError(field, message, errorElement, inputElement) {
+            transactionErrors[field] = message;
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+            inputElement.classList.add('is-invalid');
+        }
+        
+        function hideTransactionError(field, errorElement, inputElement) {
+            delete transactionErrors[field];
+            errorElement.classList.remove('show');
+            inputElement.classList.remove('is-invalid');
+        }
+        
+        function hideAllTransactionErrors(formId) {
+            const form = document.getElementById(formId);
+            form.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+            });
+            form.querySelectorAll('.form-control-custom, .form-select-custom').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+            const errorSummary = document.getElementById(formId.replace('Form', 'FormErrors'));
+            if (errorSummary) errorSummary.classList.add('d-none');
+        }
+        
+        function showTransactionFormErrors(formId) {
+            const errorSummary = document.getElementById(formId.replace('Form', 'FormErrors'));
+            const errorList = Object.values(transactionErrors).map(error => 
+                `<li>${error}</li>`
+            ).join('');
+            
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            
+            errorSummary.innerHTML = `
+                <strong class="d-block mb-2"><i class="fas fa-exclamation-triangle me-2"></i>${translations?.form_errors || 'يوجد أخطاء في النموذج'}:</strong>
+                <ul class="mb-0 me-3">${errorList}</ul>
+            `;
+            errorSummary.classList.remove('d-none');
+            errorSummary.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        async function addTransaction(type, formId) {
+            const form = document.getElementById(formId);
+            const submitBtn = document.getElementById(formId.replace('Form', 'SubmitBtn'));
+            const originalText = submitBtn.innerHTML;
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>' + (translations?.saving || 'جاري الحفظ...');
+                
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                const transactionData = prepareTransactionData(type, data);
+                
+                const result = await WMS.postData('transactions', transactionData);
+                
+                if (result && result.success) {
+                    WMS.showAlert(translations?.operation_saved || 'تم تسجيل العملية بنجاح', 'success');
+                    
+                    // Close modal
+                    const modalId = formId.replace('Form', 'Modal');
+                    WMS.closeModal(modalId);
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    // Refresh data
+                    await loadTransactionsData();
+                } else {
+                    throw new Error(result?.message || 'فشل في تسجيل العملية');
+                }
+                
+            } catch (error) {
+                console.error('❌ خطأ في تسجيل العملية:', error);
+                WMS.showAlert(error.message || 'حدث خطأ أثناء تسجيل العملية', 'danger');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+        
+        function prepareTransactionData(type, data) {
+            const baseData = {
+                id: 'T' + Date.now() + Math.random().toString(36).substr(2, 5),
+                type: type,
+                date: new Date().toISOString().split('T')[0],
+                user_id: 'U001',
+                user_name: 'Ибрахим Амир',
+                quantity: parseInt(data.quantity),
+                notes: data.notes || ''
+            };
+            
+            const product = products.find(p => p.id === data.product_id);
+            const productName = product ? product.name : 'غير معروف';
+            
+            switch(type) {
+                case 'وارد':
+                    return {
+                        ...baseData,
+                        product_id: data.product_id,
+                        warehouse_id: data.warehouse_id,
+                        reference: data.reference,
+                        product_name: productName,
+                        warehouse_name: getWarehouseName(data.warehouse_id)
+                    };
+                    
+                case 'صادر':
+                    return {
+                        ...baseData,
+                        product_id: data.product_id,
+                        warehouse_id: data.warehouse_id,
+                        reference: data.reference,
+                        customer: data.customer,
+                        price: data.price ? parseFloat(data.price) : null,
+                        product_name: productName,
+                        warehouse_name: getWarehouseName(data.warehouse_id)
+                    };
+                    
+                case 'تحويل':
+                    return {
+                        ...baseData,
+                        product_id: data.product_id,
+                        from_warehouse_id: data.from_warehouse_id,
+                        to_warehouse_id: data.to_warehouse_id,
+                        reference: data.reference,
+                        product_name: productName,
+                        from_warehouse_name: getWarehouseName(data.from_warehouse_id),
+                        to_warehouse_name: getWarehouseName(data.to_warehouse_id)
+                    };
+                    
+                case 'إرجاع':
+                    return {
+                        ...baseData,
+                        product_id: data.product_id,
+                        warehouse_id: data.warehouse_id,
+                        reference: data.reference,
+                        customer: data.customer,
+                        return_reason: data.return_reason,
+                        product_name: productName,
+                        warehouse_name: getWarehouseName(data.warehouse_id)
+                    };
+            }
+        }
+        
+        function getWarehouseName(warehouseId) {
+            const warehouse = warehouses.find(w => w.id === warehouseId);
+            return warehouse ? warehouse.name : 'غير معروف';
+        }
+        
+        function viewTransactionDetails(transactionId) {
+            const transaction = transactions.find(t => t.id === transactionId);
+            if (!transaction) {
+                WMS.showAlert('لم يتم العثور على العملية', 'warning');
+                return;
+            }
+            
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            
+            let details = `
+                <div class="mb-3">
+                    <h5 class="mb-3">${translations?.operation_details || 'تفاصيل العملية'}</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-2"><strong>${translations?.type || 'النوع'}:</strong> ${transaction.type}</div>
+                        <div class="col-md-6 mb-2"><strong>${translations?.product || 'المنتج'}:</strong> ${transaction.product_name}</div>
+                        <div class="col-md-6 mb-2"><strong>${translations?.quantity || 'الكمية'}:</strong> ${WMS.formatNumber(transaction.quantity)}</div>
+                        <div class="col-md-6 mb-2"><strong>${translations?.reference || 'المرجع'}:</strong> ${transaction.reference}</div>
+                        <div class="col-md-6 mb-2"><strong>${translations?.date || 'التاريخ'}:</strong> ${WMS.formatDateEnglish(transaction.date)}</div>
+            `;
+            
+            if (transaction.customer) details += `<div class="col-md-6 mb-2"><strong>${translations?.customer || 'العميل'}:</strong> ${transaction.customer}</div>`;
+            if (transaction.price) details += `<div class="col-md-6 mb-2"><strong>${translations?.selling_price || 'السعر'}:</strong> ${WMS.formatCurrency(transaction.price)}</div>`;
+            if (transaction.return_reason) details += `<div class="col-md-6 mb-2"><strong>${translations?.return_reason || 'سبب الإرجاع'}:</strong> ${transaction.return_reason}</div>`;
+            if (transaction.notes) details += `<div class="col-12 mb-2"><strong>${translations?.notes_label || 'ملاحظات'}:</strong> ${transaction.notes}</div>`;
+            
+            details += `</div></div>`;
+            
+            WMS.showAlert(details, 'info', 10000);
+        }
+        
+        async function deleteTransaction(id) {
+            const translations = languageSwitcher.translations[languageSwitcher.currentLang];
+            WMS.confirmAction(translations?.confirm_delete || 'هل أنت متأكد من حذف هذه العملية؟', async () => {
+                const result = await WMS.deleteData('transactions', id);
+                if (result) {
+                    WMS.showAlert(translations?.operation_deleted || 'تم حذف العملية بنجاح', 'success');
+                    await loadTransactionsData();
+                }
+            });
+        }
+        
+        // Export functions to global scope
+        window.toggleSidebar = function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-content');
+            if (sidebar) sidebar.classList.toggle('hidden');
+            if (mainContent) mainContent.classList.toggle('full-width');
+        };
+        
+        window.validateAndAddTransaction = validateAndAddTransaction;
+        window.viewTransactionDetails = viewTransactionDetails;
+        window.deleteTransaction = deleteTransaction;
+        window.openOperationModal = openOperationModal;
+        window.printTransactions = printTransactions;
+        window.refreshTransactions = refreshTransactions;
+        window.filterTransactions = filterTransactions;
+    </script>
+    <script src="js/languageSwitcher.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
